@@ -1,0 +1,100 @@
+{
+  "sdk": 3,
+  "version": 1,
+  "name": "Touch Portal Plugin Example Manual",
+  "id": "TouchPortalSDK.Sample",
+  "categories": [
+    {
+      "id": "category1",
+      "name": "Category 1",
+      "actions": [
+        {
+          "id": "category1.action1",
+          "name": "Test Action",
+          "prefix": "Plugin",
+          "type": "communicate",
+          "tryInline": true,
+          "format": "Data 1 {$category1.action1.data1$} Data 2 {$category1.action1.data2$} Data 3 {$category1.action1.data3$} Data 4 {$category1.action1.data4$} Data 5 {$category1.action1.data5$} Data 6 {$category1.action1.data6$} Data 7 {$category1.action1.data7$}",
+          "data": [
+            {
+              "id": "category1.action1.data1",
+              "type": "switch",
+              "label": "Test data switch"
+            },
+            {
+              "id": "category1.action1.data2",
+              "type": "choice",
+              "label": "Test data choice",
+              "valueChoices": [
+                "choice 1",
+                "choice 2",
+                "choice 3"
+              ]
+            },
+            {
+              "id": "category1.action1.data3",
+              "type": "choice",
+              "label": "Test data choice"
+            },
+            {
+              "id": "category1.action1.data4",
+              "type": "number",
+              "label": "Test data number"
+            },
+            {
+              "id": "category1.action1.data5",
+              "type": "text",
+              "label": "Test data text"
+            },
+            {
+              "id": "category1.action1.data6",
+              "type": "file",
+              "label": "Test data file"
+            },
+            {
+              "id": "category1.action1.data7",
+              "type": "folder",
+              "label": "Test data folder"
+            },
+            {
+              "id": "category1.action1.data8",
+              "type": "color",
+              "label": "Test data color"
+            }
+          ]
+        }
+      ],
+      "events": [
+        {
+          "id": "category1.event1",
+          "name": "Test Event",
+          "format": "Test val: $val",
+          "type": "communicate",
+          "valueType": "choice",
+          "valueChoices": [
+            "s1",
+            "s2",
+            "s3"
+          ],
+          "valueStateId": "category1.staticstate1"
+        }
+      ],
+      "states": [
+        {
+          "id": "category1.staticstate1",
+          "type": "choice",
+          "desc": "Test Static State",
+          "default": "not set",
+          "valueChoices": []
+        }
+      ]
+    },
+    {
+      "id": "category2",
+      "name": "Category 2",
+      "actions": [],
+      "events": [],
+      "states": []
+    }
+  ]
+}
