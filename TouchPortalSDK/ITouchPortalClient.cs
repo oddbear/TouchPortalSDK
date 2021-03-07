@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json;
+using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Models.Messages;
 
 namespace TouchPortalSDK
@@ -65,6 +66,14 @@ namespace TouchPortalSDK
         bool CreateState(string stateId, string displayName, string defaultValue = "");
 
         /// <summary>
+        /// Updates a setting in TouchPortal.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        bool SettingUpdate(string name, string value);
+
+        /// <summary>
         /// Removes the dynamic state from TouchPortal.
         /// </summary>
         /// <param name="stateId"></param>
@@ -93,5 +102,15 @@ namespace TouchPortalSDK
         /// <returns></returns>
         bool ChoiceUpdate(string listId, string[] values, string instanceId = null);
 
+        /// <summary>
+        /// Updates the constraints of a data value.
+        /// </summary>
+        /// <param name="dataId">Id of action the number box.</param>
+        /// <param name="minValue">Min value the field can be.</param>
+        /// <param name="maxValue">Max value the field can be.</param>
+        /// <param name="dataType">Type of the data field.</param>
+        /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
+        /// <returns></returns>
+        bool UpdateActionData(string dataId, double minValue, double maxValue, DataType dataType, string instanceId = null);
     }
 }

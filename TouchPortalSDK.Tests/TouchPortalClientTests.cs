@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Sockets;
 
 namespace TouchPortalSDK.Tests
@@ -22,7 +23,88 @@ namespace TouchPortalSDK.Tests
             
             _client = new TouchPortalClient(default, _touchPortalSocketMock.Object);
         }
-        
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" \t ")]
+        public void UpdateActionData_NoDataId(string dataId)
+        {
+            var result = _client.UpdateActionData(dataId, default, default, DataType.Number);
+            Assert.False(result);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" \t ")]
+        public void UpdateActionData_WithDataId_NoInstanceId(string instanceId)
+        {
+            Dictionary<string, object> parameter = null;
+            _touchPortalSocketMock.Setup(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()))
+                .Callback<Dictionary<string, object>>(dict => parameter = dict)
+                .Returns(true);
+
+            var result = _client.UpdateActionData("dataId", default, default, DataType.Number, instanceId);
+            Assert.True(result);
+            Assert.AreEqual("updateActionData", parameter["type"]);
+            CollectionAssert.DoesNotContain(parameter.Keys, "instanceId");
+
+            var data = (Dictionary<string, object>)parameter["data"];
+            Assert.AreEqual("dataId", data["id"]);
+            Assert.AreEqual(0.0, data["maxValue"]);
+            Assert.AreEqual(0.0, data["minValue"]);
+            Assert.AreEqual("Number", data["type"]);
+
+            _touchPortalSocketMock.Verify(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()), Times.Once);
+        }
+
+        [Test]
+        public void UpdateActionData_WithDataId_WithInstanceId()
+        {
+            Dictionary<string, object> parameter = null;
+            _touchPortalSocketMock.Setup(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()))
+                .Callback<Dictionary<string, object>>(dict => parameter = dict)
+                .Returns(true);
+
+            var result = _client.UpdateActionData("dataId", default, default, DataType.Number, "instanceId");
+            Assert.True(result);
+            Assert.AreEqual("updateActionData", parameter["type"]);
+            Assert.AreEqual("instanceId", parameter["instanceId"]);
+
+            var data = (Dictionary<string, object>)parameter["data"];
+            Assert.AreEqual("dataId", data["id"]);
+            Assert.AreEqual(0.0, data["maxValue"]);
+            Assert.AreEqual(0.0, data["minValue"]);
+            Assert.AreEqual("Number", data["type"]);
+
+            _touchPortalSocketMock.Verify(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()), Times.Once);
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" \t ")]
+        public void SettingUpdate_NoName(string name)
+        {
+            var result = _client.SettingUpdate(name, "value");
+            Assert.False(result);
+        }
+
+        [Test]
+        public void SettingUpdate_WithName()
+        {
+            Dictionary<string, object> parameter = null;
+            _touchPortalSocketMock.Setup(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()))
+                .Callback<Dictionary<string, object>>(dict => parameter = dict)
+                .Returns(true);
+
+            var result = _client.SettingUpdate("name", "value");
+            Assert.True(result);
+            Assert.AreEqual("settingUpdate", parameter["type"]);
+            Assert.AreEqual("name", parameter["name"]);
+            Assert.AreEqual("value", parameter["value"]);
+
+            _touchPortalSocketMock.Verify(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()), Times.Once);
+        }
+
         [TestCase(null)]
         [TestCase("")]
         [TestCase(" \t ")]

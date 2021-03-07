@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Models.Messages;
 
 namespace TouchPortalSDK.Sample
@@ -22,12 +23,12 @@ namespace TouchPortalSDK.Sample
             _client = serviceProvider.GetRequiredService<ITouchPortalClient>();
 
             //Setting callback actions:
-            _client.OnInfo = info => _logger.LogInformation($"[Info] VersionCode: '{info.TpVersionCode}', VersionString: '{info.TpVersionString}', SDK: '{info.SdkVersion}', PluginVersion: '{info.PluginVersion}', Status: '{info.Status}'");
+            _client.OnInfo = OnInfo;
             _client.OnAction = OnAction;
             _client.OnListChanged = OnListChanged;
             _client.OnUnhandled = document => _logger.LogWarning($"Unhandled message: {document}");
-            _client.OnBroadcast = broadcast => throw new NotImplementedException($"Feature expected in TouchPortal 2.3: {broadcast}");
-            _client.OnSettings = settings => throw new NotImplementedException($"Feature expected in TouchPortal 2.3: {settings}");
+            _client.OnBroadcast = broadcast => _logger.LogInformation($"[Broadcast] Event: '{broadcast.Event}', PageName: '{broadcast.PageName}'");
+            _client.OnSettings = OnSettings;
             _client.OnClosed = exception =>
             {
                 _logger.LogInformation(exception, "TouchPortal Disconnected.");
@@ -60,6 +61,21 @@ namespace TouchPortalSDK.Sample
             //The user should add this manually in the UI:
             _client.StateUpdate("global.customState1", "c2");
 
+            //Updates settings in TouchPortal settings:
+            _client.SettingUpdate("Test3", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
+
+            //Updates the min and max value of the number field.
+            _client.UpdateActionData("category1.action1.data4", 10, 15, DataType.Number);
+        }
+
+        /// <summary>
+        /// Information received when plugin is connected to TouchPortal.
+        /// </summary>
+        /// <param name="message"></param>
+        private static void OnInfo(MessageInfo message)
+        {
+            var settings = string.Join(", ", message.Settings.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
+            _logger.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}', Settings: '{settings}'");
         }
 
         /// <summary>
@@ -107,6 +123,12 @@ namespace TouchPortalSDK.Sample
                     _logger.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: '{data}'");
                     break;
             }
+        }
+
+        private static void OnSettings(MessageSettings message)
+        {
+            var settings = string.Join(", ", message.Values.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
+            _logger.LogInformation($"[OnSettings] '{settings}'");
         }
     }
 }

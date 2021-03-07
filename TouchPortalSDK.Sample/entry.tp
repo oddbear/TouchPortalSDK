@@ -3,6 +3,21 @@
   "version": 1,
   "name": "Touch Portal Plugin Example Manual",
   "id": "TouchPortalSDK.Sample",
+  "settings": [
+    {
+      "name": "Text 1",
+      "type": "text"
+    },
+    {
+      "name": "Number 2",
+      "type": "number"
+    },
+    {
+      "name": "Test3",
+      "type": "text",
+      "readOnly": true  
+    }
+  ],
   "categories": [
     {
       "id": "category1",
@@ -15,6 +30,7 @@
           "type": "communicate",
           "tryInline": true,
           "format": "Data 1 {$category1.action1.data1$} Data 2 {$category1.action1.data2$} Data 3 {$category1.action1.data3$} Data 4 {$category1.action1.data4$} Data 5 {$category1.action1.data5$} Data 6 {$category1.action1.data6$} Data 7 {$category1.action1.data7$}",
+          "hasHoldFunctionality": true,
           "data": [
             {
               "id": "category1.action1.data1",

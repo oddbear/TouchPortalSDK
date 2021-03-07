@@ -16,7 +16,6 @@ namespace TouchPortalSDK.Sockets
         private readonly ILogger<TouchPortalSocket> _logger;
         private readonly TouchPortalOptions _options;
         private readonly Socket _socket;
-        private readonly Encoding _encoding;
         private readonly Thread _listenerThread;
 
         private StreamReader _streamReader;
@@ -30,7 +29,6 @@ namespace TouchPortalSDK.Sockets
         {
             _logger = logger;
             _options = options.Value;
-            _encoding = Encoding.ASCII;
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _listenerThread = new Thread(ListenerThreadSync) { IsBackground = false };
@@ -48,8 +46,8 @@ namespace TouchPortalSDK.Sockets
                 _logger?.LogInformation("TouchPortal connected.");
 
                 //Setup streams:
-                _streamWriter = new StreamWriter(new NetworkStream(_socket), _encoding) {AutoFlush = true};
-                _streamReader = new StreamReader(new NetworkStream(_socket), _encoding);
+                _streamWriter = new StreamWriter(new NetworkStream(_socket), Encoding.ASCII) {AutoFlush = true};
+                _streamReader = new StreamReader(new NetworkStream(_socket), Encoding.UTF8);
 
                 return _socket.Connected;
             }

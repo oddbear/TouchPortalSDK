@@ -23,9 +23,13 @@
 
   <!-- Be carefull about killing javaw, as other applications can also be running as javaw, check Task Manager for your system -->
   <!-- Example of automatic restart and copy entry file when running project from Visual Studio -->
-  <!-- 
+  <!--
   <Target Name = "Kill_Javaw" BeforeTargets="Build">
     <Exec Command="taskkill /F /IM javaw.exe" IgnoreExitCode="true" ContinueOnError="true" />
+  </Target>
+
+  <Target Name = "Kill_TouchPortal" BeforeTargets="Build">
+    <Exec Command="taskkill /F /IM TouchPortalServices.exe" IgnoreExitCode="true" ContinueOnError="true" />
   </Target>
 
   <Target Name="Copy_entry_File" BeforeTargets="Build">

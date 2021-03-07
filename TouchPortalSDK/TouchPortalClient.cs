@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Models.Exceptions;
 using TouchPortalSDK.Models.Messages;
 using TouchPortalSDK.Sockets;
@@ -84,6 +85,26 @@ namespace TouchPortalSDK
         #region TouchPortal Input
 
         /// <inheritdoc cref="ITouchPortalClient" />
+        public bool SettingUpdate(string name, string value)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return false;
+
+            var message = new Dictionary<string, object>
+            {
+                ["type"] = "settingUpdate",
+                ["name"] = name,
+                ["value"] = value ?? string.Empty
+            };
+
+            var sent = _touchPortalSocket.SendMessage(message);
+
+            _logger?.LogInformation($"[{nameof(SettingUpdate)}] '{name}', sent '{sent}'.");
+
+            return true;
+        }
+
+        /// <inheritdoc cref="ITouchPortalClient" />
         public bool CreateState(string stateId, string displayName, string defaultValue = "")
         {
             if (string.IsNullOrWhiteSpace(stateId) ||
@@ -163,6 +184,34 @@ namespace TouchPortalSDK
             var sent = _touchPortalSocket.SendMessage(message);
 
             _logger?.LogInformation($"[{nameof(ChoiceUpdate)}] '{listId}:{instanceId}', sent '{sent}'.");
+
+            return sent;
+        }
+
+        /// <inheritdoc cref="ITouchPortalClient" />
+        public bool UpdateActionData(string dataId, double minValue, double maxValue, DataType dataType, string instanceId = null)
+        {
+            if (string.IsNullOrWhiteSpace(dataId))
+                return false;
+
+            var message = new Dictionary<string, object>
+            {
+                ["type"] = "updateActionData",
+                ["data"] = new Dictionary<string, object>
+                {
+                    ["id"] = dataId,
+                    ["minValue"] = minValue,
+                    ["maxValue"] = maxValue,
+                    ["type"] = dataType.ToString()
+                }
+            };
+
+            if (!string.IsNullOrWhiteSpace(instanceId))
+                message["instanceId"] = instanceId;
+
+            var sent = _touchPortalSocket.SendMessage(message);
+
+            _logger?.LogInformation($"[{nameof(ChoiceUpdate)}] '{dataId}:{instanceId}', sent '{sent}'.");
 
             return sent;
         }
