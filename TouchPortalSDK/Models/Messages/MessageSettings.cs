@@ -1,4 +1,4 @@
-﻿namespace TouchPortalSDK.Models
+﻿namespace TouchPortalSDK.Models.Messages
 {
     public class MessageSettings : MessageBase
     {

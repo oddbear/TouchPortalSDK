@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TouchPortalSDK.Models;
+using TouchPortalSDK.Models.Messages;
 
 namespace TouchPortalSDK.Sample
 {
@@ -39,7 +39,7 @@ namespace TouchPortalSDK.Sample
             _client.Connect();
             
             //Update choices (dropdown in UI when creating an action):
-            _client.UpdateChoice("category1.action1.data2", new[] { "choice 1 (updated)", "choice 2 (updated)", "choice 3 (updated)" });
+            _client.ChoiceUpdate("category1.action1.data2", new[] { "choice 1 (updated)", "choice 2 (updated)", "choice 3 (updated)" });
 
             //Removes a dynamic state (no change if state does not exist):
             _client.RemoveState("dynamicState1");
@@ -48,17 +48,18 @@ namespace TouchPortalSDK.Sample
             _client.CreateState("dynamicState1", "Test dynamic state 1", "Test 123");
 
             //Updates the created dynamic state, if you do not create it:
-            _client.UpdateState("dynamicState1", "d1");
+            _client.StateUpdate("dynamicState1", "d1");
 
             //You can display this value, but it will not appear in any list:
-            _client.UpdateState("dynamicState2", "d2");
+            _client.StateUpdate("dynamicState2", "d2");
 
             //Updates the static state (entry.tp):
-            _client.UpdateState("category1.staticstate1", "s1");
+            _client.StateUpdate("category1.staticstate1", "s1");
 
             //Custom states (Global Objects/left panel in TouchPortal UI), user adds this (states.tp in %AppData%/TouchPortal).
             //The user should add this manually in the UI:
-            _client.UpdateState("global.customState1", "c2");
+            _client.StateUpdate("global.customState1", "c2");
+
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace TouchPortalSDK.Sample
                 //Dynamically updates the dropdown of data3 based on value chosen from data2 dropdown:
                 case "category1.action1.data2" when message.InstanceId is not null:
                     var prefix = message.Value;
-                    _client.UpdateChoice("category1.action1.data3", new[] { $"{prefix} second 1", $"{prefix} second 2", $"{prefix} second 3" }, message.InstanceId);
+                    _client.ChoiceUpdate("category1.action1.data3", new[] { $"{prefix} second 1", $"{prefix} second 2", $"{prefix} second 3" }, message.InstanceId);
                     break;
             }
         }
@@ -88,20 +89,22 @@ namespace TouchPortalSDK.Sample
             switch (message.ActionId)
             {
                 case "category1.action1":
-                    var data1 = message.GetValue("category1.action1.data1") ?? "<null>";
-                    var data2 = message.GetValue("category1.action1.data2") ?? "<null>";
-                    var data3 = message.GetValue("category1.action1.data3") ?? "<null>";
-                    var data4 = message.GetValue("category1.action1.data4") ?? "<null>";
+                    //Get data with indexer:
+                    var data1 = message["category1.action1.data1"] ?? "<null>";
+                    var data2 = message["category1.action1.data2"] ?? "<null>";
+                    var data3 = message["category1.action1.data3"] ?? "<null>";
+                    var data4 = message["category1.action1.data4"] ?? "<null>";
+                    //Get date with method:
                     var data5 = message.GetValue("category1.action1.data5") ?? "<null>";
                     var data6 = message.GetValue("category1.action1.data6") ?? "<null>";
                     var data7 = message.GetValue("category1.action1.data7") ?? "<null>";
                     var data8 = message.GetValue("category1.action1.data8") ?? "<null>";
-                    _logger.LogInformation($"[OnAction] {message.ActionId}, Data fields: data1:'{data1}', data2:'{data2}', data3:'{data3}', data4:'{data4}', data5:'{data5}', data6:'{data6}', data7:'{data7}', data8:'{data8}'");
+                    _logger.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: data1:'{data1}', data2:'{data2}', data3:'{data3}', data4:'{data4}', data5:'{data5}', data6:'{data6}', data7:'{data7}', data8:'{data8}'");
                     break;
 
                 default:
-                    var data = string.Join(", ", message.Data.Select(dataItem => $"{dataItem.Id}:{dataItem.Value}"));
-                    _logger.LogInformation($"[OnAction] {message.ActionId} '{data}'");
+                    var data = string.Join(", ", message.Data.Select(dataItem => $"\"{dataItem.Id}\":\"{dataItem.Value}\""));
+                    _logger.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: '{data}'");
                     break;
             }
         }

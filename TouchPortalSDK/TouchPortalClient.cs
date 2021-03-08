@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using TouchPortalSDK.Exceptions;
-using TouchPortalSDK.Models;
+using TouchPortalSDK.Models.Exceptions;
+using TouchPortalSDK.Models.Messages;
 using TouchPortalSDK.Sockets;
 
 namespace TouchPortalSDK
@@ -100,7 +100,7 @@ namespace TouchPortalSDK
 
             var sent = _touchPortalSocket.SendMessage(message);
 
-            _logger?.LogInformation($"Create State '{stateId}', sent '{sent}'.");
+            _logger?.LogInformation($"[{nameof(CreateState)}] '{stateId}', sent '{sent}'.");
 
             return sent;
         }
@@ -119,13 +119,13 @@ namespace TouchPortalSDK
 
             var sent = _touchPortalSocket.SendMessage(message);
 
-            _logger?.LogInformation($"Remove State '{stateId}', sent '{sent}'.");
+            _logger?.LogInformation($"[{nameof(RemoveState)}] '{stateId}', sent '{sent}'.");
 
             return sent;
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool UpdateState(string stateId, string value)
+        public bool StateUpdate(string stateId, string value)
         {
             if (string.IsNullOrWhiteSpace(stateId))
                 return false;
@@ -139,13 +139,13 @@ namespace TouchPortalSDK
 
             var sent = _touchPortalSocket.SendMessage(message);
 
-            _logger?.LogInformation($"Update State '{stateId}', sent '{sent}'.");
+            _logger?.LogInformation($"[{nameof(StateUpdate)}] '{stateId}', sent '{sent}'.");
 
             return sent;
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool UpdateChoice(string listId, string[] values, string instanceId = null)
+        public bool ChoiceUpdate(string listId, string[] values, string instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(listId))
                 return false;
@@ -162,7 +162,7 @@ namespace TouchPortalSDK
 
             var sent = _touchPortalSocket.SendMessage(message);
 
-            _logger?.LogInformation($"Update Choice '{listId}', sent '{sent}'.");
+            _logger?.LogInformation($"[{nameof(ChoiceUpdate)}] '{listId}:{instanceId}', sent '{sent}'.");
 
             return sent;
         }
@@ -182,35 +182,43 @@ namespace TouchPortalSDK
         /// <inheritdoc cref="ITouchPortalClient" />
         private void OnMessage(string json)
         {
-            var messageType = Deserialize<MessageBase>(json)?.Type;
-            switch (messageType)
+            try
             {
-                case "closePlugin":
-                    var closeMessage = Deserialize<MessageClose>(json);
-                    Close(new TouchPortalClosedException(closeMessage));
-                    break;
-                case "listChange":
-                    var listChangeMessage = Deserialize<MessageListChange>(json);
-                    OnListChanged?.Invoke(listChangeMessage);
-                    break;
-                case "broadcast":
-                    var broadcastMessage = Deserialize<MessageBroadcast>(json);
-                    OnBroadcast?.Invoke(broadcastMessage);
-                    break;
-                case "settings":
-                    var settingsMessage = Deserialize<MessageSettings>(json);
-                    OnSettings?.Invoke(settingsMessage);
-                    break;
-                case "down": //TODO: 2.3
-                case "up": //TODO: 2.3
-                case "action":
-                    var actionMessage = Deserialize<MessageAction>(json);
-                    OnAction?.Invoke(actionMessage);
-                    break;
-                default:
-                    var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(json);
-                    OnUnhandled?.Invoke(jsonDocument);
-                    break;
+                var messageType = Deserialize<MessageBase>(json)?.Type;
+                switch (messageType)
+                {
+                    case "closePlugin":
+                        var closeMessage = Deserialize<MessageClose>(json);
+                        Close(new TouchPortalClosedException(closeMessage));
+                        break;
+                    case "listChange":
+                        var listChangeMessage = Deserialize<MessageListChange>(json);
+                        OnListChanged?.Invoke(listChangeMessage);
+                        break;
+                    case "broadcast":
+                        var broadcastMessage = Deserialize<MessageBroadcast>(json);
+                        OnBroadcast?.Invoke(broadcastMessage);
+                        break;
+                    case "settings":
+                        var settingsMessage = Deserialize<MessageSettings>(json);
+                        OnSettings?.Invoke(settingsMessage);
+                        break;
+                    case "down":
+                    case "up":
+                    case "action":
+                        var actionMessage = Deserialize<MessageAction>(json);
+                        OnAction?.Invoke(actionMessage);
+                        break;
+                    default:
+                        var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(json);
+                        OnUnhandled?.Invoke(jsonDocument);
+                        break;
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.LogWarning(exception, "Could not process message.");
+                throw;
             }
         }
 

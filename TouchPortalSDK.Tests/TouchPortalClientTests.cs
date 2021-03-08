@@ -22,11 +22,13 @@ namespace TouchPortalSDK.Tests
             
             _client = new TouchPortalClient(default, _touchPortalSocketMock.Object);
         }
-
-        [Test]
-        public void CreateState_NoId()
+        
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" \t ")]
+        public void CreateState_NoId(string stateId)
         {
-            var result = _client.CreateState(null, "displayName", "defaultValue");
+            var result = _client.CreateState(stateId, "displayName", "defaultValue");
             Assert.False(result);
         }
 
@@ -48,10 +50,12 @@ namespace TouchPortalSDK.Tests
             _touchPortalSocketMock.Verify(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()), Times.Once);
         }
 
-        [Test]
-        public void RemoveState_NoId()
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" \t ")]
+        public void RemoveState_NoId(string stateId)
         {
-            var result = _client.RemoveState(null);
+            var result = _client.RemoveState(stateId);
             Assert.False(result);
         }
 
@@ -71,22 +75,24 @@ namespace TouchPortalSDK.Tests
             _touchPortalSocketMock.Verify(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()), Times.Once);
         }
 
-        [Test]
-        public void UpdateState_NoId()
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" \t ")]
+        public void StateUpdate_NoId(string stateId)
         {
-            var result = _client.UpdateState(null, "value");
+            var result = _client.StateUpdate(stateId, "value");
             Assert.False(result);
         }
 
         [Test]
-        public void UpdateState_WithId()
+        public void StateUpdate_WithId()
         {
             Dictionary<string, object> parameter = null;
             _touchPortalSocketMock.Setup(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()))
                 .Callback<Dictionary<string, object>>(dict => parameter = dict)
                 .Returns(true);
 
-            var result = _client.UpdateState("stateId", "value");
+            var result = _client.StateUpdate("stateId", "value");
             Assert.True(result);
             Assert.AreEqual("stateUpdate", parameter["type"]);
             Assert.AreEqual("stateId", parameter["id"]);
@@ -95,43 +101,44 @@ namespace TouchPortalSDK.Tests
             _touchPortalSocketMock.Verify(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()), Times.Once);
         }
 
-        [Test]
-        public void UpdateChoices_NoId()
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase(" \t ")]
+        public void ChoiceUpdate_NoId(string listId)
         {
-            var result = _client.UpdateChoice(null, new [] { "value" }, null);
+            var result = _client.ChoiceUpdate(listId, new [] { "value" }, null);
             Assert.False(result);
         }
 
         [TestCase(null)]
         [TestCase("")]
         [TestCase(" \t ")]
-        public void UpdateState_WithId_WithOutInstanceId(string instanceId)
+        public void ChoiceUpdate_WithId_WithOutInstanceId(string instanceId)
         {
             Dictionary<string, object> parameter = null;
             _touchPortalSocketMock.Setup(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()))
                 .Callback<Dictionary<string, object>>(dict => parameter = dict)
                 .Returns(true);
 
-            var result = _client.UpdateChoice("listId", new[] { "value" }, instanceId);
+            var result = _client.ChoiceUpdate("listId", new[] { "value" }, instanceId);
             Assert.True(result);
             Assert.AreEqual("choiceUpdate", parameter["type"]);
             Assert.AreEqual("listId", parameter["id"]);
             CollectionAssert.AreEquivalent(new [] { "value" }, (IEnumerable)parameter["value"]);
-            //This is removed if null or empty during:
-            Assert.False(parameter.ContainsKey("instanceId"));
+            CollectionAssert.DoesNotContain(parameter.Keys, "instanceId");
 
             _touchPortalSocketMock.Verify(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()), Times.Once);
         }
 
         [Test]
-        public void UpdateState_WithId_WithInstanceId()
+        public void ChoiceUpdate_WithId_WithInstanceId()
         {
             Dictionary<string, object> parameter = null;
             _touchPortalSocketMock.Setup(mock => mock.SendMessage(It.IsAny<Dictionary<string, object>>()))
                 .Callback<Dictionary<string, object>>(dict => parameter = dict)
                 .Returns(true);
 
-            var result = _client.UpdateChoice("listId", new[] { "value" }, "instanceId");
+            var result = _client.ChoiceUpdate("listId", new[] { "value" }, "instanceId");
             Assert.True(result);
             Assert.AreEqual("choiceUpdate", parameter["type"]);
             Assert.AreEqual("listId", parameter["id"]);

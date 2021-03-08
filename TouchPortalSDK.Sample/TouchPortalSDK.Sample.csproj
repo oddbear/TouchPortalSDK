@@ -23,16 +23,16 @@
 
   <!-- Be carefull about killing javaw, as other applications can also be running as javaw, check Task Manager for your system -->
   <!-- Example of automatic restart and copy entry file when running project from Visual Studio -->
-  <!--
-  <Target Name = "Kill TouchPortal" BeforeTargets="Build">
-    <Exec Command="taskkill /F /IM javaw.exe" IgnoreExitCode="true" />
+  <!-- 
+  <Target Name = "Kill_Javaw" BeforeTargets="Build">
+    <Exec Command="taskkill /F /IM javaw.exe" IgnoreExitCode="true" ContinueOnError="true" />
   </Target>
 
-  <Target Name="Copy entry File" BeforeTargets="Build">
+  <Target Name="Copy_entry_File" BeforeTargets="Build">
     <Copy SourceFiles="entry.tp" DestinationFiles="$(AppData)\TouchPortal\plugins\TouchPortalSDK.Sample\entry.tp" />
   </Target>
   
-  <Target Name="Start TouchPortal with Logging" AfterTargets="Build">
+  <Target Name="Start_TouchPortal_with_Logging" AfterTargets="Build">
     <Exec Command="&quot;$(MSBuildProgramFiles32)\Touch Portal\TouchPortal.exe&quot; -logPlugin"/>
   </Target>
   -->

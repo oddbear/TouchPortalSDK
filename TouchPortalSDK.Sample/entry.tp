@@ -44,6 +44,7 @@
             {
               "id": "category1.action1.data5",
               "type": "text",
+              "default": "",
               "label": "Test data text"
             },
             {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using TouchPortalSDK.Models;
+using TouchPortalSDK.Models.Messages;
 
-namespace TouchPortalSDK.Exceptions
+namespace TouchPortalSDK.Models.Exceptions
 {
     [SuppressMessage("Major Code Smell", "S3925:\"ISerializable\" should be implemented correctly")]
     public class TouchPortalClosedException : Exception

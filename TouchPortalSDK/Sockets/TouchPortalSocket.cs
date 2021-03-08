@@ -161,9 +161,9 @@ namespace TouchPortalSDK.Sockets
                     OnClose?.Invoke(exception);
                     return;
                 }
-                catch
+                catch (Exception exception)
                 {
-                    //Any other exception, ignore and retry.
+                    _logger?.LogDebug(exception, "Something went wrong on the Listener Thread.");
                 }
             }
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.Json;
-using TouchPortalSDK.Models;
+using TouchPortalSDK.Models.Messages;
 
 namespace TouchPortalSDK
 {
@@ -81,7 +81,7 @@ namespace TouchPortalSDK
         /// <param name="stateId"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        bool UpdateState(string stateId, string value);
+        bool StateUpdate(string stateId, string value);
 
         /// <summary>
         /// Updates the drop down choices in the TouchPortal UI.
@@ -91,6 +91,7 @@ namespace TouchPortalSDK
         /// <param name="values">Values as string array that you can choose from.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool UpdateChoice(string listId, string[] values, string instanceId = null);
+        bool ChoiceUpdate(string listId, string[] values, string instanceId = null);
+
     }
 }
