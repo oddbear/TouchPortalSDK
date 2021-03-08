@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Models.Enums;
@@ -12,7 +13,7 @@ namespace TouchPortalSDK.Sample
         private static ILogger _logger;
         private static ITouchPortalClient _client;
 
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             //Standard method for build a ServiceProvider in .Net,
             // you can use any other IoC container, or no at all if you want:
@@ -26,8 +27,16 @@ namespace TouchPortalSDK.Sample
             _client.OnInfo = OnInfo;
             _client.OnAction = OnAction;
             _client.OnListChanged = OnListChanged;
-            _client.OnUnhandled = document => _logger.LogWarning($"Unhandled message: {document}");
-            _client.OnBroadcast = broadcast => _logger.LogInformation($"[Broadcast] Event: '{broadcast.Event}', PageName: '{broadcast.PageName}'");
+            _client.OnUnhandled = document =>
+            {
+                _logger.LogWarning($"Unhandled message: {document}");
+                return Task.CompletedTask;
+            };
+            _client.OnBroadcast = broadcast =>
+            {
+                _logger.LogInformation($"[Broadcast] Event: '{broadcast.Event}', PageName: '{broadcast.PageName}'");
+                return Task.CompletedTask;
+            };
             _client.OnSettings = OnSettings;
             _client.OnClosed = exception =>
             {
@@ -37,52 +46,58 @@ namespace TouchPortalSDK.Sample
             };
 
             //Connect to TouchPortal:
-            _client.Connect();
+            await _client.Connect();
+            //(full)Async Issue 1:
+            //If Connect i async, and we forget to await it, and the listener thread is made in this method.
+            // ... then the plugin will just exit at the end (thread was newer moved to foreground).
+            _client.Listen();
             
             //Update choices (dropdown in UI when creating an action):
-            _client.ChoiceUpdate("category1.action1.data2", new[] { "choice 1 (updated)", "choice 2 (updated)", "choice 3 (updated)" });
+            await _client.ChoiceUpdate("category1.action1.data2", new[] { "choice 1 (updated)", "choice 2 (updated)", "choice 3 (updated)" });
 
             //Removes a dynamic state (no change if state does not exist):
-            _client.RemoveState("dynamicState1");
+            await _client.RemoveState("dynamicState1");
 
             //Adds a state we can work with:
-            _client.CreateState("dynamicState1", "Test dynamic state 1", "Test 123");
+            await _client.CreateState("dynamicState1", "Test dynamic state 1", "Test 123");
 
             //Updates the created dynamic state, if you do not create it:
-            _client.StateUpdate("dynamicState1", "d1");
+            await _client.StateUpdate("dynamicState1", "d1");
 
             //You can display this value, but it will not appear in any list:
-            _client.StateUpdate("dynamicState2", "d2");
+            await _client.StateUpdate("dynamicState2", "d2");
 
             //Updates the static state (entry.tp):
-            _client.StateUpdate("category1.staticstate1", "s1");
+            await _client.StateUpdate("category1.staticstate1", "s1");
 
             //Custom states (Global Objects/left panel in TouchPortal UI), user adds this (states.tp in %AppData%/TouchPortal).
             //The user should add this manually in the UI:
-            _client.StateUpdate("global.customState1", "c2");
+            await _client.StateUpdate("global.customState1", "c2");
 
             //Updates settings in TouchPortal settings:
-            _client.SettingUpdate("Test3", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
+            await _client.SettingUpdate("Test3", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
 
             //Updates the min and max value of the number field.
-            _client.UpdateActionData("category1.action1.data4", 10, 15, DataType.Number);
+            await _client.UpdateActionData("category1.action1.data4", 10, 15, DataType.Number);
         }
 
         /// <summary>
         /// Information received when plugin is connected to TouchPortal.
         /// </summary>
         /// <param name="message"></param>
-        private static void OnInfo(MessageInfo message)
+        private static Task OnInfo(MessageInfo message)
         {
             var settings = string.Join(", ", message.Settings.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
             _logger.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}', Settings: '{settings}'");
+            
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// User selected an item in a dropdown menu in the TouchPortal UI.
         /// </summary>
         /// <param name="message"></param>
-        private static void OnListChanged(MessageListChange message)
+        private static Task OnListChanged(MessageListChange message)
         {
             _logger.LogInformation($"[OnListChanged] {message.ListId}/{message.ActionId}/{message.InstanceId} '{message.Value}'");
 
@@ -94,13 +109,15 @@ namespace TouchPortalSDK.Sample
                     _client.ChoiceUpdate("category1.action1.data3", new[] { $"{prefix} second 1", $"{prefix} second 2", $"{prefix} second 3" }, message.InstanceId);
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// User clicked an action.
         /// </summary>
         /// <param name="message"></param>
-        private static void OnAction(MessageAction message)
+        private static Task OnAction(MessageAction message)
         {
             switch (message.ActionId)
             {
@@ -123,12 +140,16 @@ namespace TouchPortalSDK.Sample
                     _logger.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: '{data}'");
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
-        private static void OnSettings(MessageSettings message)
+        private static Task OnSettings(MessageSettings message)
         {
             var settings = string.Join(", ", message.Values.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
             _logger.LogInformation($"[OnSettings] '{settings}'");
+
+            return Task.CompletedTask;
         }
     }
 }

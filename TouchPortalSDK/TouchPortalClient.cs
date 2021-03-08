@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Models.Exceptions;
@@ -15,25 +16,25 @@ namespace TouchPortalSDK
         private readonly ITouchPortalSocket _touchPortalSocket;
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public Action<MessageInfo> OnInfo { get; set; }
+        public Func<MessageInfo, Task> OnInfo { get; set; }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public Action<MessageListChange> OnListChanged { get; set; }
+        public Func<MessageListChange, Task> OnListChanged { get; set; }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public Action<MessageBroadcast> OnBroadcast { get; set; }
+        public Func<MessageBroadcast, Task> OnBroadcast { get; set; }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public Action<MessageSettings> OnSettings { get; set; }
+        public Func<MessageSettings, Task> OnSettings { get; set; }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public Action<MessageAction> OnAction { get; set; }
+        public Func<MessageAction, Task> OnAction { get; set; }
 
         /// <inheritdoc cref="ITouchPortalClient" />
         public Action<Exception> OnClosed { get; set; }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public Action<JsonDocument> OnUnhandled { get; set; }
+        public Func<JsonDocument, Task> OnUnhandled { get; set; }
 
         public TouchPortalClient(ILogger<TouchPortalClient> logger,
                                  ITouchPortalSocket touchPortalSocket)
@@ -47,28 +48,26 @@ namespace TouchPortalSDK
         #region Setup
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool Connect()
+        public async Task<bool> Connect()
         {
             //Connect:
-            var connected = _touchPortalSocket.Connect();
+            var connected = await _touchPortalSocket.Connect();
             if (!connected)
                 return false;
 
             //Pair:
-            var json = _touchPortalSocket.Pair();
+            var json = await _touchPortalSocket.Pair();
             if (string.IsNullOrWhiteSpace(json))
                 return false;
 
             var infoMessage = Deserialize<MessageInfo>(json);
             OnInfo?.Invoke(infoMessage);
 
-            //Listen:
-            var listening = _touchPortalSocket.Listen();
-            if (!listening)
-                return false;
-
             return true;
         }
+
+        public bool Listen()
+            => _touchPortalSocket.Listen();
 
         /// <inheritdoc cref="ITouchPortalClient" />
         public void Close(Exception exception = default)
@@ -85,7 +84,7 @@ namespace TouchPortalSDK
         #region TouchPortal Input
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool SettingUpdate(string name, string value)
+        public async Task<bool> SettingUpdate(string name, string value)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return false;
@@ -97,7 +96,7 @@ namespace TouchPortalSDK
                 ["value"] = value ?? string.Empty
             };
 
-            var sent = _touchPortalSocket.SendMessage(message);
+            var sent = await _touchPortalSocket.SendMessage(message);
 
             _logger?.LogInformation($"[{nameof(SettingUpdate)}] '{name}', sent '{sent}'.");
 
@@ -105,7 +104,7 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool CreateState(string stateId, string displayName, string defaultValue = "")
+        public async Task<bool> CreateState(string stateId, string displayName, string defaultValue = "")
         {
             if (string.IsNullOrWhiteSpace(stateId) ||
                 string.IsNullOrWhiteSpace(displayName))
@@ -119,7 +118,7 @@ namespace TouchPortalSDK
                 ["defaultValue"] = defaultValue
             };
 
-            var sent = _touchPortalSocket.SendMessage(message);
+            var sent = await _touchPortalSocket.SendMessage(message);
 
             _logger?.LogInformation($"[{nameof(CreateState)}] '{stateId}', sent '{sent}'.");
 
@@ -127,7 +126,7 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool RemoveState(string stateId)
+        public async Task<bool> RemoveState(string stateId)
         {
             if (string.IsNullOrWhiteSpace(stateId))
                 return false;
@@ -138,7 +137,7 @@ namespace TouchPortalSDK
                 ["id"] = stateId,
             };
 
-            var sent = _touchPortalSocket.SendMessage(message);
+            var sent = await _touchPortalSocket.SendMessage(message);
 
             _logger?.LogInformation($"[{nameof(RemoveState)}] '{stateId}', sent '{sent}'.");
 
@@ -146,7 +145,7 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool StateUpdate(string stateId, string value)
+        public async Task<bool> StateUpdate(string stateId, string value)
         {
             if (string.IsNullOrWhiteSpace(stateId))
                 return false;
@@ -158,7 +157,7 @@ namespace TouchPortalSDK
                 ["value"] = value ?? string.Empty
             };
 
-            var sent = _touchPortalSocket.SendMessage(message);
+            var sent = await _touchPortalSocket.SendMessage(message);
 
             _logger?.LogInformation($"[{nameof(StateUpdate)}] '{stateId}', sent '{sent}'.");
 
@@ -166,7 +165,7 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool ChoiceUpdate(string listId, string[] values, string instanceId = null)
+        public async Task<bool> ChoiceUpdate(string listId, string[] values, string instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(listId))
                 return false;
@@ -181,7 +180,7 @@ namespace TouchPortalSDK
             if (!string.IsNullOrWhiteSpace(instanceId))
                 message["instanceId"] = instanceId;
 
-            var sent = _touchPortalSocket.SendMessage(message);
+            var sent = await _touchPortalSocket.SendMessage(message);
 
             _logger?.LogInformation($"[{nameof(ChoiceUpdate)}] '{listId}:{instanceId}', sent '{sent}'.");
 
@@ -189,7 +188,7 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool UpdateActionData(string dataId, double minValue, double maxValue, DataType dataType, string instanceId = null)
+        public async Task<bool> UpdateActionData(string dataId, double minValue, double maxValue, DataType dataType, string instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(dataId))
                 return false;
@@ -209,7 +208,7 @@ namespace TouchPortalSDK
             if (!string.IsNullOrWhiteSpace(instanceId))
                 message["instanceId"] = instanceId;
 
-            var sent = _touchPortalSocket.SendMessage(message);
+            var sent = await _touchPortalSocket.SendMessage(message);
 
             _logger?.LogInformation($"[{nameof(ChoiceUpdate)}] '{dataId}:{instanceId}', sent '{sent}'.");
 
@@ -229,7 +228,7 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        private void OnMessage(string json)
+        private async Task OnMessage(string json)
         {
             try
             {

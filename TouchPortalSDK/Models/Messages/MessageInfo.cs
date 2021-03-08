@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using TouchPortalSDK.Models.Messages.Items;
 using TouchPortalSDK.Models.Utils;
@@ -39,6 +40,6 @@ namespace TouchPortalSDK.Models.Messages
         /// Values in settings.
         /// </summary>
         [JsonConverter(typeof(SettingsConverter))]
-        public IReadOnlyCollection<SettingItem> Settings { get; set; }
+        public IReadOnlyCollection<SettingItem> Settings { get; set; } = Array.Empty<SettingItem>();
     }
 }

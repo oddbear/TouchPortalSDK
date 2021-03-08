@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -21,7 +22,7 @@ namespace TouchPortalSDK.Sockets
         private StreamReader _streamReader;
         private StreamWriter _streamWriter;
 
-        public Action<string> OnMessage { get; set; }
+        public Func<string, Task> OnMessage { get; set; }
         public Action<Exception> OnClose { get; set; }
 
         public TouchPortalSocket(ILogger<TouchPortalSocket> logger,
@@ -34,7 +35,7 @@ namespace TouchPortalSDK.Sockets
             _listenerThread = new Thread(ListenerThreadSync) { IsBackground = false };
         }
         
-        public bool Connect()
+        public async Task<bool> Connect()
         {
             try
             {
@@ -42,7 +43,7 @@ namespace TouchPortalSDK.Sockets
                 var ipAddress = IPAddress.Parse(_options.IpAddress);
                 var socketAddress = new IPEndPoint(ipAddress, _options.Port);
                 _logger?.LogInformation("Connecting to TouchPortal.");
-                _socket.Connect(socketAddress);
+                await _socket.ConnectAsync(socketAddress);
                 _logger?.LogInformation("TouchPortal connected.");
 
                 //Setup streams:
@@ -75,7 +76,7 @@ namespace TouchPortalSDK.Sockets
             }
         }
 
-        public string Pair()
+        public async Task<string> Pair()
         {
             //Send pair message:
             var json = JsonSerializer.Serialize(new Dictionary<string, object>
@@ -85,10 +86,10 @@ namespace TouchPortalSDK.Sockets
             });
 
             _logger?.LogInformation("Sending pair message.");
-            SendMessage(json);
+            await SendMessage(json);
 
             //Wait for pairing response:
-            var pairMessage = _streamReader.ReadLine();
+            var pairMessage = await _streamReader.ReadLineAsync();
             _logger?.LogInformation("Received pair response.");
 
             return pairMessage;
@@ -104,10 +105,13 @@ namespace TouchPortalSDK.Sockets
             return _listenerThread.IsAlive;
         }
 
-        public bool SendMessage(Dictionary<string, object> message)
-            => SendMessage(JsonSerializer.Serialize(message));
+        public async Task<bool> SendMessage(Dictionary<string, object> message)
+        {
+            var jsonMessage = JsonSerializer.Serialize(message);
+            return await SendMessage(jsonMessage);
+        }
 
-        public bool SendMessage(string jsonMessage)
+        public async Task<bool> SendMessage(string jsonMessage)
         {
             if (_streamWriter is null)
             {
@@ -117,7 +121,7 @@ namespace TouchPortalSDK.Sockets
 
             try
             {
-                _streamWriter.WriteLine(jsonMessage);
+                await _streamWriter.WriteLineAsync(jsonMessage);
                 return true;
             }
             catch (SocketException)
@@ -135,6 +139,9 @@ namespace TouchPortalSDK.Sockets
         }
 
         private void ListenerThreadSync()
+            => ListenerThreadAsync().GetAwaiter().GetResult();
+
+        private async Task ListenerThreadAsync()
         {
             if (_streamReader is null)
             {
@@ -147,12 +154,12 @@ namespace TouchPortalSDK.Sockets
             {
                 try
                 {
-                    var message = _streamReader.ReadLine()
+                    var message = await _streamReader.ReadLineAsync()
                                   ?? throw new IOException("Server Socket Closed.");
 
                     _logger?.LogDebug(message);
 
-                    OnMessage?.Invoke(message);
+                    await (OnMessage?.Invoke(message) ?? Task.CompletedTask);
                 }
                 catch (IOException exception)
                 {

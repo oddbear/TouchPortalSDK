@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TouchPortalSDK.Sockets
 {
     public interface ITouchPortalSocket
     {
-        Action<string> OnMessage { get; set; }
+        Func<string, Task> OnMessage { get; set; }
         Action<Exception> OnClose { get; set; }
-        bool Connect();
-        string Pair();
+        Task<bool> Connect();
+        Task<string> Pair();
         bool Listen();
-        bool SendMessage(Dictionary<string, object> message);
-        bool SendMessage(string jsonMessage);
+        Task<bool> SendMessage(Dictionary<string, object> message);
+        Task<bool> SendMessage(string jsonMessage);
         void CloseSocket();
     }
 }
