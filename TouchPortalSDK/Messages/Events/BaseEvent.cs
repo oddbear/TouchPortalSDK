@@ -1,6 +1,6 @@
-﻿namespace TouchPortalSDK.Models.Messages
+﻿namespace TouchPortalSDK.Messages.Events
 {
-    public class MessageBase
+    public class BaseEvent
     {
         /// <summary>
         /// <para>

@@ -1,6 +1,6 @@
-﻿namespace TouchPortalSDK.Models.Messages
+﻿namespace TouchPortalSDK.Messages.Events
 {
-    public class MessageBroadcast : MessageBase
+    public class BroadcastEvent : BaseEvent
     {
         /// <summary>
         /// Event that was broadcast, ex. pageChange

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
-using TouchPortalSDK.Models.Messages.Items;
-using TouchPortalSDK.Models.Utils;
+using TouchPortalSDK.Messages.Items;
+using TouchPortalSDK.Utils;
 
-namespace TouchPortalSDK.Models.Messages
+namespace TouchPortalSDK.Messages.Events
 {
-    public class MessageInfo : MessageBase
+    public class InfoEvent : BaseEvent
     {
         /// <summary>
         /// Status ex. "paired"
@@ -39,6 +39,6 @@ namespace TouchPortalSDK.Models.Messages
         /// Values in settings.
         /// </summary>
         [JsonConverter(typeof(SettingsConverter))]
-        public IReadOnlyCollection<SettingItem> Settings { get; set; }
+        public IReadOnlyCollection<Setting> Settings { get; set; }
     }
 }

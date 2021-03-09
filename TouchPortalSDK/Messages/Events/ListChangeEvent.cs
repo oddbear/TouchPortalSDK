@@ -1,6 +1,6 @@
-﻿namespace TouchPortalSDK.Models.Messages
+﻿namespace TouchPortalSDK.Messages.Events
 {
-    public class MessageListChange : MessageBase
+    public class ListChangeEvent : BaseEvent
     {
         /// <summary>
         /// The id of the plugin.

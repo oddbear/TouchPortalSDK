@@ -5,6 +5,7 @@ using Moq;
 using NUnit.Framework;
 using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Sockets;
+using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Tests
 {
@@ -18,10 +19,10 @@ namespace TouchPortalSDK.Tests
         public void Setup()
         {
             _touchPortalSocketMock = new Mock<ITouchPortalSocket>(MockBehavior.Strict);
-            _touchPortalSocketMock.SetupProperty(mock => mock.OnMessage);
+            _touchPortalSocketMock.SetupProperty(mock => mock.OnMessageCallBack);
             _touchPortalSocketMock.SetupProperty(mock => mock.OnClose);
             
-            _client = new TouchPortalClient(default, _touchPortalSocketMock.Object);
+            _client = new TouchPortalClient(default, _touchPortalSocketMock.Object, Mock.Of<ICustomUpdatesStorage>());
         }
 
         [TestCase(null)]
@@ -29,7 +30,7 @@ namespace TouchPortalSDK.Tests
         [TestCase(" \t ")]
         public void UpdateActionData_NoDataId(string dataId)
         {
-            var result = _client.UpdateActionData(dataId, default, default, DataType.Number);
+            var result = _client.UpdateActionData(dataId, default, default, DataType.Number, default);
             Assert.False(result);
         }
 
