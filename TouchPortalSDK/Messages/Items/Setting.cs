@@ -1,6 +1,6 @@
-﻿namespace TouchPortalSDK.Models.Messages.Items
+﻿namespace TouchPortalSDK.Messages.Items
 {
-    public class SettingItem
+    public class Setting
     {
         /// <summary>
         /// Name of the setting property

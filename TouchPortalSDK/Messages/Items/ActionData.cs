@@ -1,6 +1,6 @@
-﻿namespace TouchPortalSDK.Models.Messages.Items
+﻿namespace TouchPortalSDK.Messages.Items
 {
-    public class DataItem
+    public class ActionData
     {
         /// <summary>
         /// The id of the data field as string

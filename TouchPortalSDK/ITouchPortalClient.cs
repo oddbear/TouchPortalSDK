@@ -1,47 +1,9 @@
-﻿using System;
-using System.Text.Json;
-using TouchPortalSDK.Models.Enums;
-using TouchPortalSDK.Models.Messages;
+﻿using TouchPortalSDK.Messages.Commands;
 
 namespace TouchPortalSDK
 {
     public interface ITouchPortalClient
     {
-        /// <summary>
-        /// Method to call when TouchPortal is connected.
-        /// </summary>
-        Action<MessageInfo> OnInfo { get; set; }
-
-        /// <summary>
-        /// Method to call when an item is selected from dropdown in Action Creation of a button.
-        /// </summary>
-        Action<MessageListChange> OnListChanged { get; set; }
-
-        /// <summary>
-        /// ...
-        /// </summary>
-        Action<MessageBroadcast> OnBroadcast { get; set; }
-
-        /// <summary>
-        /// ...
-        /// </summary>
-        Action<MessageSettings> OnSettings { get; set; }
-
-        /// <summary>
-        /// Method to call when a user presses a button on their device.
-        /// </summary>
-        Action<MessageAction> OnAction { get; set; }
-
-        /// <summary>
-        /// Method to call when we loose connection to TouchPortal.
-        /// </summary>
-        Action<Exception> OnClosed { get; set; }
-
-        /// <summary>
-        /// Messages that are unknown, and therefor we cannot deserialize to a known type.
-        /// </summary>
-        Action<JsonDocument> OnUnhandled { get; set; }
-
         /// <summary>
         /// Connects, pairs, and listens to the TouchPortal application.
         /// </summary>
@@ -51,8 +13,8 @@ namespace TouchPortalSDK
         /// <summary>
         /// Closes the connection to TouchPortal and shutdowns the plugin in a safe manner.
         /// </summary>
-        /// <param name="exception">optional exception of why we want to close the connection.</param>
-        void Close(Exception exception = default);
+        /// <param name="reason">optional reason of why we want to close the connection.</param>
+        void Close();
 
         /// <summary>
         /// Creates a dynamic state in TouchPortal Memory.
@@ -71,7 +33,7 @@ namespace TouchPortalSDK
         /// <param name="name"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        bool SettingUpdate(string name, string value);
+        bool SettingUpdate(string name, string value = "");
 
         /// <summary>
         /// Removes the dynamic state from TouchPortal.
@@ -90,7 +52,7 @@ namespace TouchPortalSDK
         /// <param name="stateId"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        bool StateUpdate(string stateId, string value);
+        bool StateUpdate(string stateId, string value = "");
 
         /// <summary>
         /// Updates the drop down choices in the TouchPortal UI.
@@ -111,6 +73,6 @@ namespace TouchPortalSDK
         /// <param name="dataType">Type of the data field.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool UpdateActionData(string dataId, double minValue, double maxValue, DataType dataType, string instanceId = null);
+        bool UpdateActionData(string dataId, double minValue, double maxValue, UpdateActionDataCommand.DataType dataType, string instanceId = null);
     }
 }

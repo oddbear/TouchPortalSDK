@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TouchPortalSDK.Messages.Items;
 using TouchPortalSDK.Models.Enums;
-using TouchPortalSDK.Models.Messages.Items;
 
-namespace TouchPortalSDK.Models.Messages
+namespace TouchPortalSDK.Messages.Events
 {
-    public class MessageAction : MessageBase
+    public class ActionEvent : BaseEvent
     {
         /// <summary>
         /// The id of the plugin.
@@ -22,7 +22,7 @@ namespace TouchPortalSDK.Models.Messages
         /// Ex. data1: dropdown1
         ///     data2: dropdown2
         /// </summary>
-        public IReadOnlyCollection<DataItem> Data { get; set; }
+        public IReadOnlyCollection<ActionData> Data { get; set; }
 
         /// <summary>
         /// Indexer to get data values.

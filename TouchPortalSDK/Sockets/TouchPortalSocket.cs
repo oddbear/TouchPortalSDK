@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using TouchPortalSDK.Configuration;
+using TouchPortalSDK.Models;
 
 namespace TouchPortalSDK.Sockets
 {
@@ -21,14 +20,15 @@ namespace TouchPortalSDK.Sockets
         private StreamReader _streamReader;
         private StreamWriter _streamWriter;
 
-        public Action<string> OnMessage { get; set; }
-        public Action<Exception> OnClose { get; set; }
+        private readonly IJsonEventHandler _jsonEventHandler;
 
-        public TouchPortalSocket(ILogger<TouchPortalSocket> logger,
-                                 IOptions<TouchPortalOptions> options)
+        public TouchPortalSocket(TouchPortalOptions options,
+                                 IJsonEventHandler jsonEventHandler,
+                                 ILogger<TouchPortalSocket> logger = null)
         {
+            _options = options;
+            _jsonEventHandler = jsonEventHandler;
             _logger = logger;
-            _options = options.Value;
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _listenerThread = new Thread(ListenerThreadSync) { IsBackground = false };
@@ -41,13 +41,16 @@ namespace TouchPortalSDK.Sockets
                 //Connect
                 var ipAddress = IPAddress.Parse(_options.IpAddress);
                 var socketAddress = new IPEndPoint(ipAddress, _options.Port);
-                _logger?.LogInformation("Connecting to TouchPortal.");
+
                 _socket.Connect(socketAddress);
+
                 _logger?.LogInformation("TouchPortal connected.");
 
                 //Setup streams:
                 _streamWriter = new StreamWriter(new NetworkStream(_socket), Encoding.ASCII) {AutoFlush = true};
                 _streamReader = new StreamReader(new NetworkStream(_socket), Encoding.UTF8);
+
+                _logger?.LogInformation("Streams created.");
 
                 return _socket.Connected;
             }
@@ -74,41 +77,26 @@ namespace TouchPortalSDK.Sockets
                 return false;
             }
         }
-
-        public string Pair()
-        {
-            //Send pair message:
-            var json = JsonSerializer.Serialize(new Dictionary<string, object>
-            {
-                ["type"] = "pair",
-                ["id"] = _options.PluginId
-            });
-
-            _logger?.LogInformation("Sending pair message.");
-            SendMessage(json);
-
-            //Wait for pairing response:
-            var pairMessage = _streamReader.ReadLine();
-            _logger?.LogInformation("Received pair response.");
-
-            return pairMessage;
-        }
-
+        
         public bool Listen()
         {
+            _logger?.LogInformation("Callback method set.");
+
             //Create listener thread:
-            _logger?.LogInformation("Create listener.");
             _listenerThread.Start();
-            _logger?.LogInformation("Listener created.");
+            _logger?.LogInformation("Listener started.");
 
             return _listenerThread.IsAlive;
         }
-
-        public bool SendMessage(Dictionary<string, object> message)
-            => SendMessage(JsonSerializer.Serialize(message));
-
+        
         public bool SendMessage(string jsonMessage)
         {
+            if (!_socket.Connected)
+            {
+                _logger?.LogWarning("Socket not connected to TouchPortal.");
+                return false;
+            }
+
             if (_streamWriter is null)
             {
                 _logger?.LogWarning("StreamWriter was not initialized. Message cannot be sent.");
@@ -118,10 +106,12 @@ namespace TouchPortalSDK.Sockets
             try
             {
                 _streamWriter.WriteLine(jsonMessage);
+                _logger?.LogDebug("Message sent.");
                 return true;
             }
-            catch (SocketException)
+            catch (SocketException exception)
             {
+                _logger?.LogWarning(exception, "Socket exception");
                 return false;
             }
         }
@@ -143,21 +133,15 @@ namespace TouchPortalSDK.Sockets
             }
 
             _logger?.LogInformation("Listener thread created and started.");
+
             while (true)
             {
                 try
                 {
-                    var message = _streamReader.ReadLine()
-                                  ?? throw new IOException("Server Socket Closed.");
-
+                    var message = _streamReader.ReadLine();
                     _logger?.LogDebug(message);
 
-                    OnMessage?.Invoke(message);
-                }
-                catch (IOException exception)
-                {
-                    OnClose?.Invoke(exception);
-                    return;
+                    _jsonEventHandler.OnMessage(message);
                 }
                 catch (Exception exception)
                 {

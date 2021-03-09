@@ -1,6 +1,6 @@
-﻿namespace TouchPortalSDK.Models.Messages
+﻿namespace TouchPortalSDK.Messages.Events
 {
-    public class MessageClose : MessageBase
+    public class CloseEvent : BaseEvent
     {
         /// <summary>
         /// The id of the plugin.
