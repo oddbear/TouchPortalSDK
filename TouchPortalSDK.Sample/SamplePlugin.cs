@@ -2,29 +2,28 @@
 using System.Linq;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 
 namespace TouchPortalSDK.Sample
 {
-    public class SamplePlugin : ITouchPortalPlugin
+    public class SamplePlugin : ITouchPortalEventHandler
     {
+        public string PluginId => "TouchPortalSDK.Sample";
+
         private readonly ILogger<SamplePlugin> _logger;
         private readonly ITouchPortalClient _client;
 
-        public SamplePlugin(ILogger<SamplePlugin> logger,
-                            ITouchPortalClient client)
+        public SamplePlugin(ITouchPortalClientFactory touchPortalClientFactory,
+                            ILogger<SamplePlugin> logger)
         {
             _logger = logger;
-            _client = client;
-
-            //Register plugin for client (if not registered in the IoC Framework):
-            //_client.RegisterPlugin(this)
+            _client = touchPortalClientFactory.Create(this);
         }
 
         //Connect to TouchPortal:
-        public void Connect()
-            => _client.Connect();
+        public void Connect() => _client.Connect();
 
         public void SendMessages()
         {
@@ -64,7 +63,7 @@ namespace TouchPortalSDK.Sample
         /// Information received when plugin is connected to TouchPortal.
         /// </summary>
         /// <param name="message"></param>
-        public void OnInfo(InfoEvent message)
+        public void OnInfoEvent(InfoEvent message)
         {
             var settings = string.Join(", ", message.Settings.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
             _logger.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}', Settings: '{settings}'");
@@ -74,7 +73,7 @@ namespace TouchPortalSDK.Sample
         /// User selected an item in a dropdown menu in the TouchPortal UI.
         /// </summary>
         /// <param name="message"></param>
-        public void OnListChanged(ListChangeEvent message)
+        public void OnListChangedEvent(ListChangeEvent message)
         {
             _logger.LogInformation($"[OnListChanged] {message.ListId}/{message.ActionId}/{message.InstanceId} '{message.Value}'");
 
@@ -88,12 +87,12 @@ namespace TouchPortalSDK.Sample
             }
         }
 
-        public void OnBroadcast(BroadcastEvent message)
+        public void OnBroadcastEvent(BroadcastEvent message)
         {
             _logger.LogInformation($"[Broadcast] Event: '{message.Event}', PageName: '{message.PageName}'");
         }
 
-        public void OnSettings(SettingsEvent message)
+        public void OnSettingsEvent(SettingsEvent message)
         {
             var settings = string.Join(", ", message.Values.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
             _logger.LogInformation($"[OnSettings] '{settings}'");
@@ -103,7 +102,7 @@ namespace TouchPortalSDK.Sample
         /// User clicked an action.
         /// </summary>
         /// <param name="message"></param>
-        public void OnAction(ActionEvent message)
+        public void OnActionEvent(ActionEvent message)
         {
             switch (message.ActionId)
             {
@@ -128,13 +127,13 @@ namespace TouchPortalSDK.Sample
             }
         }
 
-        public void OnUnhandled(string jsonMessage)
+        public void OnUnhandledEvent(string jsonMessage)
         {
             var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(jsonMessage);
             _logger.LogWarning($"Unhandled message: {jsonDocument}");
         }
 
-        public void OnClosed()
+        public void OnClosedEvent()
         {
             _logger.LogInformation("TouchPortal Disconnected.");
 

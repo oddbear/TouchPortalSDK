@@ -21,7 +21,7 @@ namespace TouchPortalSDK.Sample
             // you can use any other IoC container, or no at all if you want:
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging(configure => configure.AddSimpleConsole(options => options.TimestampFormat = "[yyyy.MM.dd HH:mm:ss] "));
-            serviceCollection.AddTouchPortalPlugin<SamplePlugin>(configurationRoot);
+            serviceCollection.AddTouchPortalSdk<SamplePlugin>(configurationRoot);
             
             var serviceProvider = serviceCollection.BuildServiceProvider(true);
 

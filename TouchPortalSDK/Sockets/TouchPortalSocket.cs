@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.Json;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Models;
 
 namespace TouchPortalSDK.Sockets
@@ -21,16 +20,15 @@ namespace TouchPortalSDK.Sockets
         private StreamReader _streamReader;
         private StreamWriter _streamWriter;
 
-        private Action<string> _onMessageCallBack;
+        private readonly IJsonEventHandler _jsonEventHandler;
 
         public TouchPortalSocket(TouchPortalOptions options,
+                                 IJsonEventHandler jsonEventHandler,
                                  ILogger<TouchPortalSocket> logger = null)
         {
-            if (string.IsNullOrWhiteSpace(options.PluginId))
-                throw new InvalidOperationException($"{nameof(options.PluginId)} on {nameof(TouchPortalOptions)} cannot be null.");
-
-            _logger = logger;
             _options = options;
+            _jsonEventHandler = jsonEventHandler;
+            _logger = logger;
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _listenerThread = new Thread(ListenerThreadSync) { IsBackground = false };
@@ -45,11 +43,13 @@ namespace TouchPortalSDK.Sockets
                 var socketAddress = new IPEndPoint(ipAddress, _options.Port);
 
                 _socket.Connect(socketAddress);
+
                 _logger?.LogInformation("TouchPortal connected.");
 
                 //Setup streams:
                 _streamWriter = new StreamWriter(new NetworkStream(_socket), Encoding.ASCII) {AutoFlush = true};
                 _streamReader = new StreamReader(new NetworkStream(_socket), Encoding.UTF8);
+
                 _logger?.LogInformation("Streams created.");
 
                 return _socket.Connected;
@@ -78,9 +78,8 @@ namespace TouchPortalSDK.Sockets
             }
         }
         
-        public bool Listen(Action<string> onMessageCallBack)
+        public bool Listen()
         {
-            _onMessageCallBack = onMessageCallBack;
             _logger?.LogInformation("Callback method set.");
 
             //Create listener thread:
@@ -142,7 +141,7 @@ namespace TouchPortalSDK.Sockets
                     var message = _streamReader.ReadLine();
                     _logger?.LogDebug(message);
 
-                    _onMessageCallBack?.Invoke(message);
+                    _jsonEventHandler.OnMessage(message);
                 }
                 catch (Exception exception)
                 {

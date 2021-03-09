@@ -2,41 +2,49 @@
 
 namespace TouchPortalSDK
 {
-    public interface ITouchPortalPlugin
+    /// <summary>
+    /// Interface used to register a plugin that can handle events from TouchPortal.
+    /// </summary>
+    public interface ITouchPortalEventHandler
     {
+        /// <summary>
+        /// EventHandler must define a pluginId to receive plugin events.
+        /// </summary>
+        public string PluginId { get; }
+
         /// <summary>
         /// Method to call when TouchPortal is connected.
         /// </summary>
-        void OnInfo(InfoEvent message);
+        void OnInfoEvent(InfoEvent message);
 
         /// <summary>
         /// Method to call when an item is selected from dropdown in Action Creation of a button.
         /// </summary>
-        void OnListChanged(ListChangeEvent message);
+        void OnListChangedEvent(ListChangeEvent message);
 
         /// <summary>
         /// Method is called when an broadcast message is sent.
         /// </summary>
-        void OnBroadcast(BroadcastEvent message);
+        void OnBroadcastEvent(BroadcastEvent message);
 
         /// <summary>
-        /// ...
+        /// Method to call when a user changes a setting.
         /// </summary>
-        void OnSettings(SettingsEvent message);
+        void OnSettingsEvent(SettingsEvent message);
 
         /// <summary>
         /// Method to call when a user presses a button on their device.
         /// </summary>
-        void OnAction(ActionEvent message);
+        void OnActionEvent(ActionEvent message);
 
         /// <summary>
         /// Method to call when we loose connection to TouchPortal.
         /// </summary>
-        void OnClosed();
+        void OnClosedEvent();
 
         /// <summary>
         /// Messages that are unknown, and therefor we cannot deserialize to a known type.
         /// </summary>
-        void OnUnhandled(string jsonMessage);
+        void OnUnhandledEvent(string jsonMessage);
     }
 }

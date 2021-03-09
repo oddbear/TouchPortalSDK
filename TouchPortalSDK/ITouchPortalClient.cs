@@ -4,8 +4,6 @@ namespace TouchPortalSDK
 {
     public interface ITouchPortalClient
     {
-        void RegisterPlugin(ITouchPortalPlugin touchPortalPlugin);
-
         /// <summary>
         /// Connects, pairs, and listens to the TouchPortal application.
         /// </summary>
@@ -16,7 +14,7 @@ namespace TouchPortalSDK
         /// Closes the connection to TouchPortal and shutdowns the plugin in a safe manner.
         /// </summary>
         /// <param name="reason">optional reason of why we want to close the connection.</param>
-        void Close(string reason);
+        void Close();
 
         /// <summary>
         /// Creates a dynamic state in TouchPortal Memory.
