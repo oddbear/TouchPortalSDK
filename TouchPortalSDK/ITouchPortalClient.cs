@@ -19,8 +19,7 @@ namespace TouchPortalSDK
         /// <summary>
         /// Closes the connection to TouchPortal and shutdowns the plugin in a safe manner.
         /// </summary>
-        /// <param name="message">Optional message to indicate the reason for closing.</param>
-        void Close(string message = null);
+        void Close();
 
         /// <summary>
         /// Creates a dynamic state in TouchPortal Memory.
@@ -68,7 +67,7 @@ namespace TouchPortalSDK
         /// <param name="values">Values as string array that you can choose from.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool ChoiceUpdate(string choiceId, string[] values, string instanceId = null);
+        bool ChoiceUpdate(string choiceId, string[] values, string instanceId = default);
 
         /// <summary>
         /// Updates the constraints of a data value.
@@ -79,6 +78,6 @@ namespace TouchPortalSDK
         /// <param name="dataType">Type of the data field.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool UpdateActionData(string dataId, double minValue, double maxValue, UpdateActionDataCommand.DataType dataType, string instanceId = null);
+        bool UpdateActionData(string dataId, double minValue, double maxValue, UpdateActionDataCommand.DataType dataType, string instanceId = default);
     }
 }

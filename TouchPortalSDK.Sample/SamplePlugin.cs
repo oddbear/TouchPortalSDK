@@ -64,7 +64,7 @@ namespace TouchPortalSDK.Sample
             //var actionData = _client.States.ActionData
             //var states = _client.States.States
 
-            //_client.Close("Test")
+            //_client.Close()
         }
 
         /// <summary>

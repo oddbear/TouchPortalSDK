@@ -14,16 +14,17 @@ using TouchPortalSDK.Utils;
 namespace TouchPortalSDK
 {
     [SuppressMessage("Critical Code Smell", "S1006:Method overrides should not change parameter defaults", Justification = "Service resolved from IoC framework.")]
-    public class TouchPortalClient : ITouchPortalClient, IJsonEventHandler
+    public class TouchPortalClient : ITouchPortalClient, IMessageHandler
     {
         private readonly ILogger<TouchPortalClient> _logger;
         private readonly ITouchPortalEventHandler _eventHandler;
         private readonly ITouchPortalSocket _touchPortalSocket;
 
-        private readonly AutoResetEvent _infoWaitHandle;
+        private readonly ManualResetEvent _infoWaitHandle;
         private readonly StateManager _states;
 
         private InfoEvent _lastInfoEvent;
+        private CommandStateStorage _commandStateStorage;
 
         /// <inheritdoc cref="ITouchPortalClient" />
         public IStateManager States => _states;
@@ -39,8 +40,9 @@ namespace TouchPortalSDK
             _touchPortalSocket = socketFactory.Create(this);
             _logger = logger;
 
-            _infoWaitHandle = new AutoResetEvent(false);
+            _infoWaitHandle = new ManualResetEvent(false);
             _states = new StateManager();
+            _commandStateStorage = new CommandStateStorage();
         }
         
         #region Setup
@@ -74,13 +76,18 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public void Close(string message)
+        public void Close()
+            => Close("Closed by plugin.");
+
+        /// <inheritdoc cref="IMessageHandler" />
+        public void Close(string message, Exception exception = default)
         {
-            _logger?.LogInformation($"Closing TouchPortal Plugin: '{message}'");
+            _logger?.LogInformation(exception, $"Closing TouchPortal Plugin: '{message}'");
 
             _touchPortalSocket?.CloseSocket();
             _eventHandler.OnClosedEvent(message);
 
+            _commandStateStorage.Store(_states);
         }
         
         #endregion
@@ -171,58 +178,44 @@ namespace TouchPortalSDK
 
         #region TouchPortal Event Handler
 
-        /// <inheritdoc cref="IJsonEventHandler" />
-        public void OnMessage(string jsonMessage)
+        /// <inheritdoc cref="IMessageHandler" />
+        public void OnMessage(string message)
         {
-            if (string.IsNullOrWhiteSpace(jsonMessage))
+            var messageType = JsonSerializer.Deserialize<BaseEvent>(message, Options.JsonSerializerOptions)?.Type;
+            switch (messageType)
             {
-                Close("Socket closed.");
-                return;
-            }
+                case "info":
+                    var infoEvent = JsonSerializer.Deserialize<InfoEvent>(message, Options.JsonSerializerOptions);
+                    _lastInfoEvent = infoEvent;
+                    _infoWaitHandle.Set();
 
-            try
-            {
-                var messageType = JsonSerializer.Deserialize<BaseEvent>(jsonMessage, Options.JsonSerializerOptions)?.Type;
-                switch (messageType)
-                {
-                    case "info":
-                        var infoEvent = JsonSerializer.Deserialize<InfoEvent>(jsonMessage, Options.JsonSerializerOptions);
-                        _lastInfoEvent = infoEvent;
-                        _infoWaitHandle.Set();
-
-                        _eventHandler.OnInfoEvent(infoEvent);
-                        return;
-                    case "closePlugin":
-                        JsonSerializer.Deserialize<CloseEvent>(jsonMessage, Options.JsonSerializerOptions);
-                        Close("Plugin close event.");
-                        return;
-                    case "listChange":
-                        var listChangeEvent = JsonSerializer.Deserialize<ListChangeEvent>(jsonMessage, Options.JsonSerializerOptions);
-                        _eventHandler.OnListChangedEvent(listChangeEvent);
-                        return;
-                    case "broadcast":
-                        var broadcastEvent = JsonSerializer.Deserialize<BroadcastEvent>(jsonMessage, Options.JsonSerializerOptions);
-                        _eventHandler.OnBroadcastEvent(broadcastEvent);
-                        return;
-                    case "settings":
-                        var settingsEvent = JsonSerializer.Deserialize<SettingsEvent>(jsonMessage, Options.JsonSerializerOptions);
-                        _eventHandler.OnSettingsEvent(settingsEvent);
-                        return;
-                    case "down":
-                    case "up":
-                    case "action":
-                        var actionEvent = JsonSerializer.Deserialize<ActionEvent>(jsonMessage, Options.JsonSerializerOptions);
-                        _eventHandler.OnActionEvent(actionEvent);
-                        break;
-                    default:
-                        _eventHandler.OnUnhandledEvent(jsonMessage);
-                        return;
-                }
-            }
-            catch (Exception exception)
-            {
-                _logger.LogWarning(exception, "Could not process message.");
-                throw;
+                    _eventHandler.OnInfoEvent(infoEvent);
+                    return;
+                case "closePlugin":
+                    JsonSerializer.Deserialize<CloseEvent>(message, Options.JsonSerializerOptions);
+                    Close("TouchPortal sent a Plugin close event.");
+                    return;
+                case "listChange":
+                    var listChangeEvent = JsonSerializer.Deserialize<ListChangeEvent>(message, Options.JsonSerializerOptions);
+                    _eventHandler.OnListChangedEvent(listChangeEvent);
+                    return;
+                case "broadcast":
+                    var broadcastEvent = JsonSerializer.Deserialize<BroadcastEvent>(message, Options.JsonSerializerOptions);
+                    _eventHandler.OnBroadcastEvent(broadcastEvent);
+                    return;
+                case "settings":
+                    var settingsEvent = JsonSerializer.Deserialize<SettingsEvent>(message, Options.JsonSerializerOptions);
+                    _eventHandler.OnSettingsEvent(settingsEvent);
+                    return;
+                case "down":
+                case "up":
+                case "action":
+                    var actionEvent = JsonSerializer.Deserialize<ActionEvent>(message, Options.JsonSerializerOptions);
+                    _eventHandler.OnActionEvent(actionEvent);
+                    break;
+                default:
+                    _eventHandler.OnUnhandledEvent(message);
+                    return;
             }
         }
 

@@ -20,14 +20,14 @@ namespace TouchPortalSDK.Sockets
         private StreamReader _streamReader;
         private StreamWriter _streamWriter;
 
-        private readonly IJsonEventHandler _jsonEventHandler;
+        private readonly IMessageHandler _messageHandler;
 
         public TouchPortalSocket(TouchPortalOptions options,
-                                 IJsonEventHandler jsonEventHandler,
+                                 IMessageHandler messageHandler,
                                  ILogger<TouchPortalSocket> logger = null)
         {
             _options = options;
-            _jsonEventHandler = jsonEventHandler;
+            _messageHandler = messageHandler;
             _logger = logger;
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -138,10 +138,17 @@ namespace TouchPortalSDK.Sockets
             {
                 try
                 {
-                    var message = _streamReader.ReadLine();
+                    var message = _streamReader.ReadLine()
+                                  ?? throw new IOException("Socket closed.");
+
                     _logger?.LogDebug(message);
 
-                    _jsonEventHandler.OnMessage(message);
+                    _messageHandler.OnMessage(message);
+                }
+                catch (IOException exception)
+                {
+                    _messageHandler.Close("Connection Terminated.", exception);
+                    return;
                 }
                 catch (Exception exception)
                 {
