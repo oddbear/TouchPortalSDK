@@ -1,15 +1,9 @@
 ﻿using TouchPortalSDK.Messages.Commands;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK
 {
     public interface ITouchPortalClient
     {
-        /// <summary>
-        /// Gets the current tracked states as how it should be in TouchPortal.
-        /// </summary>
-        IStateManager States { get; }
-
         /// <summary>
         /// Connects, pairs, and listens to the TouchPortal application.
         /// </summary>

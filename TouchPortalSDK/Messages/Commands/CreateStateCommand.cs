@@ -22,8 +22,5 @@ namespace TouchPortalSDK.Messages.Commands
             Desc = desc;
             DefaultValue = defaultValue ?? string.Empty;
         }
-
-        public string GetKey()
-            => Id;
     }
 }

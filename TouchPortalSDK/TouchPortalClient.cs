@@ -21,16 +21,15 @@ namespace TouchPortalSDK
         private readonly ITouchPortalSocket _touchPortalSocket;
 
         private readonly ManualResetEvent _infoWaitHandle;
-        private readonly StateManager _states;
+        private readonly IStateManager _stateManager;
+        private readonly ICommandStore _commandStore;
 
         private InfoEvent _lastInfoEvent;
-        private CommandStateStorage _commandStateStorage;
-
-        /// <inheritdoc cref="ITouchPortalClient" />
-        public IStateManager States => _states;
-
+        
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
                                  ITouchPortalSocketFactory socketFactory,
+                                 IStateManager stateManager,
+                                 ICommandStore commandStore,
                                  ILogger<TouchPortalClient> logger = null)
         {
             if (string.IsNullOrWhiteSpace(eventHandler.PluginId))
@@ -41,8 +40,8 @@ namespace TouchPortalSDK
             _logger = logger;
 
             _infoWaitHandle = new ManualResetEvent(false);
-            _states = new StateManager();
-            _commandStateStorage = new CommandStateStorage();
+            _stateManager = stateManager;
+            _commandStore = commandStore;
         }
         
         #region Setup
@@ -71,8 +70,19 @@ namespace TouchPortalSDK
             //Waiting for InfoMessage:
             _infoWaitHandle.WaitOne(-1);
             _logger?.LogInformation("Received pair response.");
+            
+            //Restores previous state if enabled:
+            RestorePreviousState();
 
             return true;
+        }
+
+        private void RestorePreviousState()
+        {
+            var commands = _commandStore.LoadCommands(_eventHandler.PluginId);
+
+            foreach (var jsonMessage in commands)
+                _touchPortalSocket.SendMessage(jsonMessage);
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
@@ -85,9 +95,9 @@ namespace TouchPortalSDK
             _logger?.LogInformation(exception, $"Closing TouchPortal Plugin: '{message}'");
 
             _touchPortalSocket?.CloseSocket();
-            _eventHandler.OnClosedEvent(message);
+            _commandStore.StoreCommands(_eventHandler.PluginId, _stateManager.Commands);
 
-            _commandStateStorage.Store(_states);
+            _eventHandler.OnClosedEvent(message);
         }
         
         #endregion
@@ -167,9 +177,9 @@ namespace TouchPortalSDK
             var jsonMessage = JsonSerializer.Serialize(command, Options.JsonSerializerOptions);
             var success = _touchPortalSocket.SendMessage(jsonMessage);
             if (success)
-                _states.AddStateOfCommand(command);
+                _stateManager.LogCommand(command, jsonMessage);
             
-            _logger?.LogInformation($"[{callerMember}] '{command.GetKey()}', sent '{success}'.");
+            _logger?.LogInformation($"[{callerMember}] sent: '{success}'.");
 
             return success;
         }

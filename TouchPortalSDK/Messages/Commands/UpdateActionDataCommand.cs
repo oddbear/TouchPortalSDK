@@ -47,8 +47,5 @@ namespace TouchPortalSDK.Messages.Commands
         {
             Number
         }
-
-        public string GetKey()
-            => InstanceId is null ? Data.Id : $"{Data.Id}:{InstanceId}";
     }
 }

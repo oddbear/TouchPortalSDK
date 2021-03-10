@@ -1,14 +1,21 @@
 ﻿using System.Collections.Generic;
-using TouchPortalSDK.Messages.States;
+using TouchPortalSDK.Messages.Commands;
 
 namespace TouchPortalSDK.Utils
 {
     public interface IStateManager
     {
-        IReadOnlyCollection<State> States { get; }
+        /// <summary>
+        /// Property to get all commands sent during this session.
+        /// </summary>
+        IReadOnlyCollection<string> Commands { get; }
 
-        IReadOnlyCollection<Choice> Choices { get; }
-
-        IReadOnlyCollection<ActionData> ActionData { get; }
+        /// <summary>
+        /// Log a command that can be restored after a restart.
+        /// </summary>
+        /// <param name="touchPortalCommand"></param>
+        /// <param name="jsonCommand"></param>
+        void LogCommand<TCommand>(TCommand touchPortalCommand, string jsonCommand)
+            where TCommand : ITouchPortalCommand;
     }
 }

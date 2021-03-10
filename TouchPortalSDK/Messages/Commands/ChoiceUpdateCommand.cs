@@ -23,8 +23,5 @@ namespace TouchPortalSDK.Messages.Commands
             if (!string.IsNullOrWhiteSpace(instanceId))
                 InstanceId = instanceId;
         }
-
-        public string GetKey()
-            => InstanceId is null ? Id : $"{Id}:{InstanceId}";
     }
 }

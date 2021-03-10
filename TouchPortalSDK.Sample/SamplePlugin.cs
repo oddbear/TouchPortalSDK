@@ -57,13 +57,8 @@ namespace TouchPortalSDK.Sample
             _client.SettingUpdate("Test3", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
 
             //Updates the min and max value of the number field.
-            //TODO: Update to take class parameters:
             _client.UpdateActionData("category1.action1.data4", 10, 15, UpdateActionDataCommand.DataType.Number);
             
-            //var choices = _client.States.Choices
-            //var actionData = _client.States.ActionData
-            //var states = _client.States.States
-
             //_client.Close()
         }
 

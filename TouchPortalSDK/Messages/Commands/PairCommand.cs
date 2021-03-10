@@ -15,8 +15,5 @@ namespace TouchPortalSDK.Messages.Commands
 
             Id = pluginId;
         }
-
-        public string GetKey()
-            => Id;
     }
 }

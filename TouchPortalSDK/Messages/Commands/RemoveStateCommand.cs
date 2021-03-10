@@ -15,8 +15,5 @@ namespace TouchPortalSDK.Messages.Commands
 
             Id = stateId;
         }
-
-        public string GetKey()
-            => Id;
     }
 }

@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Models;
 
 namespace TouchPortalSDK.Sockets

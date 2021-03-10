@@ -17,8 +17,5 @@ namespace TouchPortalSDK.Messages.Commands
             Name = name;
             Value = value ?? string.Empty;
         }
-
-        public string GetKey()
-            => Name;
     }
 }
