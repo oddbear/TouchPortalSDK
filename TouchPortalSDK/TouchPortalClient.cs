@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
-using TouchPortalSDK.Messages.Items;
 using TouchPortalSDK.Models;
 using TouchPortalSDK.Sockets;
 using TouchPortalSDK.Utils;
@@ -25,7 +23,6 @@ namespace TouchPortalSDK
         private readonly AutoResetEvent _infoWaitHandle;
 
         private InfoEvent _lastInfoEvent;
-        private IReadOnlyCollection<Setting> _settings;
         
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
                                  ITouchPortalSocketFactory socketFactory,
@@ -40,7 +37,7 @@ namespace TouchPortalSDK
 
             _infoWaitHandle = new AutoResetEvent(false);
         }
-
+        
         #region Setup
         
         /// <inheritdoc cref="ITouchPortalClient" />
@@ -238,7 +235,6 @@ namespace TouchPortalSDK
                     case "info":
                         var infoEvent = Deserialize<InfoEvent>(jsonMessage);
                         _lastInfoEvent = infoEvent;
-                        _settings = infoEvent.Settings;
                         _infoWaitHandle.Set();
 
                         _eventHandler.OnInfoEvent(infoEvent);
@@ -257,9 +253,6 @@ namespace TouchPortalSDK
                         return;
                     case "settings":
                         var settingsEvent = Deserialize<SettingsEvent>(jsonMessage);
-                        _settings = settingsEvent.Values;
-
-                        //TODO: Something better here?
                         _eventHandler.OnSettingsEvent(settingsEvent);
                         return;
                     case "down":

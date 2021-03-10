@@ -28,7 +28,8 @@ namespace TouchPortalSDK
         void OnBroadcastEvent(BroadcastEvent message);
 
         /// <summary>
-        /// Method to call when a user changes a setting.
+        /// Settings are first received as a part of the OnInfoEvent.
+        /// Then updated through this event if either user changes a setting in TouchPortal, or the SettingUpdate is successfully triggered.
         /// </summary>
         void OnSettingsEvent(SettingsEvent message);
 
