@@ -15,11 +15,11 @@ namespace TouchPortalSDK.Sample
         private readonly ILogger<SamplePlugin> _logger;
         private readonly ITouchPortalClient _client;
 
-        public SamplePlugin(ITouchPortalClientFactory touchPortalClientFactory,
+        public SamplePlugin(ITouchPortalClientFactory clientFactory,
                             ILogger<SamplePlugin> logger)
         {
             _logger = logger;
-            _client = touchPortalClientFactory.Create(this);
+            _client = clientFactory.Create(this);
         }
 
         //Connect to TouchPortal:

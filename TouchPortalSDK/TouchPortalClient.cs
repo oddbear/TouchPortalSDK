@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
@@ -10,6 +11,7 @@ using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Items;
 using TouchPortalSDK.Models;
 using TouchPortalSDK.Sockets;
+using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK
 {
@@ -26,14 +28,14 @@ namespace TouchPortalSDK
         private IReadOnlyCollection<Setting> _settings;
         
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
-                                 ITouchPortalSocketFactory touchPortalSocketFactory,
+                                 ITouchPortalSocketFactory socketFactory,
                                  ILogger<TouchPortalClient> logger = null)
         {
             if (string.IsNullOrWhiteSpace(eventHandler.PluginId))
                 throw new InvalidOperationException($"{nameof(ITouchPortalEventHandler)}: PluginId cannot be null or empty.");
 
             _eventHandler = eventHandler;
-            _touchPortalSocket = touchPortalSocketFactory.Create(this);
+            _touchPortalSocket = socketFactory.Create(this);
             _logger = logger;
 
             _infoWaitHandle = new AutoResetEvent(false);
@@ -80,14 +82,29 @@ namespace TouchPortalSDK
         private static string Serialize<TMessage>(TMessage message)
             where TMessage : BaseCommand
         {
-            var jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IgnoreNullValues = true };
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                IgnoreNullValues = true,
+                Converters =
+                {
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+                }
+            };
             return JsonSerializer.Serialize(message, jsonSerializerOptions);
         }
 
         private static TMessage Deserialize<TMessage>(string message)
             where TMessage : BaseEvent
         {
-            var jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Converters =
+                {
+                    new SettingsConverter()
+                }
+            };
             return JsonSerializer.Deserialize<TMessage>(message, jsonSerializerOptions);
         }
 

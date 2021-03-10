@@ -18,14 +18,14 @@
             public string Id { get; }
             public double MinValue { get; }
             public double MaxValue { get; }
-            public DataType DataType { get; }
+            public DataType Type { get; }
 
             public DataValue(string dataId, double minValue, double maxValue, DataType dataType)
             {
                 Id = dataId;
                 MinValue = minValue;
                 MaxValue = maxValue;
-                DataType = dataType;
+                Type = dataType;
             }
         }
 
