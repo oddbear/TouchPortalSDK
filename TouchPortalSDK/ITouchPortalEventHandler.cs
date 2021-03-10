@@ -41,7 +41,8 @@ namespace TouchPortalSDK
         /// <summary>
         /// Method to call when we loose connection to TouchPortal.
         /// </summary>
-        void OnClosedEvent();
+        /// <param name="message"></param>
+        void OnClosedEvent(string message);
 
         /// <summary>
         /// Messages that are unknown, and therefor we cannot deserialize to a known type.

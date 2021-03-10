@@ -1,16 +1,25 @@
-﻿namespace TouchPortalSDK.Messages.Commands
+﻿using System;
+
+namespace TouchPortalSDK.Messages.Commands
 {
-    public class StateUpdateCommand : BaseCommand
+    public class StateUpdateCommand : ITouchPortalCommand
     {
+        public string Type => "stateUpdate";
+
         public string Id { get; }
 
         public string Value { get; }
 
         public StateUpdateCommand(string stateId, string value)
-            : base("stateUpdate")
         {
+            if (string.IsNullOrWhiteSpace(stateId))
+                throw new ArgumentNullException(nameof(stateId));
+
             Id = stateId;
             Value = value ?? string.Empty;
         }
+
+        public string GetKey()
+            => Id;
     }
 }

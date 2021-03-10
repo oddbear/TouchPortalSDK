@@ -2,8 +2,10 @@
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class ChoiceUpdateCommand : BaseCommand
+    public class ChoiceUpdateCommand : ITouchPortalCommand
     {
+        public string Type => "choiceUpdate";
+
         public string Id { get; }
 
         public string[] Value { get; }
@@ -11,11 +13,18 @@ namespace TouchPortalSDK.Messages.Commands
         public string InstanceId { get; }
 
         public ChoiceUpdateCommand(string listId, string[] value, string instanceId = null)
-            : base("choiceUpdate")
         {
+            if (string.IsNullOrWhiteSpace(listId))
+                throw new ArgumentNullException(nameof(listId));
+
             Id = listId;
             Value = value ?? Array.Empty<string>();
-            InstanceId = instanceId;
+
+            if (!string.IsNullOrWhiteSpace(instanceId))
+                InstanceId = instanceId;
         }
+
+        public string GetKey()
+            => InstanceId is null ? Id : $"{Id}:{InstanceId}";
     }
 }

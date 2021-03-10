@@ -1,13 +1,22 @@
-﻿namespace TouchPortalSDK.Messages.Commands
+﻿using System;
+
+namespace TouchPortalSDK.Messages.Commands
 {
-    public class RemoveStateCommand : BaseCommand
+    public class RemoveStateCommand : ITouchPortalCommand
     {
+        public string Type => "removeState";
+
         public string Id { get; }
 
         public RemoveStateCommand(string stateId)
-            : base("removeState")
         {
+            if (string.IsNullOrWhiteSpace(stateId))
+                throw new ArgumentNullException(nameof(stateId));
+
             Id = stateId;
         }
+
+        public string GetKey()
+            => Id;
     }
 }

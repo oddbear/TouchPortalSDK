@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
@@ -21,9 +21,13 @@ namespace TouchPortalSDK
         private readonly ITouchPortalSocket _touchPortalSocket;
 
         private readonly AutoResetEvent _infoWaitHandle;
+        private readonly StateManager _states;
 
         private InfoEvent _lastInfoEvent;
-        
+
+        /// <inheritdoc cref="ITouchPortalClient" />
+        public IStateManager States => _states;
+
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
                                  ITouchPortalSocketFactory socketFactory,
                                  ILogger<TouchPortalClient> logger = null)
@@ -36,6 +40,7 @@ namespace TouchPortalSDK
             _logger = logger;
 
             _infoWaitHandle = new AutoResetEvent(false);
+            _states = new StateManager();
         }
         
         #region Setup
@@ -51,9 +56,8 @@ namespace TouchPortalSDK
 
             //Pair:
             _logger?.LogInformation("Sending pair message.");
-            var pairMessage = new PairCommand(_eventHandler.PluginId);
-            var pairJsonMessage = Serialize(pairMessage);
-            _touchPortalSocket.SendMessage(pairJsonMessage);
+            var pairCommand = new PairCommand(_eventHandler.PluginId);
+            SendCommand(pairCommand);
 
             //Listen:
             _logger?.LogInformation("Create listener.");
@@ -70,41 +74,15 @@ namespace TouchPortalSDK
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public void Close()
+        public void Close(string message)
         {
+            _logger?.LogInformation($"Closing TouchPortal Plugin: '{message}'");
+
             _touchPortalSocket?.CloseSocket();
-            _eventHandler.OnClosedEvent();
+            _eventHandler.OnClosedEvent(message);
+
         }
         
-        private static string Serialize<TMessage>(TMessage message)
-            where TMessage : BaseCommand
-        {
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                IgnoreNullValues = true,
-                Converters =
-                {
-                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-                }
-            };
-            return JsonSerializer.Serialize(message, jsonSerializerOptions);
-        }
-
-        private static TMessage Deserialize<TMessage>(string message)
-            where TMessage : BaseEvent
-        {
-            var jsonSerializerOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters =
-                {
-                    new SettingsConverter()
-                }
-            };
-            return JsonSerializer.Deserialize<TMessage>(message, jsonSerializerOptions);
-        }
-
         #endregion
         
         #region TouchPortal Command Handlers
@@ -115,33 +93,21 @@ namespace TouchPortalSDK
             if (string.IsNullOrWhiteSpace(name))
                 return false;
 
-            var message = new SettingUpdateCommand(name, value);
+            var command = new SettingUpdateCommand(name, value);
 
-            var jsonMessage = Serialize(message);
-
-            var sent = _touchPortalSocket.SendMessage(jsonMessage);
-
-            _logger?.LogInformation($"[{nameof(SettingUpdate)}] '{name}', sent '{sent}'.");
-
-            return true;
+            return SendCommand(command);
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool CreateState(string stateId, string displayName, string defaultValue)
+        public bool CreateState(string stateId, string desc, string defaultValue)
         {
             if (string.IsNullOrWhiteSpace(stateId) ||
-                string.IsNullOrWhiteSpace(displayName))
+                string.IsNullOrWhiteSpace(desc))
                 return false;
             
-            var message = new CreateStateCommand(stateId, displayName, defaultValue);
+            var command = new CreateStateCommand(stateId, desc, defaultValue);
 
-            var jsonMessage = Serialize(message);
-
-            var sent = _touchPortalSocket.SendMessage(jsonMessage);
-
-            _logger?.LogInformation($"[{nameof(CreateState)}] '{stateId}', sent '{sent}'.");
-
-            return sent;
+            return SendCommand(command);
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
@@ -150,15 +116,9 @@ namespace TouchPortalSDK
             if (string.IsNullOrWhiteSpace(stateId))
                 return false;
 
-            var message = new RemoveStateCommand(stateId);
+            var command = new RemoveStateCommand(stateId);
 
-            var jsonMessage = Serialize(message);
-
-            var sent = _touchPortalSocket.SendMessage(jsonMessage);
-
-            _logger?.LogInformation($"[{nameof(RemoveState)}] '{stateId}', sent '{sent}'.");
-
-            return sent;
+            return SendCommand(command);
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
@@ -167,34 +127,20 @@ namespace TouchPortalSDK
             if (string.IsNullOrWhiteSpace(stateId))
                 return false;
 
-            var message = new StateUpdateCommand(stateId, value);
+            var command = new StateUpdateCommand(stateId, value);
 
-            var jsonMessage = Serialize(message);
-
-            var sent = _touchPortalSocket.SendMessage(jsonMessage);
-
-            _logger?.LogInformation($"[{nameof(StateUpdate)}] '{stateId}', sent '{sent}'.");
-
-            return sent;
+            return SendCommand(command);
         }
-
-
+        
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool ChoiceUpdate(string listId, string[] values, string instanceId)
+        public bool ChoiceUpdate(string choiceId, string[] values, string instanceId)
         {
-            if (string.IsNullOrWhiteSpace(listId))
+            if (string.IsNullOrWhiteSpace(choiceId))
                 return false;
+            
+            var command = new ChoiceUpdateCommand(choiceId, values, instanceId);
 
-
-            var message = new ChoiceUpdateCommand(listId, values, instanceId);
-
-            var jsonMessage = Serialize(message);
-
-            var sent = _touchPortalSocket.SendMessage(jsonMessage);
-
-            _logger?.LogInformation($"[{nameof(ChoiceUpdate)}] '{listId}:{instanceId}', sent '{sent}'.");
-
-            return sent;
+            return SendCommand(command);
         }
 
         /// <inheritdoc cref="ITouchPortalClient" />
@@ -203,15 +149,22 @@ namespace TouchPortalSDK
             if (string.IsNullOrWhiteSpace(dataId))
                 return false;
 
-            var message = new UpdateActionDataCommand(dataId, minValue, maxValue, dataType, instanceId);
+            var command = new UpdateActionDataCommand(dataId, minValue, maxValue, dataType, instanceId);
+            
+            return SendCommand(command);
+        }
 
-            var jsonMessage = Serialize(message);
+        private bool SendCommand<TCommand>(TCommand command, [CallerMemberName]string callerMember = "")
+            where TCommand : ITouchPortalCommand
+        {
+            var jsonMessage = JsonSerializer.Serialize(command, Options.JsonSerializerOptions);
+            var success = _touchPortalSocket.SendMessage(jsonMessage);
+            if (success)
+                _states.AddStateOfCommand(command);
+            
+            _logger?.LogInformation($"[{callerMember}] '{command.GetKey()}', sent '{success}'.");
 
-            var sent = _touchPortalSocket.SendMessage(jsonMessage);
-
-            _logger?.LogInformation($"[{nameof(ChoiceUpdate)}] '{dataId}:{instanceId}', sent '{sent}'.");
-
-            return sent;
+            return success;
         }
 
         #endregion
@@ -223,42 +176,42 @@ namespace TouchPortalSDK
         {
             if (string.IsNullOrWhiteSpace(jsonMessage))
             {
-                Close(); //Socket closed.
+                Close("Socket closed.");
                 return;
             }
 
             try
             {
-                var messageType = Deserialize<BaseEvent>(jsonMessage)?.Type;
+                var messageType = JsonSerializer.Deserialize<BaseEvent>(jsonMessage, Options.JsonSerializerOptions)?.Type;
                 switch (messageType)
                 {
                     case "info":
-                        var infoEvent = Deserialize<InfoEvent>(jsonMessage);
+                        var infoEvent = JsonSerializer.Deserialize<InfoEvent>(jsonMessage, Options.JsonSerializerOptions);
                         _lastInfoEvent = infoEvent;
                         _infoWaitHandle.Set();
 
                         _eventHandler.OnInfoEvent(infoEvent);
                         return;
                     case "closePlugin":
-                        Deserialize<CloseEvent>(jsonMessage);
-                        Close(); //Plugin closed.
+                        JsonSerializer.Deserialize<CloseEvent>(jsonMessage, Options.JsonSerializerOptions);
+                        Close("Plugin close event.");
                         return;
                     case "listChange":
-                        var listChangeEvent = Deserialize<ListChangeEvent>(jsonMessage);
+                        var listChangeEvent = JsonSerializer.Deserialize<ListChangeEvent>(jsonMessage, Options.JsonSerializerOptions);
                         _eventHandler.OnListChangedEvent(listChangeEvent);
                         return;
                     case "broadcast":
-                        var broadcastEvent = Deserialize<BroadcastEvent>(jsonMessage);
+                        var broadcastEvent = JsonSerializer.Deserialize<BroadcastEvent>(jsonMessage, Options.JsonSerializerOptions);
                         _eventHandler.OnBroadcastEvent(broadcastEvent);
                         return;
                     case "settings":
-                        var settingsEvent = Deserialize<SettingsEvent>(jsonMessage);
+                        var settingsEvent = JsonSerializer.Deserialize<SettingsEvent>(jsonMessage, Options.JsonSerializerOptions);
                         _eventHandler.OnSettingsEvent(settingsEvent);
                         return;
                     case "down":
                     case "up":
                     case "action":
-                        var actionEvent = Deserialize<ActionEvent>(jsonMessage);
+                        var actionEvent = JsonSerializer.Deserialize<ActionEvent>(jsonMessage, Options.JsonSerializerOptions);
                         _eventHandler.OnActionEvent(actionEvent);
                         break;
                     default:

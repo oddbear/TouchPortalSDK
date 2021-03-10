@@ -59,8 +59,12 @@ namespace TouchPortalSDK.Sample
             //Updates the min and max value of the number field.
             //TODO: Update to take class parameters:
             _client.UpdateActionData("category1.action1.data4", 10, 15, UpdateActionDataCommand.DataType.Number);
+            
+            //var choices = _client.States.Choices
+            //var actionData = _client.States.ActionData
+            //var states = _client.States.States
 
-            //_client.Close("Test");
+            //_client.Close("Test")
         }
 
         /// <summary>
@@ -139,7 +143,7 @@ namespace TouchPortalSDK.Sample
             _logger.LogWarning($"Unhandled message: {jsonDocument}");
         }
 
-        public void OnClosedEvent()
+        public void OnClosedEvent(string message)
         {
             _logger.LogInformation("TouchPortal Disconnected.");
 

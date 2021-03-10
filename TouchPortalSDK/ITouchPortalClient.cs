@@ -1,9 +1,15 @@
 ﻿using TouchPortalSDK.Messages.Commands;
+using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK
 {
     public interface ITouchPortalClient
     {
+        /// <summary>
+        /// Gets the current tracked states as how it should be in TouchPortal.
+        /// </summary>
+        IStateManager States { get; }
+
         /// <summary>
         /// Connects, pairs, and listens to the TouchPortal application.
         /// </summary>
@@ -13,8 +19,8 @@ namespace TouchPortalSDK
         /// <summary>
         /// Closes the connection to TouchPortal and shutdowns the plugin in a safe manner.
         /// </summary>
-        /// <param name="reason">optional reason of why we want to close the connection.</param>
-        void Close();
+        /// <param name="message">Optional message to indicate the reason for closing.</param>
+        void Close(string message = null);
 
         /// <summary>
         /// Creates a dynamic state in TouchPortal Memory.
@@ -22,10 +28,10 @@ namespace TouchPortalSDK
         /// You will need to persist them yourself and reload them on plugin load.
         /// </summary>
         /// <param name="stateId"></param>
-        /// <param name="displayName"></param>
+        /// <param name="desc">Description of the created state (name in menus).</param>
         /// <param name="defaultValue"></param>
         /// <returns></returns>
-        bool CreateState(string stateId, string displayName, string defaultValue = "");
+        bool CreateState(string stateId, string desc, string defaultValue = "");
 
         /// <summary>
         /// Updates a setting in TouchPortal.
@@ -58,11 +64,11 @@ namespace TouchPortalSDK
         /// Updates the drop down choices in the TouchPortal UI.
         /// InstanceId can be used to dynamically update a dropdown based on the value chosen from another dropdown.
         /// </summary>
-        /// <param name="listId">Id of UI dropdown.</param>
+        /// <param name="choiceId">Id of UI dropdown.</param>
         /// <param name="values">Values as string array that you can choose from.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool ChoiceUpdate(string listId, string[] values, string instanceId = null);
+        bool ChoiceUpdate(string choiceId, string[] values, string instanceId = null);
 
         /// <summary>
         /// Updates the constraints of a data value.
