@@ -26,9 +26,9 @@ namespace TouchPortalSDK.Configuration
         /// <summary>
         /// Create a TouchPortal Socket
         /// </summary>
-        /// <param name="jsonEventHandler">Handler the json events from the Socket, normally the client instance.</param>
+        /// <param name="messageHandler">Handler the json events from the Socket, normally the client instance.</param>
         /// <returns>TouchPortal Socket</returns>
-        ITouchPortalSocket Create(IJsonEventHandler jsonEventHandler);
+        ITouchPortalSocket Create(IMessageHandler messageHandler);
     }
 
     /// <summary>
@@ -44,12 +44,12 @@ namespace TouchPortalSDK.Configuration
         }
 
         /// <inheritdoc cref="ITouchPortalSocketFactory" />
-        public ITouchPortalSocket Create(IJsonEventHandler jsonEventHandler)
+        public ITouchPortalSocket Create(IMessageHandler messageHandler)
         {
-            if (jsonEventHandler is null)
-                throw new ArgumentNullException(nameof(jsonEventHandler));
+            if (messageHandler is null)
+                throw new ArgumentNullException(nameof(messageHandler));
 
-            return ActivatorUtilities.CreateInstance<TouchPortalSocket>(_serviceProvider, jsonEventHandler);
+            return ActivatorUtilities.CreateInstance<TouchPortalSocket>(_serviceProvider, messageHandler);
         }
 
         /// <inheritdoc cref="ITouchPortalClientFactory" />

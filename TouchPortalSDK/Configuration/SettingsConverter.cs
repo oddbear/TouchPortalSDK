@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using TouchPortalSDK.Messages.Items;
 
-namespace TouchPortalSDK.Utils
+namespace TouchPortalSDK.Configuration
 {
     public class SettingsConverter : JsonConverter<IReadOnlyCollection<Setting>>
     {

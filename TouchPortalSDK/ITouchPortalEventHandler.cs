@@ -28,7 +28,8 @@ namespace TouchPortalSDK
         void OnBroadcastEvent(BroadcastEvent message);
 
         /// <summary>
-        /// Method to call when a user changes a setting.
+        /// Settings are first received as a part of the OnInfoEvent.
+        /// Then updated through this event if either user changes a setting in TouchPortal, or the SettingUpdate is successfully triggered.
         /// </summary>
         void OnSettingsEvent(SettingsEvent message);
 
@@ -40,7 +41,8 @@ namespace TouchPortalSDK
         /// <summary>
         /// Method to call when we loose connection to TouchPortal.
         /// </summary>
-        void OnClosedEvent();
+        /// <param name="message"></param>
+        void OnClosedEvent(string message);
 
         /// <summary>
         /// Messages that are unknown, and therefor we cannot deserialize to a known type.

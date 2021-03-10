@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
+using TouchPortalSDK.Messages.Items;
 
 namespace TouchPortalSDK.Sample
 {
@@ -14,6 +16,8 @@ namespace TouchPortalSDK.Sample
 
         private readonly ILogger<SamplePlugin> _logger;
         private readonly ITouchPortalClient _client;
+
+        private IReadOnlyCollection<Setting> _settings;
 
         public SamplePlugin(ITouchPortalClientFactory clientFactory,
                             ILogger<SamplePlugin> logger)
@@ -53,10 +57,9 @@ namespace TouchPortalSDK.Sample
             _client.SettingUpdate("Test3", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
 
             //Updates the min and max value of the number field.
-            //TODO: Update to take class parameters:
             _client.UpdateActionData("category1.action1.data4", 10, 15, UpdateActionDataCommand.DataType.Number);
-
-            //_client.Close("Test");
+            
+            //_client.Close()
         }
 
         /// <summary>
@@ -65,8 +68,10 @@ namespace TouchPortalSDK.Sample
         /// <param name="message"></param>
         public void OnInfoEvent(InfoEvent message)
         {
-            var settings = string.Join(", ", message.Settings.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
-            _logger.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}', Settings: '{settings}'");
+            _logger.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}'");
+
+            _settings = message.Settings;
+            _logger.LogInformation($"[Info] Settings: {JsonSerializer.Serialize(_settings)}");
         }
 
         /// <summary>
@@ -94,8 +99,8 @@ namespace TouchPortalSDK.Sample
 
         public void OnSettingsEvent(SettingsEvent message)
         {
-            var settings = string.Join(", ", message.Values.Select(dataItem => $"\"{dataItem.Name}\":\"{dataItem.Value}\""));
-            _logger.LogInformation($"[OnSettings] '{settings}'");
+            _settings = message.Values;
+            _logger.LogInformation($"[OnSettings] Settings: {JsonSerializer.Serialize(_settings)}");
         }
 
         /// <summary>
@@ -133,7 +138,7 @@ namespace TouchPortalSDK.Sample
             _logger.LogWarning($"Unhandled message: {jsonDocument}");
         }
 
-        public void OnClosedEvent()
+        public void OnClosedEvent(string message)
         {
             _logger.LogInformation("TouchPortal Disconnected.");
 
