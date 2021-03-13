@@ -35,7 +35,7 @@ namespace TouchPortalSDK
                                  ICommandStore commandStore,
                                  ILogger<TouchPortalClient> logger = null)
         {
-            if (string.IsNullOrWhiteSpace(eventHandler.PluginId))
+            if (string.IsNullOrWhiteSpace(eventHandler?.PluginId))
                 throw new InvalidOperationException($"{nameof(ITouchPortalEventHandler)}: PluginId cannot be null or empty.");
 
             _eventHandler = eventHandler;
@@ -61,7 +61,9 @@ namespace TouchPortalSDK
             //Pair:
             _logger?.LogInformation("Sending pair message.");
             var pairCommand = new PairCommand(_eventHandler.PluginId);
-            SendCommand(pairCommand);
+            var pairing = SendCommand(pairCommand);
+            if (!pairing)
+                return false;
 
             //Listen:
             _logger?.LogInformation("Create listener.");

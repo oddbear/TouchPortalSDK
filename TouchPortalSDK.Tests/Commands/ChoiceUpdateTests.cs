@@ -9,7 +9,7 @@ using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Tests.Commands
 {
-    public class ChoiceUpdateTests
+    public class SettingsTests
     {
         [Theory]
         [AutoMoqData]

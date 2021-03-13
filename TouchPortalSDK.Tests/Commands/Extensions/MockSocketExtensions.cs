@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Moq;
 using Moq.Language.Flow;
-using TouchPortalSDK.Messages.Items;
 using TouchPortalSDK.Sockets;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Tests.Commands.Extensions
 {
@@ -26,11 +23,5 @@ namespace TouchPortalSDK.Tests.Commands.Extensions
                 .Arguments
                 .Single() as string;
         }
-    }
-
-    public static class MockStateManagerExtensions
-    {
-        public static void LogMessage_Verify(this Mock<IStateManager> stateManager, Func<Times> times)
-            => stateManager.Verify(mock => mock.LogMessage(It.IsAny<Identifier>(), It.IsAny<string>()), times);
     }
 }
