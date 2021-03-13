@@ -74,18 +74,6 @@ namespace TouchPortalSDK
     public interface ITouchPortalClient : ICommandHandler
     {
         /// <summary>
-        /// Restores all commands to build up same state, from previous saved session:
-        /// </summary>
-        /// <param name="stateFile"></param>
-        void RestoreState(string stateFile);
-
-        /// <summary>
-        /// Saves all commands that has been sent during this session:
-        /// </summary>
-        /// <param name="stateFile"></param>
-        void SaveState(string stateFile);
-
-        /// <summary>
         /// Connects, pairs, and listens to the TouchPortal application.
         /// </summary>
         /// <returns>connection success status</returns>

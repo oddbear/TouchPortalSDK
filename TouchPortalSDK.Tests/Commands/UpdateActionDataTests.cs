@@ -7,7 +7,6 @@ using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Sockets;
 using TouchPortalSDK.Tests.Commands.Extensions;
 using TouchPortalSDK.Tests.Fixtures;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Tests.Commands
 {
@@ -15,7 +14,7 @@ namespace TouchPortalSDK.Tests.Commands
     {
         [Theory]
         [AutoMoqData]
-        public void Success(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket, [Frozen] Mock<IStateManager> stateManager)
+        public void Success(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(true);
 
@@ -29,21 +28,17 @@ namespace TouchPortalSDK.Tests.Commands
             StringAssert.Contains(minValue.ToString(CultureInfo.InvariantCulture), parameter);
             StringAssert.Contains(maxValue.ToString(CultureInfo.InvariantCulture), parameter);
             StringAssert.Contains(instanceId, parameter);
-
-            stateManager.LogMessage_Verify(Times.Once);
         }
 
         [Theory]
         [AutoMoqData]
-        public void Failed(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket, [Frozen] Mock<IStateManager> stateManager)
+        public void Failed(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(false);
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.UpdateActionData(dataId, minValue, maxValue, ActionDataType.Number, instanceId);
             Assert.False(result);
-
-            stateManager.LogMessage_Verify(Times.Never);
         }
 
         [Theory]

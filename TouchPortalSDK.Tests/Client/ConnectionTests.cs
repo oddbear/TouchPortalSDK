@@ -19,7 +19,7 @@ namespace TouchPortalSDK.Tests.Client
         {
             var mock = new Mock<ITouchPortalEventHandler>();
             mock.SetupGet(mock => mock.PluginId).Returns(null as string);
-            Assert.Throws<InvalidOperationException>(() => new TouchPortalClient(mock.Object, default, default, default, default));
+            Assert.Throws<InvalidOperationException>(() => new TouchPortalClient(mock.Object, default, default));
         }
 
         [Theory]

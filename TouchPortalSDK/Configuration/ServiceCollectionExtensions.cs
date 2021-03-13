@@ -2,7 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TouchPortalSDK.Models;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Configuration
 {
@@ -23,8 +22,6 @@ namespace TouchPortalSDK.Configuration
             serviceCollection.AddTransient<TouchPortalFactory>();
             serviceCollection.AddTransient<ITouchPortalSocketFactory>(serviceProvider => serviceProvider.GetRequiredService<TouchPortalFactory>());
             serviceCollection.AddTransient<ITouchPortalClientFactory>(serviceProvider => serviceProvider.GetRequiredService<TouchPortalFactory>());
-            serviceCollection.AddTransient<ICommandStore, CommandStore>();
-            serviceCollection.AddTransient<IStateManager, StateManager>();
         }
     }
 }

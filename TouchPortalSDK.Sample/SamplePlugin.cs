@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
-using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Items;
 using TouchPortalSDK.Models.Enums;
@@ -31,18 +30,12 @@ namespace TouchPortalSDK.Sample
         public void Connect()
         {
             _client.Connect();
-
-            //Optional: Possibility to restore previous state:
-            _client.RestoreState($"{PluginId}.clog");
         }
 
         public void OnClosedEvent(string message)
         {
             _logger.LogInformation("TouchPortal Disconnected.");
-
-            //Optional: Possibility to save the state before exiting:
-            _client.SaveState($"{PluginId}.clog");
-
+            
             //Optional force exits this plugin.
             Environment.Exit(0);
         }
