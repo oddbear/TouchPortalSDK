@@ -1,12 +1,13 @@
 ﻿using System;
+using TouchPortalSDK.Messages.Items;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class RemoveStateCommand : ITouchPortalCommand
+    public class RemoveStateCommand : ITouchPortalMessage
     {
         public string Type => "removeState";
 
-        public string Id { get; }
+        public string Id { get; set; }
 
         public RemoveStateCommand(string stateId)
         {
@@ -15,5 +16,8 @@ namespace TouchPortalSDK.Messages.Commands
 
             Id = stateId;
         }
+
+        public Identifier GetIdentifier()
+            => new Identifier(Type, Id, default);
     }
 }

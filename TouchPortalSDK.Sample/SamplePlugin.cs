@@ -7,13 +7,14 @@ using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Items;
+using TouchPortalSDK.Models.Enums;
 
 namespace TouchPortalSDK.Sample
 {
     public class SamplePlugin : ITouchPortalEventHandler
     {
         public string PluginId => "TouchPortalSDK.Sample";
-
+        
         private readonly ILogger<SamplePlugin> _logger;
         private readonly ITouchPortalClient _client;
 
@@ -27,7 +28,24 @@ namespace TouchPortalSDK.Sample
         }
 
         //Connect to TouchPortal:
-        public void Connect() => _client.Connect();
+        public void Connect()
+        {
+            _client.Connect();
+
+            //Optional: Possibility to restore previous state:
+            _client.RestoreState($"{PluginId}.clog");
+        }
+
+        public void OnClosedEvent(string message)
+        {
+            _logger.LogInformation("TouchPortal Disconnected.");
+
+            //Optional: Possibility to save the state before exiting:
+            _client.SaveState($"{PluginId}.clog");
+
+            //Optional force exits this plugin.
+            Environment.Exit(0);
+        }
 
         public void SendMessages()
         {
@@ -57,7 +75,7 @@ namespace TouchPortalSDK.Sample
             _client.SettingUpdate("Test3", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
 
             //Updates the min and max value of the number field.
-            _client.UpdateActionData("category1.action1.data4", 10, 15, UpdateActionDataCommand.DataType.Number);
+            _client.UpdateActionData("category1.action1.data4", 10, 15, ActionDataType.Number);
             
             //_client.Close()
         }
@@ -136,14 +154,6 @@ namespace TouchPortalSDK.Sample
         {
             var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(jsonMessage);
             _logger.LogWarning($"Unhandled message: {jsonDocument}");
-        }
-
-        public void OnClosedEvent(string message)
-        {
-            _logger.LogInformation("TouchPortal Disconnected.");
-
-            //Optional force exits this plugin.
-            Environment.Exit(0);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace TouchPortalSDK.Messages.Items
 {
-    public class ActionData
+    public class ActionDataSelected
     {
         /// <summary>
         /// The id of the data field as string

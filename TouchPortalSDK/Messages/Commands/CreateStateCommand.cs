@@ -1,14 +1,17 @@
 ﻿using System;
+using TouchPortalSDK.Messages.Items;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class CreateStateCommand : ITouchPortalCommand
+    public class CreateStateCommand : ITouchPortalMessage
     {
         public string Type => "createState";
 
-        public string Id { get; }
-        public string Desc { get; }
-        public string DefaultValue { get; }
+        public string Id { get; set; }
+
+        public string Desc { get; set; }
+
+        public string DefaultValue { get; set; }
 
         public CreateStateCommand(string stateId, string desc, string defaultValue)
         {
@@ -22,5 +25,8 @@ namespace TouchPortalSDK.Messages.Commands
             Desc = desc;
             DefaultValue = defaultValue ?? string.Empty;
         }
+
+        public Identifier GetIdentifier()
+            => new Identifier(Type, Id, default);
     }
 }

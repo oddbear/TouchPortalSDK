@@ -1,20 +1,22 @@
 ﻿using System;
+using TouchPortalSDK.Messages.Items;
+using TouchPortalSDK.Models.Enums;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class UpdateActionDataCommand : ITouchPortalCommand
+    public class UpdateActionDataCommand : ITouchPortalMessage
     {
         public string Type => "updateActionData";
 
-        public string InstanceId { get; }
+        public string InstanceId { get; set; }
 
-        public DataValue Data { get; }
+        public DataValue Data { get; set; }
 
-        public UpdateActionDataCommand(string dataId, double minValue, double maxValue, DataType dataType, string instanceId = null)
+        public UpdateActionDataCommand(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(dataId))
                 throw new ArgumentNullException(nameof(dataId));
-
+            
             Data = new DataValue(dataId, minValue, maxValue, dataType);
 
             if (!string.IsNullOrWhiteSpace(instanceId))
@@ -23,12 +25,12 @@ namespace TouchPortalSDK.Messages.Commands
 
         public class DataValue
         {
-            public string Id { get; }
-            public double MinValue { get; }
-            public double MaxValue { get; }
-            public DataType Type { get; }
+            public string Id { get; set; }
+            public double MinValue { get; set; }
+            public double MaxValue { get; set; }
+            public ActionDataType Type { get; set; }
 
-            public DataValue(string dataId, double minValue, double maxValue, DataType dataType)
+            public DataValue(string dataId, double minValue, double maxValue, ActionDataType dataType)
             {
                 if (string.IsNullOrWhiteSpace(dataId))
                     throw new ArgumentNullException(nameof(dataId));
@@ -40,12 +42,7 @@ namespace TouchPortalSDK.Messages.Commands
             }
         }
 
-        /// <summary>
-        /// Allowed data types for DataValue
-        /// </summary>
-        public enum DataType
-        {
-            Number
-        }
+        public Identifier GetIdentifier()
+            => new Identifier(Type, Data.Id, InstanceId);
     }
 }

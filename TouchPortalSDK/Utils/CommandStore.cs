@@ -4,28 +4,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Microsoft.Extensions.Logging;
-using TouchPortalSDK.Models;
 
 namespace TouchPortalSDK.Utils
 {
     public class CommandStore : ICommandStore
     {
-        private readonly TouchPortalOptions _options;
         private readonly ILogger<CommandStore> _logger;
 
-        public CommandStore(TouchPortalOptions options,
-                            ILogger<CommandStore> logger = null)
+        public CommandStore(ILogger<CommandStore> logger = null)
         {
-            _options = options;
             _logger = logger;
         }
 
         ///<inheritdoc cref="ICommandStore"/>
-        public void StoreCommands(string pluginId, IReadOnlyCollection<string> messages)
+        public void StoreCommands(string stateFile, IReadOnlyCollection<string> messages)
         {
-            if(!_options.LogCommands)
-                return;
-
             _logger?.LogInformation($"Logging '{messages.Count}' commands sent during this session.");
 
             try
@@ -34,7 +27,7 @@ namespace TouchPortalSDK.Utils
                     .Select(Encoding.UTF8.GetBytes)
                     .Select(Convert.ToBase64String);
 
-                var filename = SanitizeFileName(pluginId);
+                var filename = SanitizeFileName(stateFile);
                 File.WriteAllLines(filename, lines);
             }
             catch (Exception exception)
@@ -44,14 +37,11 @@ namespace TouchPortalSDK.Utils
         }
 
         ///<inheritdoc cref="ICommandStore"/>
-        public IReadOnlyCollection<string> LoadCommands(string pluginId)
+        public IReadOnlyCollection<string> LoadCommands(string stateFile)
         {
-            if (!_options.RestoreCommands)
-                return Array.Empty<string>();
-            
             try
             {
-                var filename = SanitizeFileName(pluginId);
+                var filename = SanitizeFileName(stateFile);
                 var commands =  File.ReadAllLines(filename)
                     .Select(Convert.FromBase64String)
                     .Select(Encoding.UTF8.GetString)
@@ -70,17 +60,14 @@ namespace TouchPortalSDK.Utils
         /// <summary>
         /// Removes illegal characters from the filename, dependent on OS.
         /// </summary>
-        private static string SanitizeFileName(string pluginId)
+        private static string SanitizeFileName(string fileName)
         {
-            const string extension = ".clog";
-            var stringBuilder = new StringBuilder(pluginId.Length + extension.Length);
+            var stringBuilder = new StringBuilder(fileName.Length);
 
             var invalidChars = Path.GetInvalidFileNameChars();
-            foreach (var ch in pluginId)
+            foreach (var ch in fileName)
                 stringBuilder.Append(invalidChars.Any(invalidChar => invalidChar == ch) ? '_' : ch);
-
-            stringBuilder.Append(extension);
-
+            
             return stringBuilder.ToString();
         }
     }

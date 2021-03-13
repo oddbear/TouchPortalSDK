@@ -5,8 +5,29 @@ using TouchPortalSDK.Models.Enums;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class ActionEvent : BaseEvent
+    public class ActionEvent : ITouchPortalMessage
     {
+        /// <summary>
+        /// <para>
+        ///     Action type event.
+        /// </para>
+        /// <list type="bullet">
+        /// <item>
+        ///     <term>action</term>
+        ///     <description>User presses an action button on the device.</description>
+        /// </item>
+        /// <item>
+        ///     <term>down</term>
+        ///     <description>Finger holds down the action on the device. This event happens only if the action enables the hasHoldFunctionality.</description>
+        /// </item>
+        /// <item>
+        ///     <term>up</term>
+        ///     <description>Finger released the action on the device. This event happens only if the action enables the hasHoldFunctionality.</description>
+        /// </item>
+        /// </list>
+        /// </summary>
+        public string Type { get; set; }
+
         /// <summary>
         /// The id of the plugin.
         /// </summary>
@@ -22,7 +43,7 @@ namespace TouchPortalSDK.Messages.Events
         /// Ex. data1: dropdown1
         ///     data2: dropdown2
         /// </summary>
-        public IReadOnlyCollection<ActionData> Data { get; set; }
+        public IReadOnlyCollection<ActionDataSelected> Data { get; set; }
 
         /// <summary>
         /// Indexer to get data values.
@@ -48,5 +69,8 @@ namespace TouchPortalSDK.Messages.Events
                 "down" => Press.Down,
                 _ => Press.Tap
             };
+
+        public Identifier GetIdentifier()
+            => new Identifier(Type, ActionId, default);
     }
 }

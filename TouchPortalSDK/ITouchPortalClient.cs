@@ -1,19 +1,15 @@
-﻿using TouchPortalSDK.Messages.Commands;
+﻿using TouchPortalSDK.Models.Enums;
 
 namespace TouchPortalSDK
 {
-    public interface ITouchPortalClient
+    public interface ICommandHandler
     {
         /// <summary>
-        /// Connects, pairs, and listens to the TouchPortal application.
+        /// Send a custom command. There is no state tracking for this.
         /// </summary>
-        /// <returns>connection success status</returns>
-        bool Connect();
-
-        /// <summary>
-        /// Closes the connection to TouchPortal and shutdowns the plugin in a safe manner.
-        /// </summary>
-        void Close();
+        /// <param name="message"></param>
+        /// <returns></returns>
+        bool SendMessage(string message);
 
         /// <summary>
         /// Creates a dynamic state in TouchPortal Memory.
@@ -72,6 +68,32 @@ namespace TouchPortalSDK
         /// <param name="dataType">Type of the data field.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool UpdateActionData(string dataId, double minValue, double maxValue, UpdateActionDataCommand.DataType dataType, string instanceId = default);
+        bool UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = default);
+    }
+
+    public interface ITouchPortalClient : ICommandHandler
+    {
+        /// <summary>
+        /// Restores all commands to build up same state, from previous saved session:
+        /// </summary>
+        /// <param name="stateFile"></param>
+        void RestoreState(string stateFile);
+
+        /// <summary>
+        /// Saves all commands that has been sent during this session:
+        /// </summary>
+        /// <param name="stateFile"></param>
+        void SaveState(string stateFile);
+
+        /// <summary>
+        /// Connects, pairs, and listens to the TouchPortal application.
+        /// </summary>
+        /// <returns>connection success status</returns>
+        bool Connect();
+
+        /// <summary>
+        /// Closes the connection to TouchPortal and shutdowns the plugin in a safe manner.
+        /// </summary>
+        void Close();
     }
 }

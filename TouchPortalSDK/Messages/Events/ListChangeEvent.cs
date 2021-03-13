@@ -1,7 +1,14 @@
-﻿namespace TouchPortalSDK.Messages.Events
+﻿using TouchPortalSDK.Messages.Items;
+
+namespace TouchPortalSDK.Messages.Events
 {
-    public class ListChangeEvent : BaseEvent
+    public class ListChangeEvent : ITouchPortalMessage
     {
+        /// <summary>
+        /// When setting up an action in the TouchPortal UI. This event is fired if the user selects and item in the dropdown for a choice list.
+        /// </summary>
+        public string Type { get; set; }
+
         /// <summary>
         /// The id of the plugin.
         /// </summary>
@@ -29,5 +36,8 @@
         /// Might be null if nothing is selected, ex. choices updated to something else.
         /// </summary>
         public string Value { get; set; }
+
+        public Identifier GetIdentifier()
+            => new Identifier(Type, ListId, InstanceId);
     }
 }
