@@ -3,8 +3,14 @@ using TouchPortalSDK.Messages.Items;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class InfoEvent : BaseEvent
+    public class InfoEvent : ITouchPortalMessage
     {
+        /// <summary>
+        /// Event from TouchPortal when a connection is established.
+        /// This event includes information about the TouchPortal service.
+        /// </summary>
+        public string Type { get; set; }
+
         /// <summary>
         /// Status ex. "paired"
         /// </summary>
@@ -29,7 +35,7 @@ namespace TouchPortalSDK.Messages.Events
         public int TpVersionCode { get; set; }
 
         /// <summary>
-        /// TouchPortal version as code.
+        /// Plugin version as code.
         /// </summary>
         public int PluginVersion { get; set; }
 
@@ -37,5 +43,8 @@ namespace TouchPortalSDK.Messages.Events
         /// Values in settings.
         /// </summary>
         public IReadOnlyCollection<Setting> Settings { get; set; }
+
+        public Identifier GetIdentifier()
+            => new Identifier(Type, default, default);
     }
 }

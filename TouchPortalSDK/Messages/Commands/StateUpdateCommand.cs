@@ -1,14 +1,15 @@
 ﻿using System;
+using TouchPortalSDK.Messages.Items;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class StateUpdateCommand : ITouchPortalCommand
+    public class StateUpdateCommand : ITouchPortalMessage
     {
         public string Type => "stateUpdate";
 
-        public string Id { get; }
+        public string Id { get; set; }
 
-        public string Value { get; }
+        public string Value { get; set; }
 
         public StateUpdateCommand(string stateId, string value)
         {
@@ -18,5 +19,8 @@ namespace TouchPortalSDK.Messages.Commands
             Id = stateId;
             Value = value ?? string.Empty;
         }
+
+        public Identifier GetIdentifier()
+            => new Identifier(Type, Id, default);
     }
 }

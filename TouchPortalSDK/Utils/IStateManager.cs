@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using TouchPortalSDK.Messages.Commands;
+using TouchPortalSDK.Messages.Items;
 
 namespace TouchPortalSDK.Utils
 {
@@ -8,14 +8,13 @@ namespace TouchPortalSDK.Utils
         /// <summary>
         /// Property to get all commands sent during this session.
         /// </summary>
-        IReadOnlyCollection<string> Commands { get; }
+        IReadOnlyCollection<string> Messages { get; }
 
         /// <summary>
         /// Log a command that can be restored after a restart.
         /// </summary>
-        /// <param name="touchPortalCommand"></param>
+        /// <param name="identifier"></param>
         /// <param name="jsonCommand"></param>
-        void LogCommand<TCommand>(TCommand touchPortalCommand, string jsonCommand)
-            where TCommand : ITouchPortalCommand;
+        void LogMessage(Identifier identifier, string jsonCommand);
     }
 }
