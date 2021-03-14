@@ -26,6 +26,7 @@ namespace TouchPortalSDK.Messages.Commands
             DefaultValue = defaultValue ?? string.Empty;
         }
 
+        /// <inheritdoc cref="ITouchPortalMessage" />
         public Identifier GetIdentifier()
             => new Identifier(Type, Id, default);
     }

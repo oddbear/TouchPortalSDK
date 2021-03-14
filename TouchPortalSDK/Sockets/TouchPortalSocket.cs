@@ -11,16 +11,15 @@ namespace TouchPortalSDK.Sockets
 {
     public class TouchPortalSocket : ITouchPortalSocket
     {
-        private readonly ILogger<TouchPortalSocket> _logger;
         private readonly TouchPortalOptions _options;
+        private readonly IMessageHandler _messageHandler;
+        private readonly ILogger<TouchPortalSocket> _logger;
         private readonly Socket _socket;
         private readonly Thread _listenerThread;
 
-        private StreamReader _streamReader;
         private StreamWriter _streamWriter;
-
-        private readonly IMessageHandler _messageHandler;
-
+        private StreamReader _streamReader;
+        
         public TouchPortalSocket(TouchPortalOptions options,
                                  IMessageHandler messageHandler,
                                  ILoggerFactory loggerFactory = null)
@@ -32,8 +31,9 @@ namespace TouchPortalSDK.Sockets
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _listenerThread = new Thread(ListenerThreadSync) { IsBackground = false };
         }
-        
-        public bool Connect()
+
+        /// <inheritdoc cref="ITouchPortalSocket" />
+        bool ITouchPortalSocket.Connect()
         {
             try
             {
@@ -76,8 +76,9 @@ namespace TouchPortalSDK.Sockets
                 return false;
             }
         }
-        
-        public bool Listen()
+
+        /// <inheritdoc cref="ITouchPortalSocket" />
+        bool ITouchPortalSocket.Listen()
         {
             _logger?.LogInformation("Callback method set.");
 
@@ -87,8 +88,9 @@ namespace TouchPortalSDK.Sockets
 
             return _listenerThread.IsAlive;
         }
-        
-        public bool SendMessage(string jsonMessage)
+
+        /// <inheritdoc cref="ITouchPortalSocket" />
+        bool ITouchPortalSocket.SendMessage(string jsonMessage)
         {
             if (!_socket.Connected)
             {
@@ -115,6 +117,7 @@ namespace TouchPortalSDK.Sockets
             }
         }
 
+        /// <inheritdoc cref="ITouchPortalSocket" />
         void ITouchPortalSocket.CloseSocket()
         {
             _listenerThread.Interrupt();

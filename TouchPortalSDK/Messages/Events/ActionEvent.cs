@@ -62,6 +62,10 @@ namespace TouchPortalSDK.Messages.Events
         public string GetValue(string dataId)
             => Data?.SingleOrDefault(data => data.Id == dataId)?.Value;
 
+        /// <summary>
+        /// Returns the Action type.
+        /// </summary>
+        /// <returns><see cref="Press"/> enum</returns>
         public Press GetPressState()
             => Type switch
             {
@@ -70,6 +74,7 @@ namespace TouchPortalSDK.Messages.Events
                 _ => Press.Tap
             };
 
+        /// <inheritdoc cref="ITouchPortalMessage" />
         public Identifier GetIdentifier()
             => new Identifier(Type, ActionId, default);
     }

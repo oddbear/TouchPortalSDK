@@ -19,6 +19,7 @@ namespace TouchPortalSDK.Messages.Events
         /// </summary>
         public string PageName { get; set; }
 
+        /// <inheritdoc cref="ITouchPortalMessage" />
         public Identifier GetIdentifier()
             => new Identifier(Type, PageName, default);
     }

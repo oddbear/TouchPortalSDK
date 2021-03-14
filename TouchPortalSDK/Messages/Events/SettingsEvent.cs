@@ -15,6 +15,7 @@ namespace TouchPortalSDK.Messages.Events
         /// </summary>
         public IReadOnlyCollection<Setting> Values { get; set; }
 
+        /// <inheritdoc cref="ITouchPortalMessage" />
         public Identifier GetIdentifier()
             => new Identifier(Type, default, default);
     }

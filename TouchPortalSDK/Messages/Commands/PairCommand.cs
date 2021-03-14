@@ -17,6 +17,7 @@ namespace TouchPortalSDK.Messages.Commands
             Id = pluginId;
         }
 
+        /// <inheritdoc cref="ITouchPortalMessage" />
         public Identifier GetIdentifier()
             => new Identifier(Type, Id, default);
     }
