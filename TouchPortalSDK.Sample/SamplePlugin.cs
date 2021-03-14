@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Items;
 using TouchPortalSDK.Models.Enums;
+using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Sample
 {
-    public class SamplePlugin : ITouchPortalEventHandler
+    public class SamplePlugin
     {
         public string PluginId => "TouchPortalSDK.Sample";
         
@@ -23,7 +25,16 @@ namespace TouchPortalSDK.Sample
                             ILogger<SamplePlugin> logger)
         {
             _logger = logger;
-            _client = clientFactory.Create(this);
+            _client = clientFactory.Create(new ParallelEventHandler(PluginId, 5)
+            {
+                OnClosedEventAsync = OnClosedEvent,
+                OnActionEventAsync = OnActionEvent,
+                OnBroadcastEventAsync = OnBroadcastEvent,
+                OnInfoEventAsync = OnInfoEvent,
+                OnListChangedEventAsync = OnListChangedEvent,
+                OnSettingsEventAsync = OnSettingsEvent,
+                OnUnhandledEventAsync = OnUnhandledEvent
+            });
         }
 
         public void Run()
@@ -35,12 +46,14 @@ namespace TouchPortalSDK.Sample
             SendMessages();
         }
 
-        public void OnClosedEvent(string message)
+        public Task OnClosedEvent(string message)
         {
             _logger?.LogInformation("TouchPortal Disconnected.");
             
             //Optional force exits this plugin.
             Environment.Exit(0);
+
+            return Task.CompletedTask;
         }
 
         private void SendMessages()
@@ -80,19 +93,21 @@ namespace TouchPortalSDK.Sample
         /// Information received when plugin is connected to TouchPortal.
         /// </summary>
         /// <param name="message"></param>
-        public void OnInfoEvent(InfoEvent message)
+        public Task OnInfoEvent(InfoEvent message)
         {
             _logger?.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}'");
 
             _settings = message.Settings;
             _logger?.LogInformation($"[Info] Settings: {JsonSerializer.Serialize(_settings)}");
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// User selected an item in a dropdown menu in the TouchPortal UI.
         /// </summary>
         /// <param name="message"></param>
-        public void OnListChangedEvent(ListChangeEvent message)
+        public Task OnListChangedEvent(ListChangeEvent message)
         {
             _logger?.LogInformation($"[OnListChanged] {message.ListId}/{message.ActionId}/{message.InstanceId} '{message.Value}'");
 
@@ -104,25 +119,33 @@ namespace TouchPortalSDK.Sample
                     _client.ChoiceUpdate("category1.action1.data3", new[] { $"{prefix} second 1", $"{prefix} second 2", $"{prefix} second 3" }, message.InstanceId);
                     break;
             }
+
+            return Task.CompletedTask;
         }
 
-        public void OnBroadcastEvent(BroadcastEvent message)
+        public Task OnBroadcastEvent(BroadcastEvent message)
         {
             _logger?.LogInformation($"[Broadcast] Event: '{message.Event}', PageName: '{message.PageName}'");
+
+            return Task.CompletedTask;
         }
 
-        public void OnSettingsEvent(SettingsEvent message)
+        public Task OnSettingsEvent(SettingsEvent message)
         {
             _settings = message.Values;
             _logger?.LogInformation($"[OnSettings] Settings: {JsonSerializer.Serialize(_settings)}");
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
         /// User clicked an action.
         /// </summary>
         /// <param name="message"></param>
-        public void OnActionEvent(ActionEvent message)
+        public async Task OnActionEvent(ActionEvent message)
         {
+            await Task.Delay(5000);
+
             switch (message.ActionId)
             {
                 case "category1.action1":
@@ -146,10 +169,12 @@ namespace TouchPortalSDK.Sample
             }
         }
 
-        public void OnUnhandledEvent(string jsonMessage)
+        public Task OnUnhandledEvent(string jsonMessage)
         {
             var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(jsonMessage);
             _logger?.LogWarning($"Unhandled message: {jsonDocument}");
+
+            return Task.CompletedTask;
         }
     }
 }
