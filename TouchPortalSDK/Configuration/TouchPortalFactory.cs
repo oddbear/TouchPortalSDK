@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Models;
 using TouchPortalSDK.Sockets;
 
@@ -36,29 +37,58 @@ namespace TouchPortalSDK.Configuration
     /// </summary>
     public class TouchPortalFactory : ITouchPortalSocketFactory, ITouchPortalClientFactory
     {
+        private readonly ILoggerFactory _loggerFactory;
+        private readonly TouchPortalOptions _options;
         private readonly IServiceProvider _serviceProvider;
 
+        /// <summary>
+        /// Constructor used if registered through AddTouchPortalSdk.
+        /// </summary>
         public TouchPortalFactory(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
+        
+        /// <summary>
+        /// Private so we don't expose the socket factory.
+        /// </summary>
+        private TouchPortalFactory(TouchPortalOptions options, ILoggerFactory loggerFactory)
+        {
+            _loggerFactory = loggerFactory;
+            _options = options ?? new TouchPortalOptions();
+        }
 
+        /// <summary>
+        /// Factory for creating the TouchPortal client.
+        /// </summary>
+        /// <param name="options">Optional options, if null, default values are selected.</param>
+        /// <param name="loggerFactory">Optional logger factory, if null, no logger is created.</param>
+        /// <returns></returns>
+        public static ITouchPortalClientFactory Create(TouchPortalOptions options = null, ILoggerFactory loggerFactory = null)
+            => new TouchPortalFactory(options, loggerFactory);
+        
         /// <inheritdoc cref="ITouchPortalSocketFactory" />
-        public ITouchPortalSocket Create(IMessageHandler messageHandler)
+        ITouchPortalSocket ITouchPortalSocketFactory.Create(IMessageHandler messageHandler)
         {
             if (messageHandler is null)
                 throw new ArgumentNullException(nameof(messageHandler));
-
-            return ActivatorUtilities.CreateInstance<TouchPortalSocket>(_serviceProvider, messageHandler);
+            
+            return _serviceProvider is null
+                //Manual:
+                ? new TouchPortalSocket(_options, messageHandler, _loggerFactory)
+                //Through ServiceProvider:
+                : ActivatorUtilities.CreateInstance<TouchPortalSocket>(_serviceProvider, messageHandler);
         }
 
         /// <inheritdoc cref="ITouchPortalClientFactory" />
-        public ITouchPortalClient Create(ITouchPortalEventHandler eventHandler)
+        ITouchPortalClient ITouchPortalClientFactory.Create(ITouchPortalEventHandler eventHandler)
         {
             if (eventHandler is null)
                 throw new ArgumentNullException(nameof(eventHandler));
-
-            return ActivatorUtilities.CreateInstance<TouchPortalClient>(_serviceProvider, eventHandler);
+            
+            return _serviceProvider is null
+                ? new TouchPortalClient(eventHandler, this, _loggerFactory)
+                : ActivatorUtilities.CreateInstance<TouchPortalClient>(_serviceProvider, eventHandler);
         }
     }
 }

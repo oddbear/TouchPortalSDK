@@ -11,23 +11,26 @@ namespace TouchPortalSDK.Sample
     {
         static void Main(string[] args)
         {
-            //Add configuration:
+            //Build configuration:
             var configurationRoot = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
                 .AddJsonFile("appsettings.json")
                 .Build();
 
             //Standard method for build a ServiceProvider in .Net,
-            // you can use any other IoC container, or no at all if you want:
+            // you can use any other IoC container, or no container.
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging(configure => configure.AddSimpleConsole(options => options.TimestampFormat = "[yyyy.MM.dd HH:mm:ss] "));
-            serviceCollection.AddTouchPortalSdk<SamplePlugin>(configurationRoot);
             
+            //Registering the Plugin to the IoC container:
+            serviceCollection.AddTouchPortalSdk<SamplePlugin>(configurationRoot);
+
             var serviceProvider = serviceCollection.BuildServiceProvider(true);
 
+            //Use your IoC framework to resolve the plugin with it's dependencies,
+            // or you can use 'TouchPortalFactory.Create' to get started manually:
             var plugin = serviceProvider.GetRequiredService<SamplePlugin>();
-            plugin.Connect();
-            plugin.SendMessages();
+            plugin.Run();
         }
     }
 }

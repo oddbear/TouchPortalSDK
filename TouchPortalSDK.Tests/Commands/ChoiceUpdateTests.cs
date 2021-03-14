@@ -5,7 +5,6 @@ using NUnit.Framework;
 using TouchPortalSDK.Sockets;
 using TouchPortalSDK.Tests.Commands.Extensions;
 using TouchPortalSDK.Tests.Fixtures;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Tests.Commands
 {
@@ -13,7 +12,7 @@ namespace TouchPortalSDK.Tests.Commands
     {
         [Theory]
         [AutoMoqData]
-        public void Success(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket, [Frozen] Mock<IStateManager> stateManager)
+        public void Success(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(true);
 
@@ -24,21 +23,17 @@ namespace TouchPortalSDK.Tests.Commands
             var parameter = socket.SendMessage_Parameter();
             StringAssert.Contains("\"choiceUpdate\"", parameter);
             StringAssert.Contains(stateId, parameter);
-
-            stateManager.LogMessage_Verify(Times.Once);
         }
 
         [Theory]
         [AutoMoqData]
-        public void Failed(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket, [Frozen] Mock<IStateManager> stateManager)
+        public void Failed(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(false);
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ChoiceUpdate(stateId, values, instanceId);
             Assert.False(result);
-
-            stateManager.LogMessage_Verify(Times.Never);
         }
 
         [Theory]

@@ -8,11 +8,9 @@ using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Messages;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
-using TouchPortalSDK.Messages.Items;
 using TouchPortalSDK.Models;
 using TouchPortalSDK.Models.Enums;
 using TouchPortalSDK.Sockets;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK
 {
@@ -24,27 +22,21 @@ namespace TouchPortalSDK
         private readonly ITouchPortalSocket _touchPortalSocket;
 
         private readonly ManualResetEvent _infoWaitHandle;
-        private readonly IStateManager _stateManager;
-        private readonly ICommandStore _commandStore;
 
         private InfoEvent _lastInfoEvent;
         
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
                                  ITouchPortalSocketFactory socketFactory,
-                                 IStateManager stateManager,
-                                 ICommandStore commandStore,
-                                 ILogger<TouchPortalClient> logger = null)
+                                 ILoggerFactory loggerFactory = null)
         {
             if (string.IsNullOrWhiteSpace(eventHandler?.PluginId))
                 throw new InvalidOperationException($"{nameof(ITouchPortalEventHandler)}: PluginId cannot be null or empty.");
 
             _eventHandler = eventHandler;
             _touchPortalSocket = socketFactory.Create(this);
-            _logger = logger;
+            _logger = loggerFactory?.CreateLogger<TouchPortalClient>();
 
             _infoWaitHandle = new ManualResetEvent(false);
-            _stateManager = stateManager;
-            _commandStore = commandStore;
         }
         
         #region Setup
@@ -78,22 +70,7 @@ namespace TouchPortalSDK
             
             return _lastInfoEvent != null;
         }
-
-        /// <inheritdoc cref="ITouchPortalClient" />
-        void ITouchPortalClient.RestoreState(string stateFile)
-        {
-            var commands = _commandStore.LoadCommands(stateFile);
-
-            foreach (var jsonMessage in commands)
-                _touchPortalSocket.SendMessage(jsonMessage);
-        }
-
-        /// <inheritdoc cref="ITouchPortalClient" />
-        void ITouchPortalClient.SaveState(string stateFile)
-        {
-            _commandStore.StoreCommands(stateFile, _stateManager.Messages);
-        }
-
+        
         /// <inheritdoc cref="ITouchPortalClient" />
         void ITouchPortalClient.Close()
             => Close("Closed by plugin.");
@@ -184,7 +161,7 @@ namespace TouchPortalSDK
         {
             var jsonMessage = JsonSerializer.Serialize(command, Options.JsonSerializerOptions);
 
-            var success = SendCommandMessage(command.GetIdentifier(), jsonMessage);
+            var success = _touchPortalSocket.SendMessage(jsonMessage);
 
             _logger?.LogInformation($"[{callerMemberName}] sent: '{success}'.");
             return success;
@@ -193,16 +170,7 @@ namespace TouchPortalSDK
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.SendMessage(string message)
             => _touchPortalSocket.SendMessage(message);
-
-        public bool SendCommandMessage(Identifier identifier, string message)
-        {
-            var success = _touchPortalSocket.SendMessage(message);
-            if (success && !identifier.Equals(default(Identifier)))
-                _stateManager.LogMessage(identifier, message);
-
-            return success;
-        }
-
+        
         #endregion
 
         #region TouchPortal Event Handler

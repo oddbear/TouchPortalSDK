@@ -5,7 +5,6 @@ using NUnit.Framework;
 using TouchPortalSDK.Sockets;
 using TouchPortalSDK.Tests.Commands.Extensions;
 using TouchPortalSDK.Tests.Fixtures;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Tests.Commands
 {
@@ -13,7 +12,7 @@ namespace TouchPortalSDK.Tests.Commands
     {
         [Theory]
         [AutoMoqData]
-        public void Success(string name, string value, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket, [Frozen] Mock<IStateManager> stateManager)
+        public void Success(string name, string value, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(true);
 
@@ -25,21 +24,17 @@ namespace TouchPortalSDK.Tests.Commands
             StringAssert.Contains("\"settingUpdate\"", parameter);
             StringAssert.Contains(name, parameter);
             StringAssert.Contains(value, parameter);
-
-            stateManager.LogMessage_Verify(Times.Once);
         }
 
         [Theory]
         [AutoMoqData]
-        public void Failed(string name, string value, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket, [Frozen] Mock<IStateManager> stateManager)
+        public void Failed(string name, string value, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(false);
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.SettingUpdate(name, value);
             Assert.False(result);
-
-            stateManager.LogMessage_Verify(Times.Never);
         }
 
         [Theory]

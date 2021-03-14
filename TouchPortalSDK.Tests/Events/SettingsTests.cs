@@ -4,10 +4,7 @@ using Moq;
 using NUnit.Framework;
 using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Models;
-using TouchPortalSDK.Sockets;
-using TouchPortalSDK.Tests.Commands.Extensions;
 using TouchPortalSDK.Tests.Fixtures;
-using TouchPortalSDK.Utils;
 
 namespace TouchPortalSDK.Tests.Events
 {
