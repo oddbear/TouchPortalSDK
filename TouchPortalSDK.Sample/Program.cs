@@ -23,7 +23,8 @@ namespace TouchPortalSDK.Sample
             serviceCollection.AddLogging(configure => configure.AddSimpleConsole(options => options.TimestampFormat = "[yyyy.MM.dd HH:mm:ss] "));
             
             //Registering the Plugin to the IoC container:
-            serviceCollection.AddTouchPortalSdk<SamplePlugin>(configurationRoot);
+            serviceCollection.AddTouchPortalSdk(configurationRoot);
+            serviceCollection.AddSingleton<SamplePlugin>();
 
             var serviceProvider = serviceCollection.BuildServiceProvider(true);
 
