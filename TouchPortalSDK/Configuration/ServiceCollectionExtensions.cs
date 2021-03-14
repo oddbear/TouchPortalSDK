@@ -11,7 +11,8 @@ namespace TouchPortalSDK.Configuration
             where TTouchPortalEventHandler : class, ITouchPortalEventHandler
         {
             //Add configuration:
-            serviceCollection.Configure<TouchPortalOptions>(touchPortalOptions => configuration.GetSection("TouchPortalOptions").Bind(touchPortalOptions));
+            if (configuration != null)
+                serviceCollection.Configure<TouchPortalOptions>(touchPortalOptions => configuration.GetSection("TouchPortalOptions").Bind(touchPortalOptions));
             serviceCollection.AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IOptions<TouchPortalOptions>>().Value);
 
             //Force ITouchPortalPlugin to be the same as the TTouchPortalPlugin singleton:
@@ -19,7 +20,7 @@ namespace TouchPortalSDK.Configuration
             serviceCollection.AddSingleton<ITouchPortalEventHandler>(serviceProvider => serviceProvider.GetRequiredService<TTouchPortalEventHandler>());
 
             //Add services, only expose Interfaces:
-            serviceCollection.AddTransient<TouchPortalFactory>();
+            serviceCollection.AddTransient(serviceProvider => new TouchPortalFactory(serviceProvider));
             serviceCollection.AddTransient<ITouchPortalSocketFactory>(serviceProvider => serviceProvider.GetRequiredService<TouchPortalFactory>());
             serviceCollection.AddTransient<ITouchPortalClientFactory>(serviceProvider => serviceProvider.GetRequiredService<TouchPortalFactory>());
         }

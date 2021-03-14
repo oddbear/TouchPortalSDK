@@ -23,11 +23,11 @@ namespace TouchPortalSDK.Sockets
 
         public TouchPortalSocket(TouchPortalOptions options,
                                  IMessageHandler messageHandler,
-                                 ILogger<TouchPortalSocket> logger = null)
+                                 ILoggerFactory loggerFactory = null)
         {
             _options = options;
             _messageHandler = messageHandler;
-            _logger = logger;
+            _logger = loggerFactory?.CreateLogger<TouchPortalSocket>();
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _listenerThread = new Thread(ListenerThreadSync) { IsBackground = false };

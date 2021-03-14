@@ -26,21 +26,24 @@ namespace TouchPortalSDK.Sample
             _client = clientFactory.Create(this);
         }
 
-        //Connect to TouchPortal:
-        public void Connect()
+        public void Run()
         {
+            //Connect to TouchPortal:
             _client.Connect();
+
+            //Start sending messages:
+            SendMessages();
         }
 
         public void OnClosedEvent(string message)
         {
-            _logger.LogInformation("TouchPortal Disconnected.");
+            _logger?.LogInformation("TouchPortal Disconnected.");
             
             //Optional force exits this plugin.
             Environment.Exit(0);
         }
 
-        public void SendMessages()
+        private void SendMessages()
         {
             //Update choices (dropdown in UI when creating an action):
             _client.ChoiceUpdate("category1.action1.data2", new[] { "choice 1 (updated)", "choice 2 (updated)", "choice 3 (updated)" });
@@ -79,10 +82,10 @@ namespace TouchPortalSDK.Sample
         /// <param name="message"></param>
         public void OnInfoEvent(InfoEvent message)
         {
-            _logger.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}'");
+            _logger?.LogInformation($"[Info] VersionCode: '{message.TpVersionCode}', VersionString: '{message.TpVersionString}', SDK: '{message.SdkVersion}', PluginVersion: '{message.PluginVersion}', Status: '{message.Status}'");
 
             _settings = message.Settings;
-            _logger.LogInformation($"[Info] Settings: {JsonSerializer.Serialize(_settings)}");
+            _logger?.LogInformation($"[Info] Settings: {JsonSerializer.Serialize(_settings)}");
         }
 
         /// <summary>
@@ -91,7 +94,7 @@ namespace TouchPortalSDK.Sample
         /// <param name="message"></param>
         public void OnListChangedEvent(ListChangeEvent message)
         {
-            _logger.LogInformation($"[OnListChanged] {message.ListId}/{message.ActionId}/{message.InstanceId} '{message.Value}'");
+            _logger?.LogInformation($"[OnListChanged] {message.ListId}/{message.ActionId}/{message.InstanceId} '{message.Value}'");
 
             switch (message.ListId)
             {
@@ -105,13 +108,13 @@ namespace TouchPortalSDK.Sample
 
         public void OnBroadcastEvent(BroadcastEvent message)
         {
-            _logger.LogInformation($"[Broadcast] Event: '{message.Event}', PageName: '{message.PageName}'");
+            _logger?.LogInformation($"[Broadcast] Event: '{message.Event}', PageName: '{message.PageName}'");
         }
 
         public void OnSettingsEvent(SettingsEvent message)
         {
             _settings = message.Values;
-            _logger.LogInformation($"[OnSettings] Settings: {JsonSerializer.Serialize(_settings)}");
+            _logger?.LogInformation($"[OnSettings] Settings: {JsonSerializer.Serialize(_settings)}");
         }
 
         /// <summary>
@@ -133,12 +136,12 @@ namespace TouchPortalSDK.Sample
                     var data6 = message.GetValue("category1.action1.data6") ?? "<null>";
                     var data7 = message.GetValue("category1.action1.data7") ?? "<null>";
                     var data8 = message.GetValue("category1.action1.data8") ?? "<null>";
-                    _logger.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: data1:'{data1}', data2:'{data2}', data3:'{data3}', data4:'{data4}', data5:'{data5}', data6:'{data6}', data7:'{data7}', data8:'{data8}'");
+                    _logger?.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: data1:'{data1}', data2:'{data2}', data3:'{data3}', data4:'{data4}', data5:'{data5}', data6:'{data6}', data7:'{data7}', data8:'{data8}'");
                     break;
 
                 default:
                     var data = string.Join(", ", message.Data.Select(dataItem => $"\"{dataItem.Id}\":\"{dataItem.Value}\""));
-                    _logger.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: '{data}'");
+                    _logger?.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: '{data}'");
                     break;
             }
         }
@@ -146,7 +149,7 @@ namespace TouchPortalSDK.Sample
         public void OnUnhandledEvent(string jsonMessage)
         {
             var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(jsonMessage);
-            _logger.LogWarning($"Unhandled message: {jsonDocument}");
+            _logger?.LogWarning($"Unhandled message: {jsonDocument}");
         }
     }
 }

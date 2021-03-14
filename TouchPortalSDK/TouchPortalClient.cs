@@ -27,14 +27,14 @@ namespace TouchPortalSDK
         
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
                                  ITouchPortalSocketFactory socketFactory,
-                                 ILogger<TouchPortalClient> logger = null)
+                                 ILoggerFactory loggerFactory = null)
         {
             if (string.IsNullOrWhiteSpace(eventHandler?.PluginId))
                 throw new InvalidOperationException($"{nameof(ITouchPortalEventHandler)}: PluginId cannot be null or empty.");
 
             _eventHandler = eventHandler;
             _touchPortalSocket = socketFactory.Create(this);
-            _logger = logger;
+            _logger = loggerFactory?.CreateLogger<TouchPortalClient>();
 
             _infoWaitHandle = new ManualResetEvent(false);
         }
