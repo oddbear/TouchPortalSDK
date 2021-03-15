@@ -3,8 +3,9 @@ using AutoFixture;
 using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
-using TouchPortalSDK.Models.Enums;
-using TouchPortalSDK.Sockets;
+using TouchPortalSDK.Clients;
+using TouchPortalSDK.Interfaces;
+using TouchPortalSDK.Messages.Models.Enums;
 using TouchPortalSDK.Tests.Commands.Extensions;
 using TouchPortalSDK.Tests.Fixtures;
 

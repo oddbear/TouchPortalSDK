@@ -1,4 +1,4 @@
-﻿namespace TouchPortalSDK.Messages.Items
+﻿namespace TouchPortalSDK.Messages.Models
 {
     public readonly struct Identifier
     {

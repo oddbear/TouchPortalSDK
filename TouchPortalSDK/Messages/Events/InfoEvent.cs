@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using TouchPortalSDK.Messages.Items;
+using TouchPortalSDK.Interfaces;
+using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Events
 {

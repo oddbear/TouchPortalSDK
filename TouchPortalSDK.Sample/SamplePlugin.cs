@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using TouchPortalSDK.Configuration;
+using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Events;
-using TouchPortalSDK.Messages.Items;
-using TouchPortalSDK.Models.Enums;
+using TouchPortalSDK.Messages.Models;
+using TouchPortalSDK.Messages.Models.Enums;
 
 namespace TouchPortalSDK.Sample
 {

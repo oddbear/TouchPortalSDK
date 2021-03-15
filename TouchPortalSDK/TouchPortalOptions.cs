@@ -1,4 +1,4 @@
-﻿namespace TouchPortalSDK.Models
+﻿namespace TouchPortalSDK
 {
     public class TouchPortalOptions
     {

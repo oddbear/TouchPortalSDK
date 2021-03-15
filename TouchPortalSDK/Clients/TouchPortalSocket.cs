@@ -5,9 +5,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using TouchPortalSDK.Models;
+using TouchPortalSDK.Interfaces;
 
-namespace TouchPortalSDK.Sockets
+namespace TouchPortalSDK.Clients
 {
     public class TouchPortalSocket : ITouchPortalSocket
     {

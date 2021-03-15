@@ -1,4 +1,4 @@
-﻿namespace TouchPortalSDK.Models.Enums
+﻿namespace TouchPortalSDK.Messages.Models.Enums
 {
     /// <summary>
     /// Allowed data types for DataValue

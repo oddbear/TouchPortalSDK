@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TouchPortalSDK.Models
+namespace TouchPortalSDK.Interfaces
 {
     public interface IMessageHandler
     {

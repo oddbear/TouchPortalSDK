@@ -1,13 +1,13 @@
 ﻿using System.Text.Json;
-using TouchPortalSDK.Messages;
+using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 
 namespace TouchPortalSDK.Configuration
 {
-    public static class MessageResolver
+    internal static class MessageResolver
     {
-        public static ITouchPortalMessage ResolveMessage(string message)
+        internal static ITouchPortalMessage ResolveMessage(string message)
         {
             //Is the message a valid object?
             var jsonDocument = GenericDocument(message);

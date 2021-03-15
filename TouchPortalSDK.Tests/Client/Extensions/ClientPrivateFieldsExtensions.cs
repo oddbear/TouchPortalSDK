@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using TouchPortalSDK.Clients;
+using TouchPortalSDK.Interfaces;
 
 namespace TouchPortalSDK.Tests.Client.Extensions
 {
