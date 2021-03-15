@@ -1,6 +1,6 @@
-﻿using TouchPortalSDK.Models.Enums;
+﻿using TouchPortalSDK.Messages.Models.Enums;
 
-namespace TouchPortalSDK
+namespace TouchPortalSDK.Interfaces
 {
     public interface ICommandHandler
     {
@@ -69,19 +69,5 @@ namespace TouchPortalSDK
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
         bool UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = default);
-    }
-
-    public interface ITouchPortalClient : ICommandHandler
-    {
-        /// <summary>
-        /// Connects, pairs, and listens to the TouchPortal application.
-        /// </summary>
-        /// <returns>connection success status</returns>
-        bool Connect();
-
-        /// <summary>
-        /// Closes the connection to TouchPortal and shutdowns the plugin in a safe manner.
-        /// </summary>
-        void Close();
     }
 }

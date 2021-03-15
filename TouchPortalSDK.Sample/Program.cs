@@ -17,8 +17,7 @@ namespace TouchPortalSDK.Sample
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            //Standard method for build a ServiceProvider in .Net,
-            // you can use any other IoC container, or no container.
+            //Standard method for build a ServiceProvider in .Net:
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddLogging(configure => configure.AddSimpleConsole(options => options.TimestampFormat = "[yyyy.MM.dd HH:mm:ss] "));
             
@@ -29,7 +28,7 @@ namespace TouchPortalSDK.Sample
             var serviceProvider = serviceCollection.BuildServiceProvider(true);
 
             //Use your IoC framework to resolve the plugin with it's dependencies,
-            // or you can use 'TouchPortalFactory.Create' to get started manually:
+            // or you can use 'TouchPortalFactory.CreateClient' to get started manually:
             var plugin = serviceProvider.GetRequiredService<SamplePlugin>();
             plugin.Run();
         }

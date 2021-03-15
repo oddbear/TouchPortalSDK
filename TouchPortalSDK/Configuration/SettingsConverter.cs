@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using TouchPortalSDK.Messages.Items;
+using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Configuration
 {
-    public class SettingsConverter : JsonConverter<IReadOnlyCollection<Setting>>
+    internal class SettingsConverter : JsonConverter<IReadOnlyCollection<Setting>>
     {
         public override IReadOnlyCollection<Setting> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {

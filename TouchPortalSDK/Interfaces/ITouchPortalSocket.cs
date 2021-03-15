@@ -1,4 +1,4 @@
-﻿namespace TouchPortalSDK.Sockets
+﻿namespace TouchPortalSDK.Interfaces
 {
     public interface ITouchPortalSocket
     {

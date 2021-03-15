@@ -3,9 +3,9 @@ using System.Text.Json.Serialization;
 
 namespace TouchPortalSDK.Configuration
 {
-    public static class Options
+    internal static class Options
     {
-        public static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions
+        internal static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             IgnoreNullValues = true,

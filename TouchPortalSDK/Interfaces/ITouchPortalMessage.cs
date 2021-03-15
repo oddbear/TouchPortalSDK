@@ -1,6 +1,6 @@
-﻿using TouchPortalSDK.Messages.Items;
+﻿using TouchPortalSDK.Messages.Models;
 
-namespace TouchPortalSDK.Messages
+namespace TouchPortalSDK.Interfaces
 {
     public interface ITouchPortalMessage
     { 

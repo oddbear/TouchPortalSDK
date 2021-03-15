@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using TouchPortalSDK.Models;
+using TouchPortalSDK.Interfaces;
 
 namespace TouchPortalSDK.Configuration
 {
@@ -15,9 +15,9 @@ namespace TouchPortalSDK.Configuration
             serviceCollection.AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IOptions<TouchPortalOptions>>().Value);
             
             //Add services, only expose Interfaces:
-            serviceCollection.AddTransient(serviceProvider => new TouchPortalFactory(serviceProvider));
-            serviceCollection.AddTransient<ITouchPortalSocketFactory>(serviceProvider => serviceProvider.GetRequiredService<TouchPortalFactory>());
-            serviceCollection.AddTransient<ITouchPortalClientFactory>(serviceProvider => serviceProvider.GetRequiredService<TouchPortalFactory>());
+            serviceCollection.AddTransient(serviceProvider => new ServiceProviderFactory(serviceProvider));
+            serviceCollection.AddTransient<ITouchPortalSocketFactory>(serviceProvider => serviceProvider.GetRequiredService<ServiceProviderFactory>());
+            serviceCollection.AddTransient<ITouchPortalClientFactory>(serviceProvider => serviceProvider.GetRequiredService<ServiceProviderFactory>());
         }
     }
 }

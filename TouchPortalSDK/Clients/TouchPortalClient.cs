@@ -5,14 +5,12 @@ using System.Text.Json;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
-using TouchPortalSDK.Messages;
+using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
-using TouchPortalSDK.Models;
-using TouchPortalSDK.Models.Enums;
-using TouchPortalSDK.Sockets;
+using TouchPortalSDK.Messages.Models.Enums;
 
-namespace TouchPortalSDK
+namespace TouchPortalSDK.Clients
 {
     [SuppressMessage("Critical Code Smell", "S1006:Method overrides should not change parameter defaults", Justification = "Service resolved from IoC framework.")]
     public class TouchPortalClient : ITouchPortalClient, IMessageHandler

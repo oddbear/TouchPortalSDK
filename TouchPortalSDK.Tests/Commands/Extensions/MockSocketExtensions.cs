@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Moq;
 using Moq.Language.Flow;
-using TouchPortalSDK.Sockets;
+using TouchPortalSDK.Interfaces;
 
 namespace TouchPortalSDK.Tests.Commands.Extensions
 {
