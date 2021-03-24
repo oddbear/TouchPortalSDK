@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
-    <Version>0.23.0-beta-004</Version>
+    <Version>0.23.0-beta-005</Version>
     <Authors>Oddbjørn U. Bakke</Authors>
     <PackageProjectUrl>https://github.com/oddbear/TouchPortalSDK</PackageProjectUrl>
     <RepositoryUrl>https://github.com/oddbear/TouchPortalSDK</RepositoryUrl>

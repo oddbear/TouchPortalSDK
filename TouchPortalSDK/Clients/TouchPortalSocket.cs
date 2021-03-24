@@ -45,9 +45,12 @@ namespace TouchPortalSDK.Clients
 
                 _logger?.LogInformation("TouchPortal connected.");
 
+                //The encoder needs to be without a BOM / Utf8 Identifier:
+                var encoder = new UTF8Encoding(false);
+
                 //Setup streams:
-                _streamWriter = new StreamWriter(new NetworkStream(_socket), Encoding.ASCII) {AutoFlush = true};
-                _streamReader = new StreamReader(new NetworkStream(_socket), Encoding.UTF8);
+                _streamWriter = new StreamWriter(new NetworkStream(_socket), encoder) {AutoFlush = true, };
+                _streamReader = new StreamReader(new NetworkStream(_socket), encoder);
 
                 _logger?.LogInformation("Streams created.");
 
