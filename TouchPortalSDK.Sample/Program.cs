@@ -19,7 +19,11 @@ namespace TouchPortalSDK.Sample
 
             //Standard method for build a ServiceProvider in .Net:
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddLogging(configure => configure.AddSimpleConsole(options => options.TimestampFormat = "[yyyy.MM.dd HH:mm:ss] "));
+            serviceCollection.AddLogging(configure =>
+            {
+                configure.AddSimpleConsole(options => options.TimestampFormat = "[yyyy.MM.dd HH:mm:ss] ");
+                configure.AddConfiguration(configurationRoot.GetSection("Logging"));
+            });
             
             //Registering the Plugin to the IoC container:
             serviceCollection.AddTouchPortalSdk(configurationRoot);
