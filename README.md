@@ -1,5 +1,5 @@
 # Touch Portal .Net SDK
-[![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/TouchPortalSDK)](https://www.nuget.org/packages/TouchPortalSDK)
+[![Nuget](https://img.shields.io/nuget/v/TouchPortalSDK)](https://www.nuget.org/packages/TouchPortalSDK) [![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/TouchPortalSDK)](https://www.nuget.org/packages/TouchPortalSDK)
 
 Touch Portal SDK for making plugins in .Net
 
