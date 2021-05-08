@@ -4,7 +4,7 @@
 Touch Portal SDK for making plugins in .Net
 
 Build from documentation at [Touch Portal API](https://www.touch-portal.com/api/).
- 
+
 ### Getting started:
 
 The simplest way of getting started, is to implement the `ITouchPortalEventHandler` and use `TouchPortalFactory` to create a client.
@@ -28,3 +28,5 @@ public class SamplePlugin : ITouchPortalEventHandler
     }
     ...
 ```
+
+More information on the [Wiki](https://github.com/oddbear/TouchPortalSDK/wiki), or se the Sample probject in this repository.
