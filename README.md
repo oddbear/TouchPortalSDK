@@ -3,7 +3,7 @@
 
 Touch Portal SDK for making plugins in .Net
 
-Build from documentation at [Touch Portal API](https://www.touch-portal.com/api/).
+Build from documentation at [Touch Portal Plugin API](https://www.touch-portal.com/api/).
 
 ### Getting started:
 
