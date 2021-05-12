@@ -29,4 +29,4 @@ public class SamplePlugin : ITouchPortalEventHandler
     ...
 ```
 
-More information on the [Wiki](https://github.com/oddbear/TouchPortalSDK/wiki), or se the Sample probject in this repository.
+More information on the [Wiki](https://github.com/oddbear/TouchPortalSDK/wiki), or see the Sample project in this repository.
