@@ -11,7 +11,7 @@ namespace TouchPortalSDK.Configuration
         {
             //Add configuration:
             if (configuration != null)
-                serviceCollection.Configure<TouchPortalOptions>(touchPortalOptions => configuration.GetSection("TouchPortalOptions").Bind(touchPortalOptions));
+                serviceCollection.Configure<TouchPortalOptions>(configuration.GetSection("TouchPortalOptions"));
             serviceCollection.AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IOptions<TouchPortalOptions>>().Value);
             
             //Add services, only expose Interfaces:
