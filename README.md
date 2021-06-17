@@ -30,3 +30,12 @@ public class SamplePlugin : ITouchPortalEventHandler
 ```
 
 More information on the [Wiki](https://github.com/oddbear/TouchPortalSDK/wiki), or see the Sample project in this repository.
+
+### [Work in progress] Extensions
+
+Repository: [TouchPortalSDK.Extensions](https://github.com/oddbear/TouchPortalSDK.Extensions)
+
+The TouchPortalSDK is ment to be the basic simple SDK, but there is an extended version aim to be like the [Java SDK](https://github.com/ChristopheCVB/TouchPortalPluginSDK).
+
+* Automatic generation of `entry.tp`
+* Automatic generation of `.tpp` package file.
