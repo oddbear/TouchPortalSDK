@@ -48,6 +48,8 @@ namespace TouchPortalSDK.Configuration
                     return JsonSerializer.Deserialize<StateUpdateCommand>(message, Options.JsonSerializerOptions);
                 case "updateActionData":
                     return JsonSerializer.Deserialize<UpdateActionDataCommand>(message, Options.JsonSerializerOptions);
+                case "connectorChange":
+                    return JsonSerializer.Deserialize<ConnectorChangeEvent>(message, Options.JsonSerializerOptions);
                 default:
                     return null;
             }
