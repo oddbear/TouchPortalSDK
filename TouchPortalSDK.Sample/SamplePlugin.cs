@@ -72,7 +72,9 @@ namespace TouchPortalSDK.Sample
 
             //Updates the min and max value of the number field.
             _client.UpdateActionData("category1.action1.data4", 10, 15, ActionDataType.Number);
-            
+
+            _client.ShowNotification($"TouchPortal.SamplePlugin|New Plugin Version 1.0", "SamplePlugin: new version", "Please update to version 1.0, this version is awesome!");
+
             //_client.Close()
         }
 
@@ -148,6 +150,13 @@ namespace TouchPortalSDK.Sample
 
         public void OnUnhandledEvent(string jsonMessage)
         {
+            //Example for opening a web browser (not tested on mac yet):
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = "https://www.nuget.org/packages/TouchPortalSDK/"
+            });
+
             var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(jsonMessage);
             _logger?.LogWarning($"Unhandled message: {jsonDocument}");
         }

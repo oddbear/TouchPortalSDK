@@ -69,5 +69,7 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
         bool UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = default);
+
+        bool ShowNotification(string notificationId, string title, string message);
     }
 }

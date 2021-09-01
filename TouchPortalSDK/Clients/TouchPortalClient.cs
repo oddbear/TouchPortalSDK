@@ -154,6 +154,24 @@ namespace TouchPortalSDK.Clients
             return SendCommand(command);
         }
 
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ShowNotification(string notificationId, string title, string message)
+        {
+            if (string.IsNullOrWhiteSpace(notificationId))
+                return false;
+
+            if (string.IsNullOrWhiteSpace(title))
+                return false;
+
+            if (string.IsNullOrWhiteSpace(message))
+                return false;
+
+            //TODO: Options:
+            var command = new ShowNotificationCommand(notificationId, title, message);
+
+            return SendCommand(command);
+        }
+
         public bool SendCommand<TCommand>(TCommand command, [CallerMemberName]string callerMemberName = "")
             where TCommand : ITouchPortalMessage
         {
