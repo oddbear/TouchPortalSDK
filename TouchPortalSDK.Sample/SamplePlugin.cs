@@ -28,7 +28,7 @@ namespace TouchPortalSDK.Sample
 
         public void Run()
         {
-            //Connect to TouchPortal:
+            //Connect to Touch Portal:
             _client.Connect();
 
             //Start sending messages:
@@ -64,11 +64,11 @@ namespace TouchPortalSDK.Sample
             //Updates the static state (entry.tp):
             _client.StateUpdate("category1.staticstate1", "s1");
 
-            //Custom states (Global Objects/left panel in TouchPortal UI), user adds this (states.tp in %AppData%/TouchPortal).
+            //Custom states (Global Objects/left panel in Touch Portal UI), user adds this (states.tp in %AppData%/TouchPortal).
             //The user should add this manually in the UI:
             _client.StateUpdate("global.customState1", "c2");
 
-            //Updates settings in TouchPortal settings:
+            //Updates settings in Touch Portal settings:
             _client.SettingUpdate("Test3", DateTime.UtcNow.ToString("yyyyMMddHHmmss"));
 
             //Updates the min and max value of the number field.
@@ -80,11 +80,14 @@ namespace TouchPortalSDK.Sample
                 new NotificationOptions { Id = "readMore", Title = "Read more..." }
             });
 
+            //Updates a connector/slider value.
+            _client.ConnectorUpdate("tp_dotnet_sample_connector_001", 10);
+
             //_client.Close()
         }
 
         /// <summary>
-        /// Information received when plugin is connected to TouchPortal.
+        /// Information received when plugin is connected to Touch Portal.
         /// </summary>
         /// <param name="message"></param>
         public void OnInfoEvent(InfoEvent message)
@@ -96,7 +99,7 @@ namespace TouchPortalSDK.Sample
         }
 
         /// <summary>
-        /// User selected an item in a dropdown menu in the TouchPortal UI.
+        /// User selected an item in a dropdown menu in the Touch Portal UI.
         /// </summary>
         /// <param name="message"></param>
         public void OnListChangedEvent(ListChangeEvent message)
@@ -119,6 +122,7 @@ namespace TouchPortalSDK.Sample
         /// <param name="message"></param>
         public void OnBroadcastEvent(BroadcastEvent message)
         {
+            //Use this to reapply all state... Some times if you update the state, and the page is not visible, it will not be reflected in the app.
             _logger?.LogInformation($"[Broadcast] Event: '{message.Event}', PageName: '{message.PageName}'");
         }
 
@@ -155,8 +159,12 @@ namespace TouchPortalSDK.Sample
                     break;
 
                 default:
-                    var data = string.Join(", ", message.Data.Select(dataItem => $"\"{dataItem.Id}\":\"{dataItem.Value}\""));
-                    _logger?.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: '{data}'");
+                    var dataArray = message.Data
+                        .Select(dataItem => $"\"{dataItem.Id}\":\"{dataItem.Value}\"")
+                        .ToArray();
+
+                    var dataString = string.Join(", ", dataArray);
+                    _logger?.LogInformation($"[OnAction] PressState: {message.GetPressState()}, ActionId: {message.ActionId}, Data: '{dataString}'");
                     break;
             }
         }
@@ -190,6 +198,16 @@ namespace TouchPortalSDK.Sample
                         break;
                 }
             }
+        }
+
+        public void OnConnecterChangeEvent(ConnectorChangeEvent message)
+        {
+            var dataArray = message.Data
+                .Select(dataItem => $"\"{dataItem.Id}\":\"{dataItem.Value}\"")
+                .ToArray();
+
+            var dataString = string.Join(", ", dataArray);
+            _logger?.LogInformation($"[OnConnecterChangeEvent] ConnectorId: '{message.ConnectorId}', Value: '{message.Value}', Data: '{dataString}'");
         }
 
         /// <summary>

@@ -175,6 +175,23 @@ namespace TouchPortalSDK.Clients
             return SendCommand(command);
         }
 
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ConnectorUpdate(string connectorId, int value)
+        {
+            if (string.IsNullOrWhiteSpace(connectorId))
+                return false;
+
+            if (value < 0 || value > 100)
+                return false;
+
+            var command = new ConnectorUpdateCommand(_eventHandler.PluginId, connectorId, value);
+
+            if (command.ConnectorId.Length > 200)
+                return false;
+
+            return SendCommand(command);
+        }
+
         public bool SendCommand<TCommand>(TCommand command, [CallerMemberName]string callerMemberName = "")
             where TCommand : ITouchPortalMessage
         {
@@ -220,6 +237,9 @@ namespace TouchPortalSDK.Clients
                     return;
                 case NotificationOptionClickedEvent notificationEvent:
                     _eventHandler.OnNotificationOptionClickedEvent(notificationEvent);
+                    return;
+                case ConnectorChangeEvent connectorChangeEvent:
+                    _eventHandler.OnConnecterChangeEvent(connectorChangeEvent);
                     return;
                 //All of Action, Up, Down:
                 case ActionEvent actionEvent:

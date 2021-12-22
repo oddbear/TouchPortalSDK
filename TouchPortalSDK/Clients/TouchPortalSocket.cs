@@ -66,15 +66,15 @@ namespace TouchPortalSDK.Clients
             catch (SocketException exception)
                 when (exception.SocketErrorCode == SocketError.ConnectionRefused)
             {
-                //Could not connect to TouchPortal, ex. TouchPortal is not running.
+                //Could not connect to Touch Portal, ex. Touch Portal is not running.
                 //Ex. No connection could be made because the target machine actively refused it. 127.0.0.1:12136
-                _logger?.LogWarning(exception, "Could not connect to TouchPortal, connection refused. TouchPortal might not be running.");
+                _logger?.LogWarning(exception, "Could not connect to Touch Portal, connection refused. Touch Portal might not be running.");
 
                 return false;
             }
             catch (SocketException exception)
             {
-                _logger?.LogWarning(exception, $"Could not connect to TouchPortal with error code: '{exception.SocketErrorCode}'.");
+                _logger?.LogWarning(exception, $"Could not connect to Touch Portal with error code: '{exception.SocketErrorCode}'.");
 
                 return false;
             }
@@ -97,7 +97,7 @@ namespace TouchPortalSDK.Clients
         {
             if (!_socket.Connected)
             {
-                _logger?.LogWarning("Socket not connected to TouchPortal.");
+                _logger?.LogWarning("Socket not connected to Touch Portal.");
                 return false;
             }
 

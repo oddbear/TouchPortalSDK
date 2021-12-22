@@ -1,15 +1,15 @@
 ﻿namespace TouchPortalSDK.Interfaces
 {
     /// <summary>
-    /// Factory interface for creating a TouchPortal socket.
+    /// Factory interface for creating a Touch Portal socket.
     /// </summary>
     public interface ITouchPortalSocketFactory
     {
         /// <summary>
-        /// Create a TouchPortal Socket
+        /// Create a Touch Portal Socket
         /// </summary>
         /// <param name="messageHandler">Handler the json events from the Socket, normally the client instance.</param>
-        /// <returns>TouchPortal Socket</returns>
+        /// <returns>Touch Portal Socket</returns>
         ITouchPortalSocket Create(IMessageHandler messageHandler);
     }
 }

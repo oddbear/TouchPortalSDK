@@ -104,6 +104,13 @@
           "default": "not set",
           "valueChoices": []
         }
+      ],
+      "connectors": [
+        {
+          "id": "tp_dotnet_sample_connector_001",
+          "name": "Connector no data",
+          "format": "Connector with no data"
+        }
       ]
     },
     {

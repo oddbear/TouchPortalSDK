@@ -7,8 +7,8 @@ namespace TouchPortalSDK.Messages.Events
     public class InfoEvent : ITouchPortalMessage
     {
         /// <summary>
-        /// Event from TouchPortal when a connection is established.
-        /// This event includes information about the TouchPortal service.
+        /// Event from Touch Portal when a connection is established.
+        /// This event includes information about the Touch Portal service.
         /// </summary>
         public string Type { get; set; }
 
@@ -18,19 +18,19 @@ namespace TouchPortalSDK.Messages.Events
         public string Status { get; set; }
 
         /// <summary>
-        /// Version of the SDK this version of TouchPortal knows about.
+        /// Version of the SDK this version of Touch Portal knows about.
         /// Ex. 2
         /// </summary>
         public int SdkVersion { get; set; }
 
         /// <summary>
-        /// TouchPortal version as string.
+        /// Touch Portal version as string.
         /// Major, Minor, Patch: M.m.ppp
         /// </summary>
         public string TpVersionString { get; set; }
 
         /// <summary>
-        /// TouchPortal version as int.
+        /// Touch Portal version as int.
         /// Format: Major * 10000 + Minor * 1000 + patch.
         /// </summary>
         public int TpVersionCode { get; set; }

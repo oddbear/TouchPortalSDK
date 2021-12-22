@@ -3,7 +3,7 @@
 namespace TouchPortalSDK
 {
     /// <summary>
-    /// Interface used to register a plugin that can handle events from TouchPortal.
+    /// Interface used to register a plugin that can handle events from Touch Portal.
     /// </summary>
     public interface ITouchPortalEventHandler
     {
@@ -13,7 +13,7 @@ namespace TouchPortalSDK
         public string PluginId { get; }
 
         /// <summary>
-        /// Method to call when TouchPortal is connected.
+        /// Method to call when Touch Portal is connected.
         /// </summary>
         void OnInfoEvent(InfoEvent message);
 
@@ -29,7 +29,7 @@ namespace TouchPortalSDK
 
         /// <summary>
         /// Settings are first received as a part of the OnInfoEvent.
-        /// Then updated through this event if either user changes a setting in TouchPortal, or the SettingUpdate is successfully triggered.
+        /// Then updated through this event if either user changes a setting in Touch Portal, or the SettingUpdate is successfully triggered.
         /// </summary>
         void OnSettingsEvent(SettingsEvent message);
 
@@ -43,9 +43,10 @@ namespace TouchPortalSDK
         /// </summary>
         void OnNotificationOptionClickedEvent(NotificationOptionClickedEvent message);
 
+        void OnConnecterChangeEvent(ConnectorChangeEvent message);
 
         /// <summary>
-        /// Method to call when we loose connection to TouchPortal.
+        /// Method to call when we loose connection to Touch Portal.
         /// </summary>
         /// <param name="message"></param>
         void OnClosedEvent(string message);

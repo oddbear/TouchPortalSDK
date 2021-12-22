@@ -35,6 +35,8 @@ namespace TouchPortalSDK.Configuration
                     return JsonSerializer.Deserialize<ActionEvent>(message, Options.JsonSerializerOptions);
                 case "notificationOptionClicked":
                     return JsonSerializer.Deserialize<NotificationOptionClickedEvent>(message, Options.JsonSerializerOptions);
+                case "connectorChange":
+                    return JsonSerializer.Deserialize<ConnectorChangeEvent>(message, Options.JsonSerializerOptions);
 
                 //Commands:
                 case "choiceUpdate":

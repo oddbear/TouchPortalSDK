@@ -6,7 +6,7 @@ namespace TouchPortalSDK.Messages.Events
     public class ListChangeEvent : ITouchPortalMessage
     {
         /// <summary>
-        /// When setting up an action in the TouchPortal UI. This event is fired if the user selects and item in the dropdown for a choice list.
+        /// When setting up an action in the Touch Portal UI. This event is fired if the user selects and item in the dropdown for a choice list.
         /// </summary>
         public string Type { get; set; }
 

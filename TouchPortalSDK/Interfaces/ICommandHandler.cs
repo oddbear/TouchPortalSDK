@@ -13,8 +13,8 @@ namespace TouchPortalSDK.Interfaces
         bool SendMessage(string message);
 
         /// <summary>
-        /// Creates a dynamic state in TouchPortal Memory.
-        /// This state will disappear when restarting TouchPortal.
+        /// Creates a dynamic state in Touch Portal Memory.
+        /// This state will disappear when restarting Touch Portal.
         /// You will need to persist them yourself and reload them on plugin load.
         /// </summary>
         /// <param name="stateId"></param>
@@ -24,7 +24,7 @@ namespace TouchPortalSDK.Interfaces
         bool CreateState(string stateId, string desc, string defaultValue = "");
 
         /// <summary>
-        /// Updates a setting in TouchPortal.
+        /// Updates a setting in Touch Portal.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -32,7 +32,7 @@ namespace TouchPortalSDK.Interfaces
         bool SettingUpdate(string name, string value = "");
 
         /// <summary>
-        /// Removes the dynamic state from TouchPortal.
+        /// Removes the dynamic state from Touch Portal.
         /// </summary>
         /// <param name="stateId"></param>
         /// <returns></returns>
@@ -43,7 +43,7 @@ namespace TouchPortalSDK.Interfaces
         /// Values are not persisted, and will fallback to default value on restart.
         /// - Plugin: Defined in the Entry.tp
         /// - Dynamic: Created or removed at runtime. (in memory only)
-        /// - Global: Defined in the TouchPortal UI. (state definition persisted in %AppData%\TouchPortal\states.tp)
+        /// - Global: Defined in the Touch Portal UI. (state definition persisted in %AppData%\TouchPortal\states.tp)
         /// </summary>
         /// <param name="stateId"></param>
         /// <param name="value"></param>
@@ -51,7 +51,7 @@ namespace TouchPortalSDK.Interfaces
         bool StateUpdate(string stateId, string value = "");
 
         /// <summary>
-        /// Updates the drop down choices in the TouchPortal UI.
+        /// Updates the drop down choices in the Touch Portal UI.
         /// InstanceId can be used to dynamically update a dropdown based on the value chosen from another dropdown.
         /// </summary>
         /// <param name="choiceId">Id of UI dropdown.</param>
@@ -79,5 +79,7 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="message">Text / description of the notification shown to the user.</param>
         /// <returns></returns>
         bool ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions);
+
+        bool ConnectorUpdate(string connectorId, int value);
     }
 }
