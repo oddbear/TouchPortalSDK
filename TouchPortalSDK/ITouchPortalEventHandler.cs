@@ -39,6 +39,12 @@ namespace TouchPortalSDK
         void OnActionEvent(ActionEvent message);
 
         /// <summary>
+        /// Called when a user clicks on a notification option.
+        /// </summary>
+        void OnNotificationOptionClickedEvent(NotificationOptionClickedEvent message);
+
+
+        /// <summary>
         /// Method to call when we loose connection to TouchPortal.
         /// </summary>
         /// <param name="message"></param>

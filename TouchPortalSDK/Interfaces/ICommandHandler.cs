@@ -1,4 +1,5 @@
-﻿using TouchPortalSDK.Messages.Models.Enums;
+﻿using TouchPortalSDK.Messages.Models;
+using TouchPortalSDK.Messages.Models.Enums;
 
 namespace TouchPortalSDK.Interfaces
 {
@@ -69,5 +70,14 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
         bool UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = default);
+
+        /// <summary>
+        /// Adds a notification to the Touch Portal UI. Ex. if the plugin has a updated version.
+        /// </summary>
+        /// <param name="notificationId">If of the notification.</param>
+        /// <param name="title">Title on the notification shown to the user.</param>
+        /// <param name="message">Text / description of the notification shown to the user.</param>
+        /// <returns></returns>
+        bool ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions);
     }
 }

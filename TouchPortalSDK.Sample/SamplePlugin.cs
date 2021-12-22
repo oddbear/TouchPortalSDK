@@ -43,6 +43,7 @@ namespace TouchPortalSDK.Sample
             Environment.Exit(0);
         }
 
+        //Send messages for testing.
         private void SendMessages()
         {
             //Update choices (dropdown in UI when creating an action):
@@ -72,7 +73,13 @@ namespace TouchPortalSDK.Sample
 
             //Updates the min and max value of the number field.
             _client.UpdateActionData("category1.action1.data4", 10, 15, ActionDataType.Number);
-            
+
+            //Sends a notification to the Touch Portal UI this needs options the user can react on:
+            _client.ShowNotification($"TouchPortal.SamplePlugin|update", "SamplePlugin: new version", "Please update to version 1.0!", new[] {
+                new NotificationOptions { Id = "update", Title = "Update this plugin" },
+                new NotificationOptions { Id = "readMore", Title = "Read more..." }
+            });
+
             //_client.Close()
         }
 
@@ -106,11 +113,19 @@ namespace TouchPortalSDK.Sample
             }
         }
 
+        /// <summary>
+        /// A broadcast event was received.
+        /// </summary>
+        /// <param name="message"></param>
         public void OnBroadcastEvent(BroadcastEvent message)
         {
             _logger?.LogInformation($"[Broadcast] Event: '{message.Event}', PageName: '{message.PageName}'");
         }
 
+        /// <summary>
+        /// Updated settings was received.
+        /// </summary>
+        /// <param name="message"></param>
         public void OnSettingsEvent(SettingsEvent message)
         {
             _settings = message.Values;
@@ -146,10 +161,44 @@ namespace TouchPortalSDK.Sample
             }
         }
 
+        /// <summary>
+        /// Here you can react on what the person clicked in the option.
+        /// </summary>
+        /// <param name="message"></param>
+        public void OnNotificationOptionClickedEvent(NotificationOptionClickedEvent message)
+        {
+            _logger?.LogInformation($"[OnNotificationOptionClickedEvent] NotificationId: '{message.NotificationId}', OptionId: '{message.OptionId}'");
+
+            if (message.NotificationId is "TouchPortal.SamplePlugin|update")
+            {
+                switch (message.OptionId)
+                {
+                    //Example for opening a web browser (windows):
+                    case "update":
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                        {
+                            UseShellExecute = true,
+                            FileName = "https://www.nuget.org/packages/TouchPortalSDK/"
+                        });
+                        break;
+                    case "readMore":
+                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                        {
+                            UseShellExecute = true,
+                            FileName = "https://github.com/oddbear/TouchPortalSDK/"
+                        });
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// The event was unknown and not handled, ex. a new version of TP is out with new features.
+        /// </summary>
+        /// <param name="jsonMessage"></param>
         public void OnUnhandledEvent(string jsonMessage)
         {
-            var jsonDocument = JsonSerializer.Deserialize<JsonDocument>(jsonMessage);
-            _logger?.LogWarning($"Unhandled message: {jsonDocument}");
+            _logger?.LogWarning($"Unhandled message: {jsonMessage}");
         }
     }
 }
