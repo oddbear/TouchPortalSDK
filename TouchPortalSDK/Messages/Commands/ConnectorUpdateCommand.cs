@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Text;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Models;
 

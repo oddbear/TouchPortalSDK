@@ -81,7 +81,16 @@ namespace TouchPortalSDK.Sample
             });
 
             //Updates a connector/slider value.
-            _client.ConnectorUpdate("tp_dotnet_sample_connector_001", 10);
+            _client.ConnectorUpdate("dotnetsample001", 10);
+
+            //Updates the connector with data, however this seems buggy, and we would need to find a more automated way of doing this.
+            var message = JsonSerializer.Serialize(new
+            {
+                type = "connectorUpdate",
+                connectorId = $"pc_{PluginId}_dotnetsample002|connectordata001=test", //If you change the value in Touch Portal UI, this also need to be changed (and the page on the touch device might need to be refreshed).
+                value = 20
+            });
+            _client.SendMessage(message);
 
             //_client.Close()
         }
