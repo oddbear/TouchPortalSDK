@@ -1,5 +1,5 @@
 {
-  "sdk": 3,
+  "sdk": 4,
   "version": 1,
   "name": "Touch Portal Plugin Example Manual",
   "id": "TouchPortalSDK.Sample",
@@ -103,6 +103,13 @@
           "desc": "Test Static State",
           "default": "not set",
           "valueChoices": []
+        }
+      ],
+      "connectors": [
+        {
+          "id": "tp_dotnet_sample_connector_001",
+          "name": "Connector no data",
+          "format": "Connector with no data"
         }
       ]
     },

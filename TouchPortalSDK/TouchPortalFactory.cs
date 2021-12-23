@@ -24,9 +24,9 @@ namespace TouchPortalSDK
         }
 
         /// <summary>
-        /// Factory for creating the TouchPortal client.
+        /// Factory for creating the Touch Portal client.
         /// </summary>
-        /// <param name="eventHandler">Handler the events from TouchPortal, normally the plugin instance.</param>
+        /// <param name="eventHandler">Handler the events from Touch Portal, normally the plugin instance.</param>
         /// <param name="options">Optional options, if null, default values are selected.</param>
         /// <param name="loggerFactory">Optional logger factory, if null, no logger is created.</param>
         /// <returns></returns>

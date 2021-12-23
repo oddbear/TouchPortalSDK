@@ -5,7 +5,7 @@ namespace TouchPortalSDK.Interfaces
     public interface ITouchPortalMessage
     { 
         /// <summary>
-        /// Type of the message, see TouchPortal API documentation.
+        /// Type of the message, see Touch Portal API documentation.
         /// </summary>
         string Type { get; }
 

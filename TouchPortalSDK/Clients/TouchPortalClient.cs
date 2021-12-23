@@ -8,6 +8,7 @@ using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
+using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
 
 namespace TouchPortalSDK.Clients
@@ -154,6 +155,43 @@ namespace TouchPortalSDK.Clients
             return SendCommand(command);
         }
 
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions)
+        {
+            if (string.IsNullOrWhiteSpace(notificationId))
+                return false;
+
+            if (string.IsNullOrWhiteSpace(title))
+                return false;
+
+            if (string.IsNullOrWhiteSpace(message))
+                return false;
+
+            if (notificationOptions is null || notificationOptions.Length == 0)
+                return false;
+
+            var command = new ShowNotificationCommand(notificationId, title, message, notificationOptions);
+
+            return SendCommand(command);
+        }
+
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ConnectorUpdate(string connectorId, int value)
+        {
+            if (string.IsNullOrWhiteSpace(connectorId))
+                return false;
+
+            if (value < 0 || value > 100)
+                return false;
+
+            var command = new ConnectorUpdateCommand(_eventHandler.PluginId, connectorId, value);
+
+            if (command.ConnectorId.Length > 200)
+                return false;
+
+            return SendCommand(command);
+        }
+
         public bool SendCommand<TCommand>(TCommand command, [CallerMemberName]string callerMemberName = "")
             where TCommand : ITouchPortalMessage
         {
@@ -197,10 +235,16 @@ namespace TouchPortalSDK.Clients
                 case SettingsEvent settingsEvent:
                     _eventHandler.OnSettingsEvent(settingsEvent);
                     return;
+                case NotificationOptionClickedEvent notificationEvent:
+                    _eventHandler.OnNotificationOptionClickedEvent(notificationEvent);
+                    return;
+                case ConnectorChangeEvent connectorChangeEvent:
+                    _eventHandler.OnConnecterChangeEvent(connectorChangeEvent);
+                    return;
                 //All of Action, Up, Down:
                 case ActionEvent actionEvent:
                     _eventHandler.OnActionEvent(actionEvent);
-                    break;
+                    return;
                 default:
                     _eventHandler.OnUnhandledEvent(message);
                     return;
