@@ -139,26 +139,33 @@ namespace TouchPortalSDK.Clients
 
             _logger?.LogInformation("Listener thread created and started.");
 
-            while (true)
+            try
             {
-                try
+                while (true)
                 {
-                    var message = _streamReader.ReadLine()
-                                  ?? throw new IOException("Socket closed.");
+                    try
+                    {
+                        var message = _streamReader.ReadLine()
+                                      ?? throw new IOException("Socket closed.");
 
-                    _logger?.LogDebug(message);
+                        _logger?.LogDebug(message);
 
-                    _messageHandler.OnMessage(message);
+                        _messageHandler.OnMessage(message);
+                    }
+                    catch (IOException exception)
+                    {
+                        _messageHandler.Close("Connection Terminated.", exception);
+                        return;
+                    }
+                    catch (Exception exception)
+                    {
+                        _logger?.LogDebug(exception, "Something went wrong on the Listener Thread.");
+                    }
                 }
-                catch (IOException exception)
-                {
-                    _messageHandler.Close("Connection Terminated.", exception);
-                    return;
-                }
-                catch (Exception exception)
-                {
-                    _logger?.LogDebug(exception, "Something went wrong on the Listener Thread.");
-                }
+            }
+            catch (ThreadInterruptedException exception)
+            {
+                _logger?.LogDebug(exception, "The Listener Thread was interrupted.");
             }
         }
     }
