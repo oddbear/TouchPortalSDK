@@ -241,6 +241,9 @@ namespace TouchPortalSDK.Clients
                 case ConnectorChangeEvent connectorChangeEvent:
                     _eventHandler.OnConnecterChangeEvent(connectorChangeEvent);
                     return;
+                case ShortConnectorIdNotificationEvent shortConnectorIdEvent:
+                    _eventHandler.OnShortConnectorIdNotificationEvent(shortConnectorIdEvent);
+                    return;
                 //All of Action, Up, Down:
                 case ActionEvent actionEvent:
                     _eventHandler.OnActionEvent(actionEvent);
