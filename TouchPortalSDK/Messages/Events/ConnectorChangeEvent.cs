@@ -1,25 +1,17 @@
-﻿using System.Collections.Generic;
-using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
-
+﻿
 namespace TouchPortalSDK.Messages.Events
 {
-    public class ConnectorChangeEvent : ITouchPortalMessage
+    /// <inheritdoc cref="DataContainerEventBase" />
+    public class ConnectorChangeEvent : DataContainerEventBase
     {
         /// <summary>
-        /// Touch Portal closes/stops the plugin or shuts down.
+        /// The connector ID. Alias for DataContainerEventBase::Id.
         /// </summary>
-        public string Type { get; set; }
+        public string ConnectorId { get { return Id; } set { Id = value; } }
 
-        public string PluginId { get; set; }
-
-        public string ConnectorId { get; set; }
-
+        /// <summary>
+        /// Current value of the connector.
+        /// </summary>
         public int Value { get; set; }
-
-        public IReadOnlyCollection<ActionDataSelected> Data { get; set; }
-
-        public Identifier GetIdentifier()
-            => new Identifier(Type, ConnectorId, default);
     }
 }
