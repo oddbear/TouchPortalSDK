@@ -192,6 +192,20 @@ namespace TouchPortalSDK.Clients
             return SendCommand(command);
         }
 
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ConnectorUpdateShort(string shortId, int value)
+        {
+            if (string.IsNullOrWhiteSpace(shortId))
+                return false;
+
+            if (value < 0 || value > 100)
+                return false;
+
+            var command = new ConnectorUpdateShortCommand(_eventHandler.PluginId, shortId, value);
+
+            return SendCommand(command);
+        }
+
         public bool SendCommand<TCommand>(TCommand command, [CallerMemberName]string callerMemberName = "")
             where TCommand : ITouchPortalMessage
         {

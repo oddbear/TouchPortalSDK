@@ -80,6 +80,21 @@ namespace TouchPortalSDK.Interfaces
         /// <returns></returns>
         bool ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions);
 
+        /// <summary>
+        /// Sends a connector value update to Touch Portal using the long form of the connector ID.
+        /// </summary>
+        /// <param name="connectorId">The long ID of the connector to update. The string "pc_{pluginId}_" is automatically prepended
+        /// before sending to TP. The total length must not exceed 200 chars.</param>
+        /// <param name="value">The value to send, must be between 0 and 100, inclusive.</param>
+        /// <returns>true on success, false otherwise.</returns>
         bool ConnectorUpdate(string connectorId, int value);
+
+        /// <summary>
+        /// Sends a connector value update to Touch Portal using the short form of the connector ID.
+        /// </summary>
+        /// <param name="shortId">The short ID of the connector to update. This is obtained from a <see cref="ShortConnectorIdNotification"/> event.</param>
+        /// <param name="value">The value to send, must be between 0 and 100, inclusive.</param>
+        /// <returns>true on success, false otherwise.</returns>
+        bool ConnectorUpdateShort(string shortId, int value);
     }
 }
