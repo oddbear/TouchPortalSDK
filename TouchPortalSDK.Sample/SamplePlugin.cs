@@ -13,7 +13,7 @@ namespace TouchPortalSDK.Sample
     public class SamplePlugin : ITouchPortalEventHandler
     {
         public string PluginId => "TouchPortalSDK.Sample";
-        
+
         private readonly ILogger<SamplePlugin> _logger;
         private readonly ITouchPortalClient _client;
 
@@ -38,7 +38,7 @@ namespace TouchPortalSDK.Sample
         public void OnClosedEvent(string message)
         {
             _logger?.LogInformation("TouchPortal Disconnected.");
-            
+
             //Optional force exits this plugin.
             Environment.Exit(0);
         }
@@ -209,6 +209,12 @@ namespace TouchPortalSDK.Sample
             }
         }
 
+        /// <summary>
+        /// Event fired when the TP user moves a slider which uses one of this plugin's Connectors.
+        /// This event is very similar to the OnActionEvent but with a `Value` attribute reflecting the slider's
+        /// current position. Like actions, they may contain extra user-selected data.
+        /// </summary>
+        /// <param name="message"><see cref="ConnectorChangeEvent"/></param>
         public void OnConnecterChangeEvent(ConnectorChangeEvent message)
         {
             var dataArray = message.Data
@@ -220,6 +226,16 @@ namespace TouchPortalSDK.Sample
         }
 
         /// <summary>
+        /// This event is generated when a TP user creates or modifies a slider which uses one of this plugin's Connectors.
+        /// See the TP API documentation for usage details.
+        /// </summary>
+        /// <param name="message"><see cref="ShortConnectorIdNotificationEvent"/></param>
+        public void OnShortConnectorIdNotificationEvent(ShortConnectorIdNotificationEvent message)
+        {
+            _logger?.LogInformation($"[OnShortConnectorIdNotificationEvent] ConnectorId: '{message.ConnectorId}', ShortID: '{message.ShortId}'");
+        }
+
+        /// <summary>
         /// The event was unknown and not handled, ex. a new version of TP is out with new features.
         /// </summary>
         /// <param name="jsonMessage"></param>
@@ -227,5 +243,6 @@ namespace TouchPortalSDK.Sample
         {
             _logger?.LogWarning($"Unhandled message: {jsonMessage}");
         }
-    }
+
+  }
 }

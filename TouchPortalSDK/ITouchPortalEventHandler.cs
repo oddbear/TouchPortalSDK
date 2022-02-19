@@ -43,7 +43,15 @@ namespace TouchPortalSDK
         /// </summary>
         void OnNotificationOptionClickedEvent(NotificationOptionClickedEvent message);
 
+        /// <summary>
+        /// Method to call when a user moves a slider on their device.
+        /// </summary>
         void OnConnecterChangeEvent(ConnectorChangeEvent message);
+
+        /// <summary>
+        /// Called when TP reports a new instance of your connector, either at startup or if user adds/modifies one.
+        /// </summary>
+        void OnShortConnectorIdNotificationEvent(ShortConnectorIdNotificationEvent message);
 
         /// <summary>
         /// Method to call when we loose connection to Touch Portal.
