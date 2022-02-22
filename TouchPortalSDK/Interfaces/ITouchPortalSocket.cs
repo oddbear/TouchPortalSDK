@@ -3,6 +3,11 @@
     public interface ITouchPortalSocket
     {
         /// <summary>
+        /// The connection state of the Socket being used internally.
+        /// </summary>
+        public bool IsConnected { get; }
+
+        /// <summary>
         /// Connects to Touch Portal.
         /// </summary>
         /// <returns>success flag</returns>

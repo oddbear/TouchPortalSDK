@@ -11,6 +11,8 @@ namespace TouchPortalSDK.Clients
 {
     public class TouchPortalSocket : ITouchPortalSocket
     {
+        public bool IsConnected { get => _socket?.Connected ?? false; }
+
         private readonly TouchPortalOptions _options;
         private readonly IMessageHandler _messageHandler;
         private readonly ILogger<TouchPortalSocket> _logger;
@@ -19,7 +21,7 @@ namespace TouchPortalSDK.Clients
 
         private StreamWriter _streamWriter;
         private StreamReader _streamReader;
-        
+
         public TouchPortalSocket(TouchPortalOptions options,
                                  IMessageHandler messageHandler,
                                  ILoggerFactory loggerFactory = null)

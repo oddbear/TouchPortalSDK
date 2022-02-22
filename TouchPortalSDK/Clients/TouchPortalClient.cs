@@ -16,6 +16,9 @@ namespace TouchPortalSDK.Clients
     [SuppressMessage("Critical Code Smell", "S1006:Method overrides should not change parameter defaults", Justification = "Service resolved from IoC framework.")]
     public class TouchPortalClient : ITouchPortalClient, IMessageHandler
     {
+        /// <inheritdoc cref="ITouchPortalClient" />
+        public bool IsConnected { get => _touchPortalSocket?.IsConnected ?? false; }
+
         private readonly ILogger<TouchPortalClient> _logger;
         private readonly ITouchPortalEventHandler _eventHandler;
         private readonly ITouchPortalSocket _touchPortalSocket;
