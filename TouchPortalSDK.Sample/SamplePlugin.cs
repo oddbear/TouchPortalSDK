@@ -233,6 +233,8 @@ namespace TouchPortalSDK.Sample
         public void OnShortConnectorIdNotificationEvent(ShortConnectorIdNotificationEvent message)
         {
             _logger?.LogInformation($"[OnShortConnectorIdNotificationEvent] ConnectorId: '{message.ConnectorId}', ShortID: '{message.ShortId}'");
+
+            _client.ConnectorUpdate(message.ShortId, Random.Shared.Next(0, 100));
         }
 
         /// <summary>

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Text;
 using TouchPortalSDK.Interfaces;
+using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Commands
@@ -11,6 +10,8 @@ namespace TouchPortalSDK.Messages.Commands
         public string Type => "connectorUpdate";
 
         public string ConnectorId { get; set; }
+
+        public string ShortId { get; set; }
 
         public int Value { get; set; }
 
@@ -26,6 +27,12 @@ namespace TouchPortalSDK.Messages.Commands
                 throw new ArgumentException("Value must be between 0 and 100", nameof(value));
 
             ConnectorId = $"pc_{pluginId}_{connectorId}";
+            Value = value;
+        }
+
+        public ConnectorUpdateCommand(ConnectorShortId shortId, int value)
+        {
+            ShortId = shortId.Value;
             Value = value;
         }
 

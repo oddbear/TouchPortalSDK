@@ -1,4 +1,5 @@
-﻿using TouchPortalSDK.Messages.Models;
+﻿using TouchPortalSDK.Messages.Events;
+using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
 
 namespace TouchPortalSDK.Interfaces
@@ -80,6 +81,7 @@ namespace TouchPortalSDK.Interfaces
         /// <returns></returns>
         bool ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions);
 
+        bool ConnectorUpdate(ConnectorShortId shortId, int value);
         bool ConnectorUpdate(string connectorId, int value);
     }
 }

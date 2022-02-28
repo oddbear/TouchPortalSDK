@@ -179,6 +179,14 @@ namespace TouchPortalSDK.Clients
         }
 
         /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ConnectorUpdate(ConnectorShortId shortId, int value)
+        {
+            var command = new ConnectorUpdateCommand(shortId, value);
+
+            return SendCommand(command);
+        }
+
+        /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.ConnectorUpdate(string connectorId, int value)
         {
             if (string.IsNullOrWhiteSpace(connectorId))
