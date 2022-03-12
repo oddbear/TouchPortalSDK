@@ -1,0 +1,31 @@
+{
+  "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
+  "sdk": 7,
+  "version": 1,
+  "name": "TouchPortalSDK.States",
+  "id": "TouchPortalSDK.States",
+  "categories": [
+    {
+      "id": "TouchPortalSDK.States.category",
+      "name": "TouchPortalSDK.States",
+      "actions": [],
+      "states": [
+        {
+          "id": "tp_sid_fruit",
+          "type": "choice",
+          "desc": "Fruit Kind description",
+          "default": "Apple",
+          "valueChoices": [
+            "Apple",
+            "Pears",
+            "Grapes",
+            "Bananas"
+          ]
+        }
+      ],
+      "events": [],
+      "connectors": []
+    }
+  ],
+  "settings": []
+}

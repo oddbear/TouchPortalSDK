@@ -1,0 +1,135 @@
+{
+  "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
+  "sdk": 7,
+  "version": 1,
+  "name": "TouchPortalSDK.Actions",
+  "id": "TouchPortalSDK.Actions",
+  "categories": [
+    {
+      "id": "TouchPortalSDK.Actions.category",
+      "name": "TouchPortalSDK.Actions",
+      "actions": [
+        {
+          "id": "action.without.data",
+          "name": "Dynamic Action Without data",
+          "prefix": "Plugin",
+          "type": "communicate",
+          "tryInline": true,
+          "hasHoldFunctionality": true
+        },
+        {
+          "id": "action.with.data",
+          "name": "Dynamic Action With data",
+          "prefix": "Plugin",
+          "type": "communicate",
+          "tryInline": true,
+          "format": "{$first$} {$second$} {$actiondata001$} {$actiondata003$}",
+          "hasHoldFunctionality": true,
+          "data": [
+            {
+              "id": "first",
+              "type": "number",
+              "label": "First number",
+              "default": 200,
+              "minValue": 100,
+              "maxValue": 350
+            },
+            {
+              "id": "second",
+              "type": "choice",
+              "label": "Second number",
+              "default": "200",
+              "valueChoices": [
+                "200",
+                "400",
+                "600",
+                "800"
+              ]
+            },
+            {
+              "id": "actiondata001",
+              "type": "text",
+              "label": "Name",
+              "default": "any text"
+            },
+            {
+              "id": "actiondata003",
+              "type": "switch",
+              "label": "Is this true?",
+              "default": true
+            }
+          ]
+        },
+        {
+          "id": "action.with.listUpdates",
+          "name": "Dynamic Action With List Updates",
+          "prefix": "Plugin",
+          "type": "communicate",
+          "tryInline": true,
+          "format": "{$action.with.listUpdates.list1$} {$action.with.listUpdates.list2$}",
+          "hasHoldFunctionality": true,
+          "data": [
+            {
+              "id": "action.with.listUpdates.list1",
+              "type": "choice",
+              "label": "List update trigger",
+              "default": "200",
+              "valueChoices": [
+                "200",
+                "400",
+                "600",
+                "800"
+              ]
+            },
+            {
+              "id": "action.with.listUpdates.list2",
+              "type": "choice",
+              "label": "List updated",
+              "default": ""
+            }
+          ]
+        },
+        {
+          "id": "tp_pl_action_001",
+          "name": "Static Execute Action",
+          "prefix": "Plugin",
+          "type": "execute",
+          "tryInline": true,
+          "format": "Frequency {$frequency$} Duration {$duration$}",
+          "description": "This action will play a beep sound.",
+          "execution_cmd": "powershell \"[console]::beep({$frequency$},{$duration$})\"",
+          "data": [
+            {
+              "id": "frequency",
+              "type": "choice",
+              "label": "Frequency",
+              "default": "200",
+              "valueChoices": [
+                "200",
+                "400",
+                "600",
+                "800"
+              ]
+            },
+            {
+              "id": "duration",
+              "type": "choice",
+              "label": "Duration",
+              "default": "500",
+              "valueChoices": [
+                "100",
+                "250",
+                "500",
+                "1000"
+              ]
+            }
+          ]
+        }
+      ],
+      "states": [],
+      "events": [],
+      "connectors": []
+    }
+  ],
+  "settings": []
+}
