@@ -11,7 +11,7 @@ namespace TouchPortalSDK.Clients
 {
     public class TouchPortalSocket : ITouchPortalSocket
     {
-        public bool IsConnected { get => _socket?.Connected ?? false; }
+        public bool IsConnected => _socket?.Connected ?? false;
 
         private readonly TouchPortalOptions _options;
         private readonly IMessageHandler _messageHandler;

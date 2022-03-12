@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Models;
 
@@ -28,7 +27,10 @@ namespace TouchPortalSDK.Messages.Commands
             if (string.IsNullOrWhiteSpace(message))
                 throw new ArgumentNullException(nameof(message));
 
-            if(!notificationOptions.Any())
+            if (notificationOptions is null)
+                throw new ArgumentNullException(nameof(notificationOptions));
+
+            if (notificationOptions.Length == 0)
               throw new Exception("At least one option is required.");
 
             NotificationId = notificationId;

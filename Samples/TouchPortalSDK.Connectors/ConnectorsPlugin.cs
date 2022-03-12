@@ -38,11 +38,9 @@ namespace TouchPortalSDK.Notifications
                 var value = message.Value / 2;
                 _client.ConnectorUpdate("connector.with.data|first=lower", value);
 
-                //TODO: This is really cluncky... need to make simpler shortId lookup. Or track internally.
-                var shortId = _shortIds
-                    .First(m => m.ConnectorId.Contains("connector.with.data") && m.ConnectorId.Contains("upper"))
-                    .ShortId;
+                var client = (Clients.TouchPortalClient)_client;
 
+                var shortId = client.GetShortId("connector.with.data", "first", "upper");
                 _client.ConnectorUpdate(shortId, value + 50);
                 return;
             }

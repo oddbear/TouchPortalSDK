@@ -1,7 +1,7 @@
 ﻿using System;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Models;
+using TouchPortalSDK.Values;
 
 namespace TouchPortalSDK.Messages.Commands
 {
@@ -32,6 +32,12 @@ namespace TouchPortalSDK.Messages.Commands
 
         public ConnectorUpdateCommand(ConnectorShortId shortId, int value)
         {
+            if (shortId is null)
+                throw new ArgumentNullException(nameof(shortId));
+
+            if (value < 0 || value > 100)
+                throw new ArgumentException("Value must be between 0 and 100", nameof(value));
+
             ShortId = shortId.Value;
             Value = value;
         }

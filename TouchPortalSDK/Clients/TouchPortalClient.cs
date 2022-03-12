@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -10,20 +11,23 @@ using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
+using TouchPortalSDK.Values;
 
 namespace TouchPortalSDK.Clients
 {
     [SuppressMessage("Critical Code Smell", "S1006:Method overrides should not change parameter defaults", Justification = "Service resolved from IoC framework.")]
-    public class TouchPortalClient : ITouchPortalClient, IMessageHandler
+    public class TouchPortalClient : ITouchPortalClient, IMessageHandler, ICommandHandler
     {
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool IsConnected { get => _touchPortalSocket?.IsConnected ?? false; }
+        public bool IsConnected => _touchPortalSocket?.IsConnected ?? false;
 
         private readonly ILogger<TouchPortalClient> _logger;
         private readonly ITouchPortalEventHandler _eventHandler;
         private readonly ITouchPortalSocket _touchPortalSocket;
 
         private readonly ManualResetEvent _infoWaitHandle;
+
+        public readonly Dictionary<string, ConnectorShortId> ShortIdMappings;
 
         private InfoEvent _lastInfoEvent;
         
@@ -39,6 +43,7 @@ namespace TouchPortalSDK.Clients
             _logger = loggerFactory?.CreateLogger<TouchPortalClient>();
 
             _infoWaitHandle = new ManualResetEvent(false);
+            ShortIdMappings = new Dictionary<string, ConnectorShortId>();
         }
         
         #region Setup
@@ -85,6 +90,16 @@ namespace TouchPortalSDK.Clients
             _touchPortalSocket?.CloseSocket();
 
             _eventHandler.OnClosedEvent(message);
+        }
+
+        public ConnectorShortId GetShortId(string connectorId, string dataId, string dataValue)
+        {
+            var fullConnectorId = $"pc_{_eventHandler.PluginId}_{connectorId}|{dataId}={dataValue}";
+
+            if (!ShortIdMappings.TryGetValue(fullConnectorId, out var shortId))
+                throw new InvalidOperationException($"ShortId not found for connectorId: {fullConnectorId}");
+
+            return shortId;
         }
 
         #endregion
@@ -150,9 +165,6 @@ namespace TouchPortalSDK.Clients
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId)
         {
-            if (string.IsNullOrWhiteSpace(dataId))
-                return false;
-
             var command = new UpdateActionDataCommand(dataId, minValue, maxValue, dataType, instanceId);
             
             return SendCommand(command);
@@ -161,19 +173,18 @@ namespace TouchPortalSDK.Clients
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions)
         {
-            if (string.IsNullOrWhiteSpace(notificationId))
-                return false;
-
-            if (string.IsNullOrWhiteSpace(title))
-                return false;
-
-            if (string.IsNullOrWhiteSpace(message))
-                return false;
-
-            if (notificationOptions is null || notificationOptions.Length == 0)
-                return false;
-
             var command = new ShowNotificationCommand(notificationId, title, message, notificationOptions);
+
+            return SendCommand(command);
+        }
+
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ConnectorUpdate(string connectorId, int value)
+        {
+            var command = new ConnectorUpdateCommand(_eventHandler.PluginId, connectorId, value);
+
+            if (command.ConnectorId.Length > 200)
+                return false;
 
             return SendCommand(command);
         }
@@ -182,23 +193,6 @@ namespace TouchPortalSDK.Clients
         bool ICommandHandler.ConnectorUpdate(ConnectorShortId shortId, int value)
         {
             var command = new ConnectorUpdateCommand(shortId, value);
-
-            return SendCommand(command);
-        }
-
-        /// <inheritdoc cref="ICommandHandler" />
-        bool ICommandHandler.ConnectorUpdate(string connectorId, int value)
-        {
-            if (string.IsNullOrWhiteSpace(connectorId))
-                return false;
-
-            if (value < 0 || value > 100)
-                return false;
-
-            var command = new ConnectorUpdateCommand(_eventHandler.PluginId, connectorId, value);
-
-            if (command.ConnectorId.Length > 200)
-                return false;
 
             return SendCommand(command);
         }
@@ -253,6 +247,7 @@ namespace TouchPortalSDK.Clients
                     _eventHandler.OnConnecterChangeEvent(connectorChangeEvent);
                     return;
                 case ShortConnectorIdNotificationEvent shortConnectorIdEvent:
+                    ShortIdMappings[shortConnectorIdEvent.ConnectorId] = new ConnectorShortId(shortConnectorIdEvent);
                     _eventHandler.OnShortConnectorIdNotificationEvent(shortConnectorIdEvent);
                     return;
                 //All of Action, Up, Down:
