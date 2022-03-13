@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Values;
 
@@ -8,7 +9,8 @@ namespace TouchPortalSDK.Messages.Commands
     {
         public string Type => "connectorUpdate";
 
-        public string ConnectorId { get; set; }
+        [JsonPropertyName("connectorId")]
+        public string TouchPortalConnectorId { get; set; }
 
         public string ShortId { get; set; }
 
@@ -27,10 +29,10 @@ namespace TouchPortalSDK.Messages.Commands
 
             var command = new ConnectorUpdateCommand
             {
-                ConnectorId = $"pc_{pluginId}_{connectorId}"
+                TouchPortalConnectorId = $"pc_{pluginId}_{connectorId}"
             };
 
-            if (command.ConnectorId.Length > 200)
+            if (command.TouchPortalConnectorId.Length > 200)
                 throw new ArgumentException("ConnectorId longer than 200, use ShortId", nameof(value));
 
             command.Value = value;
@@ -42,6 +44,9 @@ namespace TouchPortalSDK.Messages.Commands
         {
             if (shortId is null)
                 throw new ArgumentNullException(nameof(shortId));
+
+            if (string.IsNullOrWhiteSpace(shortId.Value))
+                throw new InvalidOperationException("ShortId value was empty.");
 
             if (value < 0 || value > 100)
                 throw new ArgumentException("Value must be between 0 and 100", nameof(value));

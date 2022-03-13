@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -21,9 +20,6 @@ namespace TouchPortalSDK.Clients
         /// <inheritdoc cref="ITouchPortalClient" />
         public bool IsConnected => _touchPortalSocket?.IsConnected ?? false;
 
-        /// <inheritdoc cref="ICommandHandler" />
-        public Dictionary<string, ConnectorShortId> ShortIdMappings { get; }
-
         private readonly ILogger<TouchPortalClient> _logger;
         private readonly ITouchPortalEventHandler _eventHandler;
         private readonly ITouchPortalSocket _touchPortalSocket;
@@ -44,7 +40,6 @@ namespace TouchPortalSDK.Clients
             _logger = loggerFactory?.CreateLogger<TouchPortalClient>();
 
             _infoWaitHandle = new ManualResetEvent(false);
-            ShortIdMappings = new Dictionary<string, ConnectorShortId>();
         }
         
         #region Setup
@@ -91,19 +86,6 @@ namespace TouchPortalSDK.Clients
             _touchPortalSocket?.CloseSocket();
 
             _eventHandler.OnClosedEvent(message);
-        }
-
-        ConnectorShortId ICommandHandler.GetShortId(string connectorId, Data data)
-        {
-            var fullConnectorId = $"pc_{_eventHandler.PluginId}_{connectorId}";
-
-            if (data != null)
-                fullConnectorId += $"|{data.Id}={data.Value}";
-
-            if (!ShortIdMappings.TryGetValue(fullConnectorId, out var shortId))
-                throw new InvalidOperationException($"ShortId not found for connectorId: {fullConnectorId}");
-
-            return shortId;
         }
 
         #endregion
@@ -307,7 +289,7 @@ namespace TouchPortalSDK.Clients
                     _eventHandler.OnConnecterChangeEvent(connectorChangeEvent);
                     return;
                 case ShortConnectorIdNotificationEvent shortConnectorIdEvent:
-                    ShortIdMappings[shortConnectorIdEvent.ConnectorId] = new ConnectorShortId(shortConnectorIdEvent);
+                    _eventHandler.OnShortConnectorIdNotificationEvent(new ConnectorInfo(shortConnectorIdEvent));
                     return;
                 //All of Action, Up, Down:
                 case ActionEvent actionEvent:

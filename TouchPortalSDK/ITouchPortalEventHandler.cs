@@ -1,4 +1,5 @@
 ﻿using TouchPortalSDK.Messages.Events;
+using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK
 {
@@ -47,6 +48,11 @@ namespace TouchPortalSDK
         /// Method to call when a user moves a slider on their device.
         /// </summary>
         void OnConnecterChangeEvent(ConnectorChangeEvent message);
+
+        /// <summary>
+        /// Called when TP reports a new instance of your connector, either at startup or if user adds/modifies one.
+        /// </summary>
+        void OnShortConnectorIdNotificationEvent(ConnectorInfo connectorInfo);
 
         /// <summary>
         /// Method to call when we loose connection to Touch Portal.

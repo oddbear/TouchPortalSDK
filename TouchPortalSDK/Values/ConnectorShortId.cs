@@ -6,9 +6,9 @@ namespace TouchPortalSDK.Values
     {
         public string Value { get; }
 
-        public ConnectorShortId(ShortConnectorIdNotificationEvent message)
+        public ConnectorShortId(string shortId)
         {
-            Value = message.ShortId;
+            Value = shortId;
         }
 
         public override string ToString()

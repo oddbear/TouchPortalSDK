@@ -2,6 +2,7 @@
 using TouchPortalSDK;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Events;
+using TouchPortalSDK.Messages.Models;
 
 namespace SampleUtils
 {
@@ -53,6 +54,11 @@ namespace SampleUtils
         public virtual void OnSettingsEvent(SettingsEvent message)
         {
             _logger.LogObjectAsJson(message);
+        }
+
+        public virtual void OnShortConnectorIdNotificationEvent(ConnectorInfo connectorInfo)
+        {
+            _logger.LogObjectAsJson(connectorInfo);
         }
 
         public virtual void OnUnhandledEvent(string jsonMessage)

@@ -11,6 +11,8 @@ namespace TouchPortalSDK.Notifications
         protected override ILogger _logger { get; }
         protected override ITouchPortalClient _client { get; }
 
+        private List<ConnectorInfo> _connectors = new List<ConnectorInfo>();
+
         public ConnectorsPlugin(ITouchPortalClientFactory clientFactory,
                             ILogger<ConnectorsPlugin> logger)
         {
@@ -24,6 +26,9 @@ namespace TouchPortalSDK.Notifications
             _client.Connect();
 
             _client.ConnectorUpdate("connector.without.data", Random.Shared.Next(0, 100));
+
+            //Connectors with data is a littble bit cluncy, you will need to add the parameters in this format.
+            //Warning: The parameters have to be in the correct order!
             _client.ConnectorUpdate("connector.with.data|first=lower", Random.Shared.Next(0, 100));
             _client.ConnectorUpdate("connector.with.data|first=upper", Random.Shared.Next(0, 100));
         }
@@ -37,8 +42,17 @@ namespace TouchPortalSDK.Notifications
                 var value = message.Value / 2;
                 _client.ConnectorUpdate("connector.with.data|first=lower", value);
 
-                var shortId = _client.GetShortId("connector.with.data", Data.Create("first","upper"));
-                _client.ConnectorUpdate(shortId, value + 50);
+                //You can also track the connectors that are set, and get the 
+                var connectors = _connectors
+                    .Where(connectorInfo => connectorInfo.ConnectorId == "connector.with.data")
+                    //You can write filters to get one or more connectors, then update them accordingly.
+                    .Where(connectorInfo => connectorInfo.GetValue("first") == "upper");
+
+                foreach (var connector in connectors)
+                {
+                    _client.ConnectorUpdate(connector.ShortId, value + 50);
+                }
+
                 return;
             }
 
@@ -48,9 +62,18 @@ namespace TouchPortalSDK.Notifications
                 var value = message.Value / 2;
                 if (first == "upper")
                     value += 50;
+
                 _client.ConnectorUpdate("connector.without.data", value);
+
                 return;
             }
+        }
+
+        public override void OnShortConnectorIdNotificationEvent(ConnectorInfo connectorInfo)
+        {
+            _logger.LogObjectAsJson(connectorInfo);
+
+            _connectors.Add(connectorInfo);
         }
     }
 }

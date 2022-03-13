@@ -8,19 +8,6 @@ namespace TouchPortalSDK.Interfaces
     public interface ICommandHandler
     {
         /// <summary>
-        /// Mappings of full connectorId to ShortId
-        /// </summary>
-        Dictionary<string, ConnectorShortId> ShortIdMappings { get; }
-
-        /// <summary>
-        /// Gets the ShortId representation fo a connectorId with or without data
-        /// </summary>
-        /// <param name="connectorId"></param>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        ConnectorShortId GetShortId(string connectorId, Data data = null);
-
-        /// <summary>
         /// Send a custom command. There is no state tracking for this.
         /// </summary>
         /// <param name="message"></param>

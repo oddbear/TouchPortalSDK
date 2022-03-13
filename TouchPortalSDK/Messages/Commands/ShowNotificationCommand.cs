@@ -31,7 +31,19 @@ namespace TouchPortalSDK.Messages.Commands
                 throw new ArgumentNullException(nameof(notificationOptions));
 
             if (notificationOptions.Length == 0)
-              throw new Exception("At least one option is required.");
+                throw new Exception("At least one option is required.");
+
+            foreach (var notificationOption in notificationOptions)
+            {
+                if (notificationOption is null)
+                    throw new InvalidOperationException("Notification option object was null.");
+
+                if (string.IsNullOrWhiteSpace(notificationOption.Id))
+                    throw new InvalidOperationException("Notification option Id was null.");
+
+                if (string.IsNullOrWhiteSpace(notificationOption.Title))
+                    throw new InvalidOperationException("Notification option Title was null.");
+            }
 
             var command = new ShowNotificationCommand
             {

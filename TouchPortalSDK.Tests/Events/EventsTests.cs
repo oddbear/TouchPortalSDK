@@ -5,11 +5,12 @@ using NUnit.Framework;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Events;
+using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Tests.Fixtures;
 
 namespace TouchPortalSDK.Tests.Events
 {
-    public class SettingsTests
+    public class EventsTests
     {
         [Theory]
         [AutoMoqData]
@@ -89,6 +90,36 @@ namespace TouchPortalSDK.Tests.Events
             messageHandler.OnMessage("{\"type\":\"down\"}");
 
             eventHandler.Verify(mock => mock.OnActionEvent(It.IsAny<ActionEvent>()), Times.Once);
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void NotificationOptionClickedEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
+        {
+            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+            messageHandler.OnMessage("{\"type\":\"notificationOptionClicked\"}");
+
+            eventHandler.Verify(mock => mock.OnNotificationOptionClickedEvent(It.IsAny<NotificationOptionClickedEvent>()), Times.Once);
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void ConnectorChangeEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
+        {
+            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+            messageHandler.OnMessage("{\"type\":\"connectorChange\"}");
+
+            eventHandler.Verify(mock => mock.OnConnecterChangeEvent(It.IsAny<ConnectorChangeEvent>()), Times.Once);
+        }
+
+        [Theory]
+        [AutoMoqData]
+        public void ShortConnectorIdNotificationEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
+        {
+            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+            messageHandler.OnMessage("{\"type\":\"shortConnectorIdNotification\"}");
+
+            eventHandler.Verify(mock => mock.OnShortConnectorIdNotificationEvent(It.IsAny<ConnectorInfo>()), Times.Once);
         }
 
         [Theory]
