@@ -1,0 +1,37 @@
+{
+  "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
+  "sdk": 7,
+  "version": 1,
+  "name": "TouchPortalSDK.Settings",
+  "id": "TouchPortalSDK.Settings",
+  "categories": [
+    {
+      "id": "TouchPortalSDK.Settings.category",
+      "name": "TouchPortalSDK.Settings",
+      "actions": [],
+      "states": [],
+      "events": [],
+      "connectors": []
+    }
+  ],
+  "settings": [
+    {
+      "name": "First",
+      "default": "23",
+      "type": "number",
+      "minValue": 0,
+      "maxValue": 120,
+      "readOnly": false
+    },
+    {
+      "name": "Second",
+      "default": "23",
+      "type": "text",
+      "maxLenght": 20,
+      "isPassword": false,
+      "minValue": 0,
+      "maxValue": 120,
+      "readOnly": true
+    }
+  ]
+}

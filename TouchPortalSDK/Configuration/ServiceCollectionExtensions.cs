@@ -13,7 +13,7 @@ namespace TouchPortalSDK.Configuration
             if (configuration != null)
                 serviceCollection.Configure<TouchPortalOptions>(configuration.GetSection("TouchPortalOptions"));
             serviceCollection.AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IOptions<TouchPortalOptions>>().Value);
-            
+
             //Add services, only expose Interfaces:
             serviceCollection.AddTransient(serviceProvider => new ServiceProviderFactory(serviceProvider));
             serviceCollection.AddTransient<ITouchPortalSocketFactory>(serviceProvider => serviceProvider.GetRequiredService<ServiceProviderFactory>());

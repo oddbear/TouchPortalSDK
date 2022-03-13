@@ -20,7 +20,7 @@ namespace TouchPortalSDK.Tests.Commands
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.CreateState(stateId, desc, defaultValue);
             Assert.True(result);
-            
+
             var parameter = socket.SendMessage_Parameter();
             StringAssert.Contains("\"createState\"", parameter);
             StringAssert.Contains(stateId, parameter);

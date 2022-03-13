@@ -1,9 +1,8 @@
 ﻿using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class BroadcastEvent : ITouchPortalMessage
+    public class BroadcastEvent : ITouchPortalEvent
     {
         /// <summary>
         /// Broadcast type is a global event all plugins will receive.
@@ -19,9 +18,5 @@ namespace TouchPortalSDK.Messages.Events
         /// Name of the page the device is currently on. Ex. "(main)"
         /// </summary>
         public string PageName { get; set; }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, PageName, default);
     }
 }

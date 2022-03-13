@@ -1,13 +1,12 @@
 ﻿using System.Text.Json;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 
 namespace TouchPortalSDK.Configuration
 {
     internal static class MessageResolver
     {
-        internal static ITouchPortalMessage ResolveMessage(string message)
+        internal static ITouchPortalEvent ResolveMessage(string message)
         {
             //Is the message a valid object?
             var jsonDocument = GenericDocument(message);
@@ -38,23 +37,7 @@ namespace TouchPortalSDK.Configuration
                 case "connectorChange":
                     return JsonSerializer.Deserialize<ConnectorChangeEvent>(message, Options.JsonSerializerOptions);
                 case "shortConnectorIdNotification":
-                  return JsonSerializer.Deserialize<ShortConnectorIdNotificationEvent>(message, Options.JsonSerializerOptions);
-
-                //Commands:
-                case "choiceUpdate":
-                    return JsonSerializer.Deserialize<ChoiceUpdateCommand>(message, Options.JsonSerializerOptions);
-                case "createState":
-                    return JsonSerializer.Deserialize<CreateStateCommand>(message, Options.JsonSerializerOptions);
-                case "pair":
-                    return JsonSerializer.Deserialize<PairCommand>(message, Options.JsonSerializerOptions);
-                case "removeState":
-                    return JsonSerializer.Deserialize<RemoveStateCommand>(message, Options.JsonSerializerOptions);
-                case "settingUpdate":
-                    return JsonSerializer.Deserialize<SettingUpdateCommand>(message, Options.JsonSerializerOptions);
-                case "stateUpdate":
-                    return JsonSerializer.Deserialize<StateUpdateCommand>(message, Options.JsonSerializerOptions);
-                case "updateActionData":
-                    return JsonSerializer.Deserialize<UpdateActionDataCommand>(message, Options.JsonSerializerOptions);
+                    return JsonSerializer.Deserialize<ShortConnectorIdNotificationEvent>(message, Options.JsonSerializerOptions);
 
                 default:
                     return null;

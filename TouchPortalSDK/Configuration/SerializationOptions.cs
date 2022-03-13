@@ -8,7 +8,7 @@ namespace TouchPortalSDK.Configuration
         internal static JsonSerializerOptions JsonSerializerOptions { get; } = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreNullValues = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             Converters =
             {
                 new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),

@@ -19,7 +19,7 @@ namespace TouchPortalSDK.Tests.Commands
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.SendMessage(message);
             Assert.True(result);
-            
+
             var parameter = socket.SendMessage_Parameter();
             Assert.AreEqual(message, parameter);
         }

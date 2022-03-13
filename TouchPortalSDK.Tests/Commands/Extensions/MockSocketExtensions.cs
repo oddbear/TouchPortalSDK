@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using Moq;
+﻿using Moq;
 using Moq.Language.Flow;
+using System.Linq;
 using TouchPortalSDK.Interfaces;
 
 namespace TouchPortalSDK.Tests.Commands.Extensions

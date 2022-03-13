@@ -1,0 +1,49 @@
+{
+  "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
+  "sdk": 7,
+  "version": 1,
+  "name": "TouchPortalSDK.Connectors",
+  "id": "TouchPortalSDK.Connectors",
+  "categories": [
+    {
+      "id": "TouchPortalSDK.Connectors.category",
+      "name": "TouchPortalSDK.Connectors",
+      "actions": [
+        {
+          "id": "dummy.action",
+          "name": "Dummy action to make connectors work",
+          "prefix": "Plugin",
+          "type": "communicate",
+          "tryInline": true
+        }
+      ],
+      "states": [],
+      "events": [],
+      "connectors": [
+        {
+          "id": "connector.without.data",
+          "name": "Connector without data",
+          "format": "Connector Without Data"
+        },
+        {
+          "id": "connector.with.data",
+          "name": "Connector with data",
+          "format": "Data {$first$}",
+          "data": [
+            {
+              "id": "first",
+              "type": "choice",
+              "label": "Plugin",
+              "default": "lower",
+              "valueChoices": [
+                "lower",
+                "upper"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "settings": []
+}

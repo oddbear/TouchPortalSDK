@@ -1,9 +1,9 @@
-﻿using System;
-using System.Threading;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
+using System;
+using System.Threading;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Events;

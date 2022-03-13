@@ -1,10 +1,9 @@
 ﻿using System;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class SettingUpdateCommand : ITouchPortalMessage
+    public class SettingUpdateCommand : ITouchPortalCommand
     {
         public string Type => "settingUpdate";
 
@@ -12,17 +11,18 @@ namespace TouchPortalSDK.Messages.Commands
 
         public string Value { get; set; }
 
-        public SettingUpdateCommand(string name, string value)
+        public static SettingUpdateCommand CreateAndValidate(string name, string value)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
-            Name = name;
-            Value = value ?? string.Empty;
-        }
+            var command = new SettingUpdateCommand
+            {
+                Name = name,
+                Value = value ?? string.Empty
+            };
 
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, Name, default);
+            return command;
+        }
     }
 }

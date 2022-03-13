@@ -1,0 +1,45 @@
+{
+  "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
+  "sdk": 7,
+  "version": 1,
+  "name": "TouchPortalSDK.Events",
+  "id": "TouchPortalSDK.Events",
+  "categories": [
+    {
+      "id": "TouchPortalSDK.Events.category",
+      "name": "TouchPortalSDK.Events",
+      "actions": [],
+      "states": [
+        {
+          "id": "fruit",
+          "type": "choice",
+          "desc": "Fruit Kind description",
+          "default": "Apple",
+          "valueChoices": [
+            "Apple",
+            "Pears",
+            "Grapes",
+            "Bananas"
+          ]
+        }],
+      "events": [
+        {
+          "id": "event002",
+          "name": "On breakfast eating",
+          "format": "When we eat $val as breakfast",
+          "type": "communicate",
+          "valueType": "choice",
+          "valueChoices": [
+            "Apple",
+            "Pears",
+            "Grapes",
+            "Bananas"
+          ],
+          "valueStateId": "fruit"
+        }
+      ],
+      "connectors": []
+    }
+  ],
+  "settings": []
+}

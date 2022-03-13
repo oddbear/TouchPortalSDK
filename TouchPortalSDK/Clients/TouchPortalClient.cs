@@ -1,23 +1,24 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
-using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
+using TouchPortalSDK.Values;
 
 namespace TouchPortalSDK.Clients
 {
     [SuppressMessage("Critical Code Smell", "S1006:Method overrides should not change parameter defaults", Justification = "Service resolved from IoC framework.")]
-    public class TouchPortalClient : ITouchPortalClient, IMessageHandler
+    public class TouchPortalClient : ITouchPortalClient, IMessageHandler, ICommandHandler
     {
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool IsConnected { get => _touchPortalSocket?.IsConnected ?? false; }
+        public bool IsConnected => _touchPortalSocket?.IsConnected ?? false;
 
         private readonly ILogger<TouchPortalClient> _logger;
         private readonly ITouchPortalEventHandler _eventHandler;
@@ -26,7 +27,7 @@ namespace TouchPortalSDK.Clients
         private readonly ManualResetEvent _infoWaitHandle;
 
         private InfoEvent _lastInfoEvent;
-        
+
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
                                  ITouchPortalSocketFactory socketFactory,
                                  ILoggerFactory loggerFactory = null)
@@ -40,9 +41,9 @@ namespace TouchPortalSDK.Clients
 
             _infoWaitHandle = new ManualResetEvent(false);
         }
-        
+
         #region Setup
-        
+
         /// <inheritdoc cref="ITouchPortalClient" />
         bool ITouchPortalClient.Connect()
         {
@@ -69,10 +70,10 @@ namespace TouchPortalSDK.Clients
             //Waiting for InfoMessage:
             _infoWaitHandle.WaitOne(-1);
             _logger?.LogInformation("Received pair response.");
-            
+
             return _lastInfoEvent != null;
         }
-        
+
         /// <inheritdoc cref="ITouchPortalClient" />
         void ITouchPortalClient.Close()
             => Close("Closed by plugin.");
@@ -94,114 +95,157 @@ namespace TouchPortalSDK.Clients
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.SettingUpdate(string name, string value)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            try
+            {
+                var command = SettingUpdateCommand.CreateAndValidate(name, value);
+
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(SettingUpdateCommand)}");
                 return false;
-
-            var command = new SettingUpdateCommand(name, value);
-
-            return SendCommand(command);
+            }
         }
 
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.CreateState(string stateId, string desc, string defaultValue)
         {
-            if (string.IsNullOrWhiteSpace(stateId) ||
-                string.IsNullOrWhiteSpace(desc))
-                return false;
-            
-            var command = new CreateStateCommand(stateId, desc, defaultValue);
+            try
+            {
+                var command = CreateStateCommand.CreateAndValidate(stateId, desc, defaultValue);
 
-            return SendCommand(command);
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(CreateStateCommand)}");
+                return false;
+            }
         }
 
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.RemoveState(string stateId)
         {
-            if (string.IsNullOrWhiteSpace(stateId))
+            try
+            {
+                var command = RemoveStateCommand.CreateAndValidate(stateId);
+
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(RemoveStateCommand)}");
                 return false;
-
-            var command = new RemoveStateCommand(stateId);
-
-            return SendCommand(command);
+            }
         }
 
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.StateUpdate(string stateId, string value)
         {
-            if (string.IsNullOrWhiteSpace(stateId))
+            try
+            {
+                var command = StateUpdateCommand.CreateAndValidate(stateId, value);
+
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(StateUpdateCommand)}");
                 return false;
-
-            var command = new StateUpdateCommand(stateId, value);
-
-            return SendCommand(command);
+            }
         }
 
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.ChoiceUpdate(string choiceId, string[] values, string instanceId)
         {
-            if (string.IsNullOrWhiteSpace(choiceId))
-                return false;
-            
-            var command = new ChoiceUpdateCommand(choiceId, values, instanceId);
+            try
+            {
+                var command = ChoiceUpdateCommand.CreateAndValidate(choiceId, values, instanceId);
 
-            return SendCommand(command);
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(ChoiceUpdateCommand)}");
+                return false;
+            }
         }
 
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId)
         {
-            if (string.IsNullOrWhiteSpace(dataId))
-                return false;
+            try
+            {
+                var command = UpdateActionDataCommand.CreateAndValidate(dataId, minValue, maxValue, dataType, instanceId);
 
-            var command = new UpdateActionDataCommand(dataId, minValue, maxValue, dataType, instanceId);
-            
-            return SendCommand(command);
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(UpdateActionDataCommand)}");
+                return false;
+            }
         }
 
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions)
         {
-            if (string.IsNullOrWhiteSpace(notificationId))
+            try
+            {
+                var command = ShowNotificationCommand.CreateAndValidate(notificationId, title, message, notificationOptions);
+
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(ShowNotificationCommand)}");
                 return false;
-
-            if (string.IsNullOrWhiteSpace(title))
-                return false;
-
-            if (string.IsNullOrWhiteSpace(message))
-                return false;
-
-            if (notificationOptions is null || notificationOptions.Length == 0)
-                return false;
-
-            var command = new ShowNotificationCommand(notificationId, title, message, notificationOptions);
-
-            return SendCommand(command);
+            }
         }
 
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.ConnectorUpdate(string connectorId, int value)
         {
-            if (string.IsNullOrWhiteSpace(connectorId))
+            try
+            {
+                var command = ConnectorUpdateCommand.CreateAndValidate(_eventHandler.PluginId, connectorId, value);
+
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(ConnectorUpdateCommand)}");
                 return false;
-
-            if (value < 0 || value > 100)
-                return false;
-
-            var command = new ConnectorUpdateCommand(_eventHandler.PluginId, connectorId, value);
-
-            if (command.ConnectorId.Length > 200)
-                return false;
-
-            return SendCommand(command);
+            }
         }
 
-        public bool SendCommand<TCommand>(TCommand command, [CallerMemberName]string callerMemberName = "")
-            where TCommand : ITouchPortalMessage
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.ConnectorUpdate(ConnectorShortId shortId, int value)
         {
-            var jsonMessage = JsonSerializer.Serialize(command, Options.JsonSerializerOptions);
+            try
+            {
+                var command = ConnectorUpdateCommand.CreateAndValidate(shortId, value);
 
-            var success = _touchPortalSocket.SendMessage(jsonMessage);
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(ConnectorUpdateCommand)}");
+                return false;
+            }
+        }
 
+        bool ICommandHandler.SendCommand(ITouchPortalCommand command)
+        {
+            var jsonMessage = JsonSerializer.Serialize<object>(command, Options.JsonSerializerOptions);
+
+            return _touchPortalSocket.SendMessage(jsonMessage);
+        }
+
+        public bool SendCommand(ITouchPortalCommand command, [CallerMemberName] string callerMemberName = "")
+        {
+            var success = ((ICommandHandler)this).SendCommand(command);
             _logger?.LogInformation($"[{callerMemberName}] sent: '{success}'.");
             return success;
         }
@@ -209,7 +253,7 @@ namespace TouchPortalSDK.Clients
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.SendMessage(string message)
             => _touchPortalSocket.SendMessage(message);
-        
+
         #endregion
 
         #region TouchPortal Event Handler
@@ -245,7 +289,7 @@ namespace TouchPortalSDK.Clients
                     _eventHandler.OnConnecterChangeEvent(connectorChangeEvent);
                     return;
                 case ShortConnectorIdNotificationEvent shortConnectorIdEvent:
-                    _eventHandler.OnShortConnectorIdNotificationEvent(shortConnectorIdEvent);
+                    _eventHandler.OnShortConnectorIdNotificationEvent(new ConnectorInfo(shortConnectorIdEvent));
                     return;
                 //All of Action, Up, Down:
                 case ActionEvent actionEvent:

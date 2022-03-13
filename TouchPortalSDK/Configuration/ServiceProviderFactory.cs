@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
 

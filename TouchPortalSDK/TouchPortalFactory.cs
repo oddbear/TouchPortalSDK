@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
 
@@ -13,7 +13,7 @@ namespace TouchPortalSDK
     {
         private readonly ILoggerFactory _loggerFactory;
         private readonly TouchPortalOptions _options;
-        
+
         /// <summary>
         /// Private so we don't expose the socket factory.
         /// </summary>
@@ -33,7 +33,7 @@ namespace TouchPortalSDK
         public static ITouchPortalClient CreateClient(ITouchPortalEventHandler eventHandler, TouchPortalOptions options = null, ILoggerFactory loggerFactory = null)
         {
             ITouchPortalClientFactory factory = new TouchPortalFactory(options, loggerFactory);
-            
+
             return factory.Create(eventHandler);
         }
 

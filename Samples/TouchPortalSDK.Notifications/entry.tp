@@ -1,0 +1,14 @@
+{
+  "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
+  "sdk": 7,
+  "version": 1,
+  "name": "TouchPortalSDK.Notifications",
+  "id": "TouchPortalSDK.Notifications",
+  "categories": [
+    {
+      "id": "TouchPortalSDK.Notifications.category",
+      "name": "TouchPortalSDK.Notifications"
+    }
+  ],
+  "settings": []
+}

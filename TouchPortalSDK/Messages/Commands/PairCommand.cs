@@ -1,14 +1,18 @@
 ﻿using System;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class PairCommand : ITouchPortalMessage
+    public class PairCommand : ITouchPortalCommand
     {
         public string Type => "pair";
 
         public string Id { get; set; }
+
+        public PairCommand()
+        {
+            //Empty constructor for no validation or calculations.
+        }
 
         public PairCommand(string pluginId)
         {
@@ -17,9 +21,5 @@ namespace TouchPortalSDK.Messages.Commands
 
             Id = pluginId;
         }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, Id, default);
     }
 }

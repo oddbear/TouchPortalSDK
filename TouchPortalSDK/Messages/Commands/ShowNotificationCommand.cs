@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Linq;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    internal class ShowNotificationCommand : ITouchPortalMessage
+    internal class ShowNotificationCommand : ITouchPortalCommand
     {
         public string Type => "showNotification";
 
@@ -17,7 +16,7 @@ namespace TouchPortalSDK.Messages.Commands
 
         public NotificationOptions[] Options { get; set; }
 
-        public ShowNotificationCommand(string notificationId, string title, string message, NotificationOptions[] notificationOptions)
+        public static ShowNotificationCommand CreateAndValidate(string notificationId, string title, string message, NotificationOptions[] notificationOptions)
         {
             if (string.IsNullOrWhiteSpace(notificationId))
                 throw new ArgumentNullException(nameof(notificationId));
@@ -28,18 +27,34 @@ namespace TouchPortalSDK.Messages.Commands
             if (string.IsNullOrWhiteSpace(message))
                 throw new ArgumentNullException(nameof(message));
 
-            if(!notificationOptions.Any())
-              throw new Exception("At least one option is required.");
+            if (notificationOptions is null)
+                throw new ArgumentNullException(nameof(notificationOptions));
 
-            NotificationId = notificationId;
-            Title = title;
-            Msg = message;
+            if (notificationOptions.Length == 0)
+                throw new Exception("At least one option is required.");
 
-            Options = notificationOptions;
+            foreach (var notificationOption in notificationOptions)
+            {
+                if (notificationOption is null)
+                    throw new InvalidOperationException("Notification option object was null.");
+
+                if (string.IsNullOrWhiteSpace(notificationOption.Id))
+                    throw new InvalidOperationException("Notification option Id was null.");
+
+                if (string.IsNullOrWhiteSpace(notificationOption.Title))
+                    throw new InvalidOperationException("Notification option Title was null.");
+            }
+
+            var command = new ShowNotificationCommand
+            {
+                NotificationId = notificationId,
+                Title = title,
+                Msg = message,
+
+                Options = notificationOptions
+            };
+
+            return command;
         }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, NotificationId, default);
     }
 }

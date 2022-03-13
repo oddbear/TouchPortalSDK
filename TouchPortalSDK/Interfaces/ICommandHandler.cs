@@ -1,5 +1,6 @@
 ﻿using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
+using TouchPortalSDK.Values;
 
 namespace TouchPortalSDK.Interfaces
 {
@@ -11,6 +12,13 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="message"></param>
         /// <returns></returns>
         bool SendMessage(string message);
+
+        /// <summary>
+        /// Sends a command.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        bool SendCommand(ITouchPortalCommand command);
 
         /// <summary>
         /// Creates a dynamic state in Touch Portal Memory.
@@ -80,6 +88,20 @@ namespace TouchPortalSDK.Interfaces
         /// <returns></returns>
         bool ShowNotification(string notificationId, string title, string message, NotificationOptions[] notificationOptions);
 
+        /// <summary>
+        /// Updates the a connector/slider value.
+        /// </summary>
+        /// <param name="connectorId">The id of the connector (with data if applicable)</param>
+        /// <param name="value">A value between 0-100 to update the connector to</param>
+        /// <returns></returns>
         bool ConnectorUpdate(string connectorId, int value);
+
+        /// <summary>
+        /// Updates the a connector/slider value.
+        /// </summary>
+        /// <param name="shortId">A shorter representation of the connectorId created by Touch Portal</param>
+        /// <param name="value">A value between 0-100 to update the connector to</param>
+        /// <returns></returns>
+        bool ConnectorUpdate(ConnectorShortId shortId, int value);
     }
 }
