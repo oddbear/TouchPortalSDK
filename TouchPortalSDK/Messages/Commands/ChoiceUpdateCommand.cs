@@ -1,10 +1,9 @@
 ﻿using System;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class ChoiceUpdateCommand : ITouchPortalMessage
+    public class ChoiceUpdateCommand : ITouchPortalCommand
     {
         public string Type => "choiceUpdate";
 
@@ -14,20 +13,21 @@ namespace TouchPortalSDK.Messages.Commands
 
         public string InstanceId { get; set; }
 
-        public ChoiceUpdateCommand(string listId, string[] value, string instanceId = null)
+        public static ChoiceUpdateCommand CreateAndValidate(string listId, string[] value, string instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(listId))
                 throw new ArgumentNullException(nameof(listId));
-            
-            Id = listId;
-            Value = value ?? Array.Empty<string>();
+
+            var command = new ChoiceUpdateCommand
+            {
+                Id = listId,
+                Value = value ?? Array.Empty<string>()
+            };
 
             if (!string.IsNullOrWhiteSpace(instanceId))
-                InstanceId = instanceId;
-        }
+                command.InstanceId = instanceId;
 
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, Id, InstanceId);
+            return command;
+        }
     }
 }

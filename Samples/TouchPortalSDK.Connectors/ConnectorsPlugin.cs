@@ -2,6 +2,7 @@
 using SampleUtils;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Events;
+using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Notifications
 {
@@ -9,8 +10,6 @@ namespace TouchPortalSDK.Notifications
     {
         protected override ILogger _logger { get; }
         protected override ITouchPortalClient _client { get; }
-
-        private List<ShortConnectorIdNotificationEvent> _shortIds = new List<ShortConnectorIdNotificationEvent>();
 
         public ConnectorsPlugin(ITouchPortalClientFactory clientFactory,
                             ILogger<ConnectorsPlugin> logger)
@@ -38,9 +37,7 @@ namespace TouchPortalSDK.Notifications
                 var value = message.Value / 2;
                 _client.ConnectorUpdate("connector.with.data|first=lower", value);
 
-                var client = (Clients.TouchPortalClient)_client;
-
-                var shortId = client.GetShortId("connector.with.data", "first", "upper");
+                var shortId = _client.GetShortId("connector.with.data", Data.Create("first","upper"));
                 _client.ConnectorUpdate(shortId, value + 50);
                 return;
             }
@@ -54,12 +51,6 @@ namespace TouchPortalSDK.Notifications
                 _client.ConnectorUpdate("connector.without.data", value);
                 return;
             }
-        }
-
-        public override void OnShortConnectorIdNotificationEvent(ShortConnectorIdNotificationEvent message)
-        {
-            _logger.LogObjectAsJson(message);
-            _shortIds.Add(message);
         }
     }
 }

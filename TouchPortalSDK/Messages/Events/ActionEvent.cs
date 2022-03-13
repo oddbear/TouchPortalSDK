@@ -6,7 +6,7 @@ using TouchPortalSDK.Messages.Models.Enums;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class ActionEvent : ITouchPortalMessage
+    public class ActionEvent : ITouchPortalEvent
     {
         /// <summary>
         /// <para>
@@ -44,7 +44,7 @@ namespace TouchPortalSDK.Messages.Events
         /// Ex. data1: dropdown1
         ///     data2: dropdown2
         /// </summary>
-        public IReadOnlyCollection<ActionDataSelected> Data { get; set; }
+        public IReadOnlyCollection<Data> Data { get; set; }
 
         /// <summary>
         /// Indexer to get data values.
@@ -74,9 +74,5 @@ namespace TouchPortalSDK.Messages.Events
                 "down" => Press.Down,
                 _ => Press.Tap
             };
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, ActionId, default);
     }
 }

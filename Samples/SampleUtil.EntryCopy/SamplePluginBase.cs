@@ -12,10 +12,6 @@ namespace SampleUtils
         protected abstract ILogger _logger { get; }
         protected abstract ITouchPortalClient _client { get; }
 
-        public SamplePluginBase()
-        {
-        }
-
         public virtual void OnActionEvent(ActionEvent message)
         {
             _logger.LogObjectAsJson(message);
@@ -55,11 +51,6 @@ namespace SampleUtils
         }
 
         public virtual void OnSettingsEvent(SettingsEvent message)
-        {
-            _logger.LogObjectAsJson(message);
-        }
-
-        public virtual void OnShortConnectorIdNotificationEvent(ShortConnectorIdNotificationEvent message)
         {
             _logger.LogObjectAsJson(message);
         }

@@ -1,9 +1,8 @@
 ﻿using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class NotificationOptionClickedEvent : ITouchPortalMessage
+    public class NotificationOptionClickedEvent : ITouchPortalEvent
     {
         /// <summary>
         /// Notification option in Touch Portal UI clicked by a user.
@@ -19,9 +18,5 @@ namespace TouchPortalSDK.Messages.Events
         /// The option clicked by the user.
         /// </summary>
         public string OptionId { get; set; }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, NotificationId, default);
     }
 }

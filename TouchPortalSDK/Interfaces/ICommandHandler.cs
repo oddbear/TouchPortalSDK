@@ -1,4 +1,5 @@
-﻿using TouchPortalSDK.Messages.Models;
+﻿using System.Collections.Generic;
+using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
 using TouchPortalSDK.Values;
 
@@ -7,11 +8,31 @@ namespace TouchPortalSDK.Interfaces
     public interface ICommandHandler
     {
         /// <summary>
+        /// Mappings of full connectorId to ShortId
+        /// </summary>
+        Dictionary<string, ConnectorShortId> ShortIdMappings { get; }
+
+        /// <summary>
+        /// Gets the ShortId representation fo a connectorId with or without data
+        /// </summary>
+        /// <param name="connectorId"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        ConnectorShortId GetShortId(string connectorId, Data data = null);
+
+        /// <summary>
         /// Send a custom command. There is no state tracking for this.
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
         bool SendMessage(string message);
+
+        /// <summary>
+        /// Sends a command.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        bool SendCommand(ITouchPortalCommand command);
 
         /// <summary>
         /// Creates a dynamic state in Touch Portal Memory.

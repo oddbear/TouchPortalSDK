@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using SampleUtils;
-using System.Text.Json;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Commands;
 
@@ -30,9 +29,11 @@ namespace TouchPortalSDK.Events
 
             //You can also send custom messages to Touch Portal, if this SDK gets outdated,
             // then this is an option (and receiving with the OnUnhandledEvent).
-            var command = new StateUpdateCommand("fruit", state);
-            var message = JsonSerializer.Serialize(command);
-            _client.SendMessage(message);
+            var command = StateUpdateCommand.CreateAndValidate("fruit", state);
+            _client.SendCommand(command);
+
+            //Or as message:
+            //_client.SendMessage(JsonSerializer.Serialize(command));
         }
     }
 }

@@ -4,7 +4,7 @@ using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class SettingsEvent : ITouchPortalMessage
+    public class SettingsEvent : ITouchPortalEvent
     {
         /// <summary>
         /// Plugin settings changed in TouchPortal UI.
@@ -15,9 +15,5 @@ namespace TouchPortalSDK.Messages.Events
         /// Values in settings.
         /// </summary>
         public IReadOnlyCollection<Setting> Values { get; set; }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, default, default);
     }
 }

@@ -4,7 +4,7 @@ using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class InfoEvent : ITouchPortalMessage
+    public class InfoEvent : ITouchPortalEvent
     {
         /// <summary>
         /// Event from Touch Portal when a connection is established.
@@ -44,9 +44,5 @@ namespace TouchPortalSDK.Messages.Events
         /// Values in settings.
         /// </summary>
         public IReadOnlyCollection<Setting> Settings { get; set; }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, default, default);
     }
 }

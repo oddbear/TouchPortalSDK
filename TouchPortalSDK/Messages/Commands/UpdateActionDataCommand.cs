@@ -1,11 +1,10 @@
 ﻿using System;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    public class UpdateActionDataCommand : ITouchPortalMessage
+    public class UpdateActionDataCommand : ITouchPortalCommand
     {
         public string Type => "updateActionData";
 
@@ -13,15 +12,20 @@ namespace TouchPortalSDK.Messages.Commands
 
         public DataValue Data { get; set; }
 
-        public UpdateActionDataCommand(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = null)
+        public static UpdateActionDataCommand CreateAndValidate(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(dataId))
                 throw new ArgumentNullException(nameof(dataId));
-            
-            Data = new DataValue(dataId, minValue, maxValue, dataType);
+
+            var command = new UpdateActionDataCommand
+            {
+                Data = new DataValue(dataId, minValue, maxValue, dataType)
+            };
 
             if (!string.IsNullOrWhiteSpace(instanceId))
-                InstanceId = instanceId;
+                command.InstanceId = instanceId;
+
+            return command;
         }
 
         public class DataValue
@@ -42,9 +46,5 @@ namespace TouchPortalSDK.Messages.Commands
                 Type = dataType;
             }
         }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, Data.Id, InstanceId);
     }
 }

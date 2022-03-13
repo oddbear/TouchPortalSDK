@@ -1,9 +1,8 @@
 ﻿using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class ListChangeEvent : ITouchPortalMessage
+    public class ListChangeEvent : ITouchPortalEvent
     {
         /// <summary>
         /// When setting up an action in the Touch Portal UI. This event is fired if the user selects and item in the dropdown for a choice list.
@@ -37,9 +36,5 @@ namespace TouchPortalSDK.Messages.Events
         /// Might be null if nothing is selected, ex. choices updated to something else.
         /// </summary>
         public string Value { get; set; }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, ListId, InstanceId);
     }
 }

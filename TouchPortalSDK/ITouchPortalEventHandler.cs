@@ -49,11 +49,6 @@ namespace TouchPortalSDK
         void OnConnecterChangeEvent(ConnectorChangeEvent message);
 
         /// <summary>
-        /// Called when TP reports a new instance of your connector, either at startup or if user adds/modifies one.
-        /// </summary>
-        void OnShortConnectorIdNotificationEvent(ShortConnectorIdNotificationEvent message);
-
-        /// <summary>
         /// Method to call when we loose connection to Touch Portal.
         /// </summary>
         /// <param name="message"></param>

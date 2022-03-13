@@ -5,7 +5,7 @@ using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Events
 {
-    public class ConnectorChangeEvent : ITouchPortalMessage
+    public class ConnectorChangeEvent : ITouchPortalEvent
     {
         /// <summary>
         /// Touch Portal closes/stops the plugin or shuts down.
@@ -18,7 +18,7 @@ namespace TouchPortalSDK.Messages.Events
 
         public int Value { get; set; }
 
-        public IReadOnlyCollection<ActionDataSelected> Data { get; set; }
+        public IReadOnlyCollection<Data> Data { get; set; }
 
         /// <summary>
         /// Indexer to get data values.
@@ -36,8 +36,5 @@ namespace TouchPortalSDK.Messages.Events
         /// <returns>the value of the data field as string or null if not exists</returns>
         public string GetValue(string dataId)
             => Data?.SingleOrDefault(data => data.Id == dataId)?.Value;
-
-        public Identifier GetIdentifier()
-            => new Identifier(Type, ConnectorId, default);
     }
 }

@@ -4,7 +4,7 @@ using TouchPortalSDK.Messages.Models;
 
 namespace TouchPortalSDK.Messages.Commands
 {
-    internal class ShowNotificationCommand : ITouchPortalMessage
+    internal class ShowNotificationCommand : ITouchPortalCommand
     {
         public string Type => "showNotification";
 
@@ -16,7 +16,7 @@ namespace TouchPortalSDK.Messages.Commands
 
         public NotificationOptions[] Options { get; set; }
 
-        public ShowNotificationCommand(string notificationId, string title, string message, NotificationOptions[] notificationOptions)
+        public static ShowNotificationCommand CreateAndValidate(string notificationId, string title, string message, NotificationOptions[] notificationOptions)
         {
             if (string.IsNullOrWhiteSpace(notificationId))
                 throw new ArgumentNullException(nameof(notificationId));
@@ -33,15 +33,16 @@ namespace TouchPortalSDK.Messages.Commands
             if (notificationOptions.Length == 0)
               throw new Exception("At least one option is required.");
 
-            NotificationId = notificationId;
-            Title = title;
-            Msg = message;
+            var command = new ShowNotificationCommand
+            {
+                NotificationId = notificationId,
+                Title = title,
+                Msg = message,
 
-            Options = notificationOptions;
+                Options = notificationOptions
+            };
+
+            return command;
         }
-
-        /// <inheritdoc cref="ITouchPortalMessage" />
-        public Identifier GetIdentifier()
-            => new Identifier(Type, NotificationId, default);
     }
 }
