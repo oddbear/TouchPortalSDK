@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Interfaces;
 
 namespace TouchPortalSDK.Clients
@@ -51,7 +51,7 @@ namespace TouchPortalSDK.Clients
                 var encoder = new UTF8Encoding(false);
 
                 //Setup streams:
-                _streamWriter = new StreamWriter(new NetworkStream(_socket), encoder) {AutoFlush = true, };
+                _streamWriter = new StreamWriter(new NetworkStream(_socket), encoder) { AutoFlush = true, };
                 _streamReader = new StreamReader(new NetworkStream(_socket), encoder);
 
                 _logger?.LogInformation("Streams created.");

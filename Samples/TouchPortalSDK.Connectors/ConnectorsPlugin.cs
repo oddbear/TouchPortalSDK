@@ -37,7 +37,7 @@ namespace TouchPortalSDK.Notifications
         {
             _logger.LogObjectAsJson(message);
 
-            if(message.ConnectorId == "connector.without.data")
+            if (message.ConnectorId == "connector.without.data")
             {
                 var value = message.Value / 2;
                 _client.ConnectorUpdate("connector.with.data|first=lower", value);

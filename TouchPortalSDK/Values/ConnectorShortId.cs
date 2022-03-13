@@ -1,6 +1,4 @@
-﻿using TouchPortalSDK.Messages.Events;
-
-namespace TouchPortalSDK.Values
+﻿namespace TouchPortalSDK.Values
 {
     public class ConnectorShortId
     {

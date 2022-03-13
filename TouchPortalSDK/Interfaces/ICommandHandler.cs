@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using TouchPortalSDK.Messages.Models;
+﻿using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
 using TouchPortalSDK.Values;
 

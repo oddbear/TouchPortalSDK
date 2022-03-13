@@ -14,7 +14,7 @@ namespace TouchPortalSDK.Tests.Events
     {
         [Theory]
         [AutoMoqData]
-        public void InfoEvent(IFixture fixture, [Frozen]Mock<ITouchPortalEventHandler> eventHandler)
+        public void InfoEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
         {
             IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
             messageHandler.OnMessage("{\"type\":\"info\"}");

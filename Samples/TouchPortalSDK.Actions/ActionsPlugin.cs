@@ -46,7 +46,7 @@ namespace TouchPortalSDK.Actions
             _client.Connect();
 
             //Example: Updates all instances of the list with new values.
-            var values = new [] { "a", "b", "c" };
+            var values = new[] { "a", "b", "c" };
             _client.ChoiceUpdate("action.with.listUpdates.list2", values);
         }
     }

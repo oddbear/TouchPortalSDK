@@ -1,8 +1,8 @@
-﻿using System.Globalization;
-using AutoFixture;
+﻿using AutoFixture;
 using AutoFixture.NUnit3;
 using Moq;
 using NUnit.Framework;
+using System.Globalization;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Models.Enums;

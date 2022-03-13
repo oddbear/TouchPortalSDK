@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Messages.Commands;
 using TouchPortalSDK.Messages.Events;
 
 namespace TouchPortalSDK.Configuration
@@ -38,7 +37,7 @@ namespace TouchPortalSDK.Configuration
                 case "connectorChange":
                     return JsonSerializer.Deserialize<ConnectorChangeEvent>(message, Options.JsonSerializerOptions);
                 case "shortConnectorIdNotification":
-                  return JsonSerializer.Deserialize<ShortConnectorIdNotificationEvent>(message, Options.JsonSerializerOptions);
+                    return JsonSerializer.Deserialize<ShortConnectorIdNotificationEvent>(message, Options.JsonSerializerOptions);
 
                 default:
                     return null;

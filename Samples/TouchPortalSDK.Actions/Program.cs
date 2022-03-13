@@ -2,8 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SampleUtils;
-using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Actions;
+using TouchPortalSDK.Configuration;
 
 //Used in debug to copy the entry.tp file if changed, and restart Touch Portal:
 EntryCopy.RefreshEntryFile();

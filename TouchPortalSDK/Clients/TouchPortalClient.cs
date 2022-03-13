@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
-using Microsoft.Extensions.Logging;
 using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Commands;
@@ -27,7 +27,7 @@ namespace TouchPortalSDK.Clients
         private readonly ManualResetEvent _infoWaitHandle;
 
         private InfoEvent _lastInfoEvent;
-        
+
         public TouchPortalClient(ITouchPortalEventHandler eventHandler,
                                  ITouchPortalSocketFactory socketFactory,
                                  ILoggerFactory loggerFactory = null)
@@ -41,9 +41,9 @@ namespace TouchPortalSDK.Clients
 
             _infoWaitHandle = new ManualResetEvent(false);
         }
-        
+
         #region Setup
-        
+
         /// <inheritdoc cref="ITouchPortalClient" />
         bool ITouchPortalClient.Connect()
         {
@@ -70,10 +70,10 @@ namespace TouchPortalSDK.Clients
             //Waiting for InfoMessage:
             _infoWaitHandle.WaitOne(-1);
             _logger?.LogInformation("Received pair response.");
-            
+
             return _lastInfoEvent != null;
         }
-        
+
         /// <inheritdoc cref="ITouchPortalClient" />
         void ITouchPortalClient.Close()
             => Close("Closed by plugin.");
@@ -243,7 +243,7 @@ namespace TouchPortalSDK.Clients
             return _touchPortalSocket.SendMessage(jsonMessage);
         }
 
-        public bool SendCommand(ITouchPortalCommand command, [CallerMemberName]string callerMemberName = "")
+        public bool SendCommand(ITouchPortalCommand command, [CallerMemberName] string callerMemberName = "")
         {
             var success = ((ICommandHandler)this).SendCommand(command);
             _logger?.LogInformation($"[{callerMemberName}] sent: '{success}'.");
@@ -253,7 +253,7 @@ namespace TouchPortalSDK.Clients
         /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.SendMessage(string message)
             => _touchPortalSocket.SendMessage(message);
-        
+
         #endregion
 
         #region TouchPortal Event Handler

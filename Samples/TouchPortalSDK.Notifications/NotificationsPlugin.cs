@@ -9,7 +9,7 @@ namespace TouchPortalSDK.Notifications
 {
     public class NotificationsPlugin : SamplePluginBase
     {
-        protected override ILogger _logger { get;  }
+        protected override ILogger _logger { get; }
         protected override ITouchPortalClient _client { get; }
 
         public NotificationsPlugin(ITouchPortalClientFactory clientFactory,
