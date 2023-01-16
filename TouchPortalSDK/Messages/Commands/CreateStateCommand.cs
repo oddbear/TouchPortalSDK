@@ -13,7 +13,9 @@ namespace TouchPortalSDK.Messages.Commands
 
         public string DefaultValue { get; set; }
 
-        public static CreateStateCommand CreateAndValidate(string stateId, string desc, string defaultValue)
+        public string ParentGroup { get; set; }
+
+        public static CreateStateCommand CreateAndValidate(string stateId, string desc, string defaultValue, string parentGroup = null)
         {
             if (string.IsNullOrWhiteSpace(stateId))
                 throw new ArgumentNullException(nameof(stateId));
@@ -25,7 +27,8 @@ namespace TouchPortalSDK.Messages.Commands
             {
                 Id = stateId,
                 Desc = desc,
-                DefaultValue = defaultValue ?? string.Empty
+                DefaultValue = defaultValue ?? string.Empty,
+                ParentGroup = parentGroup
             };
 
             return command;

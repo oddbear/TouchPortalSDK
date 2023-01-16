@@ -109,11 +109,11 @@ namespace TouchPortalSDK.Clients
         }
 
         /// <inheritdoc cref="ICommandHandler" />
-        bool ICommandHandler.CreateState(string stateId, string desc, string defaultValue)
+        bool ICommandHandler.CreateState(string stateId, string desc, string defaultValue, string parentGroup)
         {
             try
             {
-                var command = CreateStateCommand.CreateAndValidate(stateId, desc, defaultValue);
+                var command = CreateStateCommand.CreateAndValidate(stateId, desc, defaultValue, parentGroup);
 
                 return SendCommand(command);
             }
