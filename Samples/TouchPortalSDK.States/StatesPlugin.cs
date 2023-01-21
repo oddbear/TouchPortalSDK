@@ -28,7 +28,7 @@ namespace TouchPortalSDK.States
             _client.StateUpdate("tp_sid_fruit", state);
 
             //Dynamic states is not defined in the entry.tp file:
-            _client.CreateState("dynamicState1", "dynamic state 1", DateTime.UtcNow.ToString("s"));
+            _client.CreateState("dynamicState1", "dynamic state 1", DateTime.UtcNow.ToString("s"), "dynamic parentGroup");
 
             //You can update a dynamic state:
             //_client.StateUpdate("dynamicState1", DateTime.UtcNow.ToString("s");

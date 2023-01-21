@@ -15,6 +15,7 @@
           "type": "choice",
           "desc": "Fruit Kind description",
           "default": "Apple",
+          "parentGroup": "Fruits",
           "valueChoices": [
             "Apple",
             "Pears",

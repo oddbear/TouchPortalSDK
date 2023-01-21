@@ -10,7 +10,7 @@ EntryCopy.RefreshEntryFile();
 
 //Build configuration:
 var configurationRoot = new ConfigurationBuilder()
-    .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
+    .SetBasePath(Directory.GetParent(AppContext.BaseDirectory)!.FullName)
     .AddJsonFile("appsettings.json")
     .Build();
 

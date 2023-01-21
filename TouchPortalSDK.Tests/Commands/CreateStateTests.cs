@@ -13,12 +13,12 @@ namespace TouchPortalSDK.Tests.Commands
     {
         [Theory]
         [AutoMoqData]
-        public void Success(string stateId, string desc, string defaultValue, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
+        public void Success(string stateId, string desc, string defaultValue, string parentGroup, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(true);
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.CreateState(stateId, desc, defaultValue);
+            var result = commandHandler.CreateState(stateId, desc, defaultValue, parentGroup);
             Assert.True(result);
 
             var parameter = socket.SendMessage_Parameter();
@@ -26,16 +26,18 @@ namespace TouchPortalSDK.Tests.Commands
             StringAssert.Contains(stateId, parameter);
             StringAssert.Contains(desc, parameter);
             StringAssert.Contains(defaultValue, parameter);
+            StringAssert.Contains(defaultValue, parameter);
+            StringAssert.Contains(parentGroup, parameter);
         }
 
         [Theory]
         [AutoMoqData]
-        public void Failed(string stateId, string desc, string defaultValue, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
+        public void Failed(string stateId, string desc, string defaultValue, string parentGroup, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
         {
             socket.SendMessage_Setup().Returns(false);
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.CreateState(stateId, desc, defaultValue);
+            var result = commandHandler.CreateState(stateId, desc, defaultValue, parentGroup);
             Assert.False(result);
         }
 
