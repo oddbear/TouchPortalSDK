@@ -29,7 +29,7 @@ namespace TouchPortalSDK.Actions
 
         public override void OnListChangedEvent(ListChangeEvent message)
         {
-            _logger?.LogObjectAsJson(message);
+            _logger.LogObjectAsJson(message);
 
             //Example: One list triggers an update of another list
             // , when user changes the value of the first list in Touch Portal.
