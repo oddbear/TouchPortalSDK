@@ -8,11 +8,11 @@ namespace TouchPortalSDK.Messages.Commands
     {
         public string Type => "updateActionData";
 
-        public string InstanceId { get; set; }
+        public string? InstanceId { get; set; }
 
         public DataValue Data { get; set; }
 
-        public static UpdateActionDataCommand CreateAndValidate(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = null)
+        public static UpdateActionDataCommand CreateAndValidate(string dataId, double minValue, double maxValue, ActionDataType dataType, string? instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(dataId))
                 throw new ArgumentNullException(nameof(dataId));

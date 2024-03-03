@@ -21,11 +21,15 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ConnectorUpdate(connectorId, value);
-            Assert.True(result);
 
-            var parameter = socket.SendMessage_Parameter();
-            StringAssert.Contains("\"connectorUpdate\"", parameter);
-            StringAssert.Contains(connectorId, parameter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.True);
+
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Does.Contain("\"connectorUpdate\""));
+                Assert.That(parameter, Does.Contain(connectorId));
+            });
         }
 
         [Theory]
@@ -38,7 +42,8 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ConnectorUpdate(connectorId, value);
-            Assert.False(result);
+
+            Assert.That(result, Is.False);
         }
 
         [Theory]
@@ -50,11 +55,15 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ConnectorUpdate(new ConnectorShortId(shortId), value);
-            Assert.True(result);
 
-            var parameter = socket.SendMessage_Parameter();
-            StringAssert.Contains("\"connectorUpdate\"", parameter);
-            StringAssert.Contains(shortId, parameter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.True);
+
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Does.Contain("\"connectorUpdate\""));
+                Assert.That(parameter, Does.Contain(shortId));
+            });
         }
 
         [Theory]
@@ -67,7 +76,8 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ConnectorUpdate(new ConnectorShortId(shortId), value);
-            Assert.False(result);
+
+            Assert.That(result, Is.False);
         }
     }
 }

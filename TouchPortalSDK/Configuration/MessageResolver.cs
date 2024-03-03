@@ -6,7 +6,7 @@ namespace TouchPortalSDK.Configuration
 {
     internal static class MessageResolver
     {
-        internal static ITouchPortalEvent ResolveMessage(string message)
+        internal static ITouchPortalEvent? ResolveMessage(string message)
         {
             //Is the message a valid object?
             var jsonDocument = GenericDocument(message);

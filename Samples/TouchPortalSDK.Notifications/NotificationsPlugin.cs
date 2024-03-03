@@ -12,8 +12,9 @@ namespace TouchPortalSDK.Notifications
         protected override ILogger _logger { get; }
         protected override ITouchPortalClient _client { get; }
 
-        public NotificationsPlugin(ITouchPortalClientFactory clientFactory,
-                            ILogger<NotificationsPlugin> logger)
+        public NotificationsPlugin(
+            ITouchPortalClientFactory clientFactory,
+            ILogger<NotificationsPlugin> logger)
         {
             _logger = logger;
             _client = clientFactory.Create(this);

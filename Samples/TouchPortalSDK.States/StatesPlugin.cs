@@ -9,8 +9,9 @@ namespace TouchPortalSDK.States
         protected override ILogger _logger { get; }
         protected override ITouchPortalClient _client { get; }
 
-        public StatesPlugin(ITouchPortalClientFactory clientFactory,
-                            ILogger<StatesPlugin> logger)
+        public StatesPlugin(
+            ITouchPortalClientFactory clientFactory,
+            ILogger<StatesPlugin> logger)
         {
             _logger = logger;
             _client = clientFactory.Create(this);

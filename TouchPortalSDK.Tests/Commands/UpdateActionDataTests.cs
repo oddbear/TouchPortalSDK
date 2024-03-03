@@ -21,14 +21,18 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.UpdateActionData(dataId, minValue, maxValue, ActionDataType.Number, instanceId);
-            Assert.True(result);
 
-            var parameter = socket.SendMessage_Parameter();
-            StringAssert.Contains("\"updateActionData\"", parameter);
-            StringAssert.Contains(dataId, parameter);
-            StringAssert.Contains(minValue.ToString(CultureInfo.InvariantCulture), parameter);
-            StringAssert.Contains(maxValue.ToString(CultureInfo.InvariantCulture), parameter);
-            StringAssert.Contains(instanceId, parameter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.True);
+
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Does.Contain("\"updateActionData\""));
+                Assert.That(parameter, Does.Contain(dataId));
+                Assert.That(parameter, Does.Contain(minValue.ToString(CultureInfo.InvariantCulture)));
+                Assert.That(parameter, Does.Contain(maxValue.ToString(CultureInfo.InvariantCulture)));
+                Assert.That(parameter, Does.Contain(instanceId));
+            });
         }
 
         [Theory]
@@ -39,7 +43,8 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.UpdateActionData(dataId, minValue, maxValue, ActionDataType.Number, instanceId);
-            Assert.False(result);
+            
+            Assert.That(result, Is.False);
         }
 
         [Theory]
@@ -49,7 +54,8 @@ namespace TouchPortalSDK.Tests.Commands
         {
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.UpdateActionData(dataId, default, default, default, default);
-            Assert.AreEqual(expected, result);
+            
+            Assert.That(expected, Is.EqualTo(result));
         }
     }
 }

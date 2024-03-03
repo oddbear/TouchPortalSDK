@@ -15,24 +15,25 @@ using TouchPortalSDK.Values;
 namespace TouchPortalSDK.Clients
 {
     [SuppressMessage("Critical Code Smell", "S1006:Method overrides should not change parameter defaults", Justification = "Service resolved from IoC framework.")]
-    public class TouchPortalClient : ITouchPortalClient, IMessageHandler, ICommandHandler
+    public class TouchPortalClient : ITouchPortalClient, IMessageHandler
     {
         /// <inheritdoc cref="ITouchPortalClient" />
-        public bool IsConnected => _touchPortalSocket?.IsConnected ?? false;
+        public bool IsConnected => _touchPortalSocket.IsConnected;
 
-        private readonly ILogger<TouchPortalClient> _logger;
+        private readonly ILogger<TouchPortalClient>? _logger;
         private readonly ITouchPortalEventHandler _eventHandler;
         private readonly ITouchPortalSocket _touchPortalSocket;
 
         private readonly ManualResetEvent _infoWaitHandle;
 
-        private InfoEvent _lastInfoEvent;
+        private InfoEvent? _lastInfoEvent;
 
-        public TouchPortalClient(ITouchPortalEventHandler eventHandler,
-                                 ITouchPortalSocketFactory socketFactory,
-                                 ILoggerFactory loggerFactory = null)
+        public TouchPortalClient(
+            ITouchPortalEventHandler eventHandler,
+            ITouchPortalSocketFactory socketFactory,
+            ILoggerFactory? loggerFactory = null)
         {
-            if (string.IsNullOrWhiteSpace(eventHandler?.PluginId))
+            if (string.IsNullOrWhiteSpace(eventHandler.PluginId))
                 throw new InvalidOperationException($"{nameof(ITouchPortalEventHandler)}: PluginId cannot be null or empty.");
 
             _eventHandler = eventHandler;
@@ -79,11 +80,11 @@ namespace TouchPortalSDK.Clients
             => Close("Closed by plugin.");
 
         /// <inheritdoc cref="IMessageHandler" />
-        public void Close(string message, Exception exception = default)
+        public void Close(string message, Exception? exception = null)
         {
             _logger?.LogInformation(exception, $"Closing TouchPortal Plugin: '{message}'");
 
-            _touchPortalSocket?.CloseSocket();
+            _touchPortalSocket.CloseSocket();
 
             _eventHandler.OnClosedEvent(message);
         }
@@ -109,11 +110,11 @@ namespace TouchPortalSDK.Clients
         }
 
         /// <inheritdoc cref="ICommandHandler" />
-        bool ICommandHandler.CreateState(string stateId, string desc, string defaultValue, string parentGroup)
+        bool ICommandHandler.CreateState(string stateId, string desc, string defaultValue, string? parentGroup, bool? forceUpdate)
         {
             try
             {
-                var command = CreateStateCommand.CreateAndValidate(stateId, desc, defaultValue, parentGroup);
+                var command = CreateStateCommand.CreateAndValidate(stateId, desc, defaultValue, parentGroup, forceUpdate);
 
                 return SendCommand(command);
             }
@@ -157,7 +158,7 @@ namespace TouchPortalSDK.Clients
         }
 
         /// <inheritdoc cref="ICommandHandler" />
-        bool ICommandHandler.ChoiceUpdate(string choiceId, string[] values, string instanceId)
+        bool ICommandHandler.ChoiceUpdate(string choiceId, string[] values, string? instanceId)
         {
             try
             {
@@ -173,7 +174,7 @@ namespace TouchPortalSDK.Clients
         }
 
         /// <inheritdoc cref="ICommandHandler" />
-        bool ICommandHandler.UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId)
+        bool ICommandHandler.UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string? instanceId)
         {
             try
             {

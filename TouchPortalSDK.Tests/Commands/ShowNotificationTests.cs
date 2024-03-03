@@ -24,13 +24,17 @@ namespace TouchPortalSDK.Tests.Commands
             };
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ShowNotification(notificationId, title, message, notificationOptions);
-            Assert.True(result);
 
-            var parameter = socket.SendMessage_Parameter();
-            StringAssert.Contains("\"showNotification\"", parameter);
-            StringAssert.Contains(notificationId, parameter);
-            StringAssert.Contains(title, parameter);
-            StringAssert.Contains(message, parameter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.True);
+
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Does.Contain("\"showNotification\""));
+                Assert.That(parameter, Does.Contain(notificationId));
+                Assert.That(parameter, Does.Contain(title));
+                Assert.That(parameter, Does.Contain(message));
+            });
         }
 
         [Theory]
@@ -44,7 +48,8 @@ namespace TouchPortalSDK.Tests.Commands
             };
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ShowNotification(notificationId, title, message, notificationOptions);
-            Assert.False(result);
+
+            Assert.That(result, Is.False);
         }
 
         [Theory]
@@ -63,7 +68,8 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ShowNotification(notificationId, title, message, notificationOptions);
-            Assert.False(result);
+
+            Assert.That(result, Is.False);
         }
 
         [AutoMoqData]
@@ -75,7 +81,8 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.ShowNotification(notificationId, title, message, notificationOptions);
-            Assert.False(result);
+
+            Assert.That(result, Is.False);
         }
     }
 }

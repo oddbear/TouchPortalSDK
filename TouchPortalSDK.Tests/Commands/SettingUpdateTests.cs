@@ -19,12 +19,16 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.SettingUpdate(name, value);
-            Assert.True(result);
 
-            var parameter = socket.SendMessage_Parameter();
-            StringAssert.Contains("\"settingUpdate\"", parameter);
-            StringAssert.Contains(name, parameter);
-            StringAssert.Contains(value, parameter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.True);
+
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Does.Contain("\"settingUpdate\""));
+                Assert.That(parameter, Does.Contain(name));
+                Assert.That(parameter, Does.Contain(value));
+            });
         }
 
         [Theory]
@@ -35,7 +39,8 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.SettingUpdate(name, value);
-            Assert.False(result);
+
+            Assert.That(result, Is.False);
         }
 
         [Theory]
@@ -45,7 +50,7 @@ namespace TouchPortalSDK.Tests.Commands
         {
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.SettingUpdate(name);
-            Assert.AreEqual(expected, result);
+            Assert.That(result, Is.EqualTo(expected));
         }
     }
 }

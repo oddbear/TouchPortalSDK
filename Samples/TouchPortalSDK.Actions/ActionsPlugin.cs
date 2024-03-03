@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Linq;
+using Microsoft.Extensions.Logging;
 using SampleUtils;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Events;
@@ -10,8 +11,9 @@ namespace TouchPortalSDK.Actions
         protected override ILogger _logger { get; }
         protected override ITouchPortalClient _client { get; }
 
-        public ActionsPlugin(ITouchPortalClientFactory clientFactory,
-                            ILogger<ActionsPlugin> logger)
+        public ActionsPlugin(
+            ITouchPortalClientFactory clientFactory,
+            ILogger<ActionsPlugin> logger)
         {
             _logger = logger;
             _client = clientFactory.Create(this);

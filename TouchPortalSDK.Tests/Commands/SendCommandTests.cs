@@ -18,10 +18,14 @@ namespace TouchPortalSDK.Tests.Commands
         {
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.SendMessage(message);
-            Assert.True(result);
 
-            var parameter = socket.SendMessage_Parameter();
-            Assert.AreEqual(message, parameter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.True);
+
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Is.EqualTo(message));
+            });
         }
 
         [Theory]
@@ -32,9 +36,12 @@ namespace TouchPortalSDK.Tests.Commands
             var client = fixture.Create<TouchPortalClient>();
             client.SendCommand(pair);
 
-            var parameter = socket.SendMessage_Parameter();
-            StringAssert.Contains("\"pair\"", parameter);
-            StringAssert.Contains(pluginId, parameter);
+            Assert.Multiple(() =>
+            {
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Does.Contain("\"pair\""));
+                Assert.That(parameter, Does.Contain(pluginId));
+            });
         }
     }
 }

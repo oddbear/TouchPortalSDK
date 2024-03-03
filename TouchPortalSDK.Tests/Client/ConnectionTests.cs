@@ -30,7 +30,7 @@ namespace TouchPortalSDK.Tests.Client
 
             ITouchPortalClient client = fixture.Create<TouchPortalClient>();
             var result = client.Connect();
-            Assert.False(result);
+            Assert.That(result, Is.False);
 
             socket.Verify(mock => mock.Connect(), Times.Once);
         }
@@ -44,7 +44,7 @@ namespace TouchPortalSDK.Tests.Client
 
             ITouchPortalClient client = fixture.Create<TouchPortalClient>();
             var result = client.Connect();
-            Assert.False(result);
+            Assert.That(result, Is.False);
 
             socket.Verify(mock => mock.Connect(), Times.Once);
             socket.Verify(mock => mock.SendMessage(It.IsAny<string>()), Times.Once);
@@ -60,7 +60,7 @@ namespace TouchPortalSDK.Tests.Client
 
             ITouchPortalClient client = fixture.Create<TouchPortalClient>();
             var result = client.Connect();
-            Assert.False(result);
+            Assert.That(result, Is.False);
 
             socket.Verify(mock => mock.Listen(), Times.Once);
             socket.Verify(mock => mock.SendMessage(It.IsAny<string>()), Times.Once);
@@ -79,7 +79,7 @@ namespace TouchPortalSDK.Tests.Client
             client.SetPrivate("_lastInfoEvent", new InfoEvent()); //final return to be true.
             client.SetPrivate("_infoWaitHandle", new ManualResetEvent(true)); //Thread not waiting for response.
             var result = client.Connect();
-            Assert.True(result);
+            Assert.That(result, Is.True);
 
             socket.Verify(mock => mock.Listen(), Times.Once);
             socket.Verify(mock => mock.SendMessage(It.IsAny<string>()), Times.Once);

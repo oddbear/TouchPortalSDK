@@ -1,6 +1,6 @@
 {
   "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
-  "sdk": 7,
+  "api": 8,
   "version": 1,
   "name": "TouchPortalSDK.States",
   "id": "TouchPortalSDK.States",

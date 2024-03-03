@@ -29,8 +29,9 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="desc">Description of the created state (name in menus).</param>
         /// <param name="defaultValue"></param>
         /// <param name="parentGroup"></param>
+        /// <param name="forceUpdate"></param>
         /// <returns></returns>
-        bool CreateState(string stateId, string desc, string defaultValue = "", string parentGroup = null);
+        bool CreateState(string stateId, string desc, string defaultValue = "", string? parentGroup = null, bool? forceUpdate = null);
 
         /// <summary>
         /// Updates a setting in Touch Portal.
@@ -67,7 +68,7 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="values">Values as string array that you can choose from.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool ChoiceUpdate(string choiceId, string[] values, string instanceId = default);
+        bool ChoiceUpdate(string choiceId, string[] values, string? instanceId = null);
 
         /// <summary>
         /// Updates the constraints of a data value.
@@ -78,7 +79,7 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="dataType">Type of the data field.</param>
         /// <param name="instanceId">if set (fetched from listChange event), this will only update this particular list.</param>
         /// <returns></returns>
-        bool UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string instanceId = default);
+        bool UpdateActionData(string dataId, double minValue, double maxValue, ActionDataType dataType, string? instanceId = null);
 
         /// <summary>
         /// Adds a notification to the Touch Portal UI. Ex. if the plugin has a updated version.

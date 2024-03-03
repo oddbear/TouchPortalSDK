@@ -19,15 +19,18 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.CreateState(stateId, desc, defaultValue, parentGroup);
-            Assert.True(result);
 
-            var parameter = socket.SendMessage_Parameter();
-            StringAssert.Contains("\"createState\"", parameter);
-            StringAssert.Contains(stateId, parameter);
-            StringAssert.Contains(desc, parameter);
-            StringAssert.Contains(defaultValue, parameter);
-            StringAssert.Contains(defaultValue, parameter);
-            StringAssert.Contains(parentGroup, parameter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.True);
+
+                var parameter = socket.SendMessage_Parameter();
+                Assert.That(parameter, Does.Contain("\"createState\""));
+                Assert.That(parameter, Does.Contain(stateId));
+                Assert.That(parameter, Does.Contain(desc));
+                Assert.That(parameter, Does.Contain(defaultValue));
+                Assert.That(parameter, Does.Contain(parentGroup));
+            });
         }
 
         [Theory]
@@ -38,7 +41,8 @@ namespace TouchPortalSDK.Tests.Commands
 
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.CreateState(stateId, desc, defaultValue, parentGroup);
-            Assert.False(result);
+
+            Assert.That(result, Is.False);
         }
 
         [Theory]
@@ -49,7 +53,8 @@ namespace TouchPortalSDK.Tests.Commands
         {
             ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
             var result = commandHandler.CreateState(stateId, desc);
-            Assert.AreEqual(expected, result);
+
+            Assert.That(result, Is.EqualTo(expected));
         }
     }
 }

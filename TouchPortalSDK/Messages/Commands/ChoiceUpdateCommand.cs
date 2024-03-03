@@ -11,9 +11,9 @@ namespace TouchPortalSDK.Messages.Commands
 
         public string[] Value { get; set; }
 
-        public string InstanceId { get; set; }
+        public string? InstanceId { get; set; }
 
-        public static ChoiceUpdateCommand CreateAndValidate(string listId, string[] value, string instanceId = null)
+        public static ChoiceUpdateCommand CreateAndValidate(string listId, string[] value, string? instanceId = null)
         {
             if (string.IsNullOrWhiteSpace(listId))
                 throw new ArgumentNullException(nameof(listId));
