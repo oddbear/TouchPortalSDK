@@ -1,61 +1,55 @@
 ﻿using AutoFixture;
 using AutoFixture.NUnit3;
-using Moq;
 using NUnit.Framework;
 using System.Globalization;
+using FakeItEasy;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
 using TouchPortalSDK.Messages.Models.Enums;
-using TouchPortalSDK.Tests.Commands.Extensions;
 using TouchPortalSDK.Tests.Fixtures;
 
-namespace TouchPortalSDK.Tests.Commands
+namespace TouchPortalSDK.Tests.Commands;
+
+public class UpdateActionDataTests
 {
-    public class UpdateActionDataTests
+    [Theory]
+    [FakeItEasyData]
+    public void Success(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] ITouchPortalSocket socket)
     {
-        [Theory]
-        [AutoMoqData]
-        public void Success(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
-        {
-            socket.SendMessage_Setup().Returns(true);
+        A.CallTo(() => socket.SendMessage(A<string>.Ignored)).Returns(true);
 
-            ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.UpdateActionData(dataId, minValue, maxValue, ActionDataType.Number, instanceId);
+        ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
+        var result = commandHandler.UpdateActionData(dataId, minValue, maxValue, ActionDataType.Number, instanceId);
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.True);
+        Assert.That(result, Is.True);
 
-                var parameter = socket.SendMessage_Parameter();
-                Assert.That(parameter, Does.Contain("\"updateActionData\""));
-                Assert.That(parameter, Does.Contain(dataId));
-                Assert.That(parameter, Does.Contain(minValue.ToString(CultureInfo.InvariantCulture)));
-                Assert.That(parameter, Does.Contain(maxValue.ToString(CultureInfo.InvariantCulture)));
-                Assert.That(parameter, Does.Contain(instanceId));
-            });
-        }
+        A.CallTo(() => socket.SendMessage(A<string>.That.Contains("\"updateActionData\""))).MustHaveHappened();
+        A.CallTo(() => socket.SendMessage(A<string>.That.Contains(dataId))).MustHaveHappened();
+        A.CallTo(() => socket.SendMessage(A<string>.That.Contains(minValue.ToString(CultureInfo.InvariantCulture)))).MustHaveHappened();
+        A.CallTo(() => socket.SendMessage(A<string>.That.Contains(maxValue.ToString(CultureInfo.InvariantCulture)))).MustHaveHappened();
+        A.CallTo(() => socket.SendMessage(A<string>.That.Contains(instanceId))).MustHaveHappened();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void Failed(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
-        {
-            socket.SendMessage_Setup().Returns(false);
+    [Theory]
+    [FakeItEasyData]
+    public void Failed(string dataId, double minValue, double maxValue, string instanceId, IFixture fixture, [Frozen] ITouchPortalSocket socket)
+    {
+        A.CallTo(() => socket.SendMessage(A<string>.Ignored)).Returns(false);
 
-            ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.UpdateActionData(dataId, minValue, maxValue, ActionDataType.Number, instanceId);
+        ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
+        var result = commandHandler.UpdateActionData(dataId, minValue, maxValue, ActionDataType.Number, instanceId);
             
-            Assert.That(result, Is.False);
-        }
+        Assert.That(result, Is.False);
+    }
 
-        [Theory]
-        [InlineAutoMoqData("", false)]
-        [InlineAutoMoqData("dataId", true)]
-        public void Ignored(string dataId, bool expected, IFixture fixture)
-        {
-            ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.UpdateActionData(dataId, default, default, default, default);
+    [Theory]
+    [InlineFakeItEasyData("", false)]
+    [InlineFakeItEasyData("dataId", true)]
+    public void Ignored(string dataId, bool expected, IFixture fixture)
+    {
+        ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
+        var result = commandHandler.UpdateActionData(dataId, default, default, default, default);
             
-            Assert.That(expected, Is.EqualTo(result));
-        }
+        Assert.That(expected, Is.EqualTo(result));
     }
 }

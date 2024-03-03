@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
 using AutoFixture.NUnit3;
-using Moq;
+using FakeItEasy;
 using NUnit.Framework;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
@@ -8,128 +8,127 @@ using TouchPortalSDK.Messages.Events;
 using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Tests.Fixtures;
 
-namespace TouchPortalSDK.Tests.Events
+namespace TouchPortalSDK.Tests.Events;
+
+public class EventsTests
 {
-    public class EventsTests
+    [Theory]
+    [FakeItEasyData]
+    public void InfoEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
     {
-        [Theory]
-        [AutoMoqData]
-        public void InfoEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"info\"}");
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"info\"}");
 
-            eventHandler.Verify(mock => mock.OnInfoEvent(It.IsAny<InfoEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnInfoEvent(A<InfoEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void CloseEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"closePlugin\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void CloseEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"closePlugin\"}");
 
-            eventHandler.Verify(mock => mock.OnClosedEvent("TouchPortal sent a Plugin close event."), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnClosedEvent("TouchPortal sent a Plugin close event.")).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void ListChangeEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"listChange\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void ListChangeEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"listChange\"}");
 
-            eventHandler.Verify(mock => mock.OnListChangedEvent(It.IsAny<ListChangeEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnListChangedEvent(A<ListChangeEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void BroadcastEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"broadcast\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void BroadcastEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"broadcast\"}");
 
-            eventHandler.Verify(mock => mock.OnBroadcastEvent(It.IsAny<BroadcastEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnBroadcastEvent(A<BroadcastEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void SettingsEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"settings\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void SettingsEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"settings\"}");
 
-            eventHandler.Verify(mock => mock.OnSettingsEvent(It.IsAny<SettingsEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnSettingsEvent(A<SettingsEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void ActionEvent_Action(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"action\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void ActionEvent_Action(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"action\"}");
 
-            eventHandler.Verify(mock => mock.OnActionEvent(It.IsAny<ActionEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnActionEvent(A<ActionEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void ActionEvent_Up(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"up\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void ActionEvent_Up(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"up\"}");
 
-            eventHandler.Verify(mock => mock.OnActionEvent(It.IsAny<ActionEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnActionEvent(A<ActionEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void ActionEvent_Down(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"down\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void ActionEvent_Down(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"down\"}");
 
-            eventHandler.Verify(mock => mock.OnActionEvent(It.IsAny<ActionEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnActionEvent(A<ActionEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void NotificationOptionClickedEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"notificationOptionClicked\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void NotificationOptionClickedEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"notificationOptionClicked\"}");
 
-            eventHandler.Verify(mock => mock.OnNotificationOptionClickedEvent(It.IsAny<NotificationOptionClickedEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnNotificationOptionClickedEvent(A<NotificationOptionClickedEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void ConnectorChangeEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"connectorChange\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void ConnectorChangeEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"connectorChange\"}");
 
-            eventHandler.Verify(mock => mock.OnConnecterChangeEvent(It.IsAny<ConnectorChangeEvent>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnConnecterChangeEvent(A<ConnectorChangeEvent>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void ShortConnectorIdNotificationEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"shortConnectorIdNotification\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void ShortConnectorIdNotificationEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"shortConnectorIdNotification\"}");
 
-            eventHandler.Verify(mock => mock.OnShortConnectorIdNotificationEvent(It.IsAny<ConnectorInfo>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnShortConnectorIdNotificationEvent(A<ConnectorInfo>.Ignored)).MustHaveHappenedOnceExactly();
+    }
 
-        [Theory]
-        [AutoMoqData]
-        public void UnhandledEvent(IFixture fixture, [Frozen] Mock<ITouchPortalEventHandler> eventHandler)
-        {
-            IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
-            messageHandler.OnMessage("{\"type\":\"unknown\"}");
+    [Theory]
+    [FakeItEasyData]
+    public void UnhandledEvent(IFixture fixture, [Frozen] ITouchPortalEventHandler eventHandler)
+    {
+        IMessageHandler messageHandler = fixture.Create<TouchPortalClient>();
+        messageHandler.OnMessage("{\"type\":\"unknown\"}");
 
-            eventHandler.Verify(mock => mock.OnUnhandledEvent(It.IsAny<string>()), Times.Once);
-        }
+        A.CallTo(() => eventHandler.OnUnhandledEvent(A<string>.Ignored)).MustHaveHappenedOnceExactly();
     }
 }

@@ -1,56 +1,53 @@
 ﻿using AutoFixture;
 using AutoFixture.NUnit3;
-using Moq;
+using FakeItEasy;
 using NUnit.Framework;
 using TouchPortalSDK.Clients;
 using TouchPortalSDK.Interfaces;
-using TouchPortalSDK.Tests.Commands.Extensions;
 using TouchPortalSDK.Tests.Fixtures;
 
-namespace TouchPortalSDK.Tests.Commands
+namespace TouchPortalSDK.Tests.Commands;
+
+public class SettingsTests
 {
-    public class SettingsTests
+    [Theory]
+    [FakeItEasyData]
+    public void Success(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] ITouchPortalSocket socket)
     {
-        [Theory]
-        [AutoMoqData]
-        public void Success(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
+        A.CallTo(() => socket.SendMessage(A<string>.Ignored)).Returns(true);
+
+        ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
+        var result = commandHandler.ChoiceUpdate(stateId, values, instanceId);
+
+        Assert.Multiple(() =>
         {
-            socket.SendMessage_Setup().Returns(true);
+            Assert.That(result, Is.True);
 
-            ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.ChoiceUpdate(stateId, values, instanceId);
+            A.CallTo(() => socket.SendMessage(A<string>.That.Contains("\"choiceUpdate\""))).MustHaveHappened();
+            A.CallTo(() => socket.SendMessage(A<string>.That.Contains(stateId))).MustHaveHappened();
+        });
+    }
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.True);
+    [Theory]
+    [FakeItEasyData]
+    public void Failed(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] ITouchPortalSocket socket)
+    {
+        A.CallTo(() => socket.SendMessage(A<string>.Ignored)).Returns(false);
 
-                var parameter = socket.SendMessage_Parameter();
-                Assert.That(parameter, Does.Contain("\"choiceUpdate\""));
-                Assert.That(parameter, Does.Contain(stateId));
-            });
-        }
+        ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
+        var result = commandHandler.ChoiceUpdate(stateId, values, instanceId);
 
-        [Theory]
-        [AutoMoqData]
-        public void Failed(string stateId, string[] values, string instanceId, IFixture fixture, [Frozen] Mock<ITouchPortalSocket> socket)
-        {
-            socket.SendMessage_Setup().Returns(false);
+        Assert.That(result, Is.False);
+    }
 
-            ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.ChoiceUpdate(stateId, values, instanceId);
+    [Theory]
+    [InlineFakeItEasyData("", false)]
+    [InlineFakeItEasyData("choiceId", true)]
+    public void Ignored(string choiceId, bool expected, IFixture fixture)
+    {
+        ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
+        var result = commandHandler.ChoiceUpdate(choiceId, default, default);
 
-            Assert.That(result, Is.False);
-        }
-
-        [Theory]
-        [InlineAutoMoqData("", false)]
-        [InlineAutoMoqData("choiceId", true)]
-        public void Ignored(string choiceId, bool expected, IFixture fixture)
-        {
-            ICommandHandler commandHandler = fixture.Create<TouchPortalClient>();
-            var result = commandHandler.ChoiceUpdate(choiceId, default, default);
-
-            Assert.That(result, Is.EqualTo(expected));
-        }
+        Assert.That(result, Is.EqualTo(expected));
     }
 }
