@@ -1,6 +1,6 @@
 {
   "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
-  "api": 8,
+  "api": 7,
   "version": 1,
   "name": "TouchPortalSDK.Settings",
   "id": "TouchPortalSDK.Settings",
@@ -21,7 +21,12 @@
       "type": "number",
       "minValue": 0,
       "maxValue": 120,
-      "readOnly": false
+      "readOnly": false,
+      "tooltip": {
+        "title": "Test Title",
+        "body": "Test Body",
+        "docUrl" : "http://localhost/"
+      }
     },
     {
       "name": "Second",

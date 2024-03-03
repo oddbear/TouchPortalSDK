@@ -11,7 +11,7 @@ namespace TouchPortalSDK.Messages.Commands
 
         public PairCommand()
         {
-            //Empty constructor for no validation or calculations.
+            // Empty constructor for no validation or calculations.
         }
 
         public PairCommand(string pluginId)

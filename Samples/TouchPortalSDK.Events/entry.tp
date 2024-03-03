@@ -1,6 +1,6 @@
 {
   "$schema": "https://pjiesco.com/touch-portal/entry.tp/schema",
-  "api": 8,
+  "api": 7,
   "version": 1,
   "name": "TouchPortalSDK.Events",
   "id": "TouchPortalSDK.Events",
@@ -13,7 +13,7 @@
         {
           "id": "fruit",
           "type": "choice",
-          "desc": "Fruit Kind description",
+          "desc": "E Fruit Kind description",
           "default": "Apple",
           "valueChoices": [
             "Apple",
@@ -26,7 +26,7 @@
         {
           "id": "event002",
           "name": "On breakfast eating",
-          "format": "When we eat $val as breakfast",
+          "format": "E When we eat $val as breakfast",
           "type": "communicate",
           "valueType": "choice",
           "valueChoices": [

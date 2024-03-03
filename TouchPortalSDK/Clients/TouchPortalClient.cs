@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading;
@@ -14,7 +14,6 @@ using TouchPortalSDK.Values;
 
 namespace TouchPortalSDK.Clients
 {
-    [SuppressMessage("Critical Code Smell", "S1006:Method overrides should not change parameter defaults", Justification = "Service resolved from IoC framework.")]
     public class TouchPortalClient : ITouchPortalClient, IMessageHandler
     {
         /// <inheritdoc cref="ITouchPortalClient" />
@@ -48,27 +47,27 @@ namespace TouchPortalSDK.Clients
         /// <inheritdoc cref="ITouchPortalClient" />
         bool ITouchPortalClient.Connect()
         {
-            //Connect:
+            // Connect:
             _logger?.LogInformation("Connecting to TouchPortal.");
             var connected = _touchPortalSocket.Connect();
             if (!connected)
                 return false;
 
-            //Pair:
+            // Pair:
             _logger?.LogInformation("Sending pair message.");
             var pairCommand = new PairCommand(_eventHandler.PluginId);
             var pairing = SendCommand(pairCommand);
             if (!pairing)
                 return false;
 
-            //Listen:
+            // Listen:
             _logger?.LogInformation("Create listener.");
             var listening = _touchPortalSocket.Listen();
             _logger?.LogInformation("Listener created.");
             if (!listening)
                 return false;
 
-            //Waiting for InfoMessage:
+            // Waiting for InfoMessage:
             _infoWaitHandle.WaitOne(-1);
             _logger?.LogInformation("Received pair response.");
 
@@ -158,6 +157,22 @@ namespace TouchPortalSDK.Clients
         }
 
         /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.StateListUpdate(string stateId, string[] values)
+        {
+            try
+            {
+                var command = StateListUpdateCommand.CreateAndValidate(stateId, values);
+
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(StateListUpdateCommand)}");
+                return false;
+            }
+        }
+
+        /// <inheritdoc cref="ICommandHandler" />
         bool ICommandHandler.ChoiceUpdate(string choiceId, string[] values, string? instanceId)
         {
             try
@@ -237,6 +252,22 @@ namespace TouchPortalSDK.Clients
             }
         }
 
+        /// <inheritdoc cref="ICommandHandler" />
+        bool ICommandHandler.TriggerEvent(string eventId, Dictionary<string, string>? states)
+        {
+            try
+            {
+                var command = TriggerEventCommand.CreateAndValidate(eventId, states);
+
+                return SendCommand(command);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogWarning(exception, $"Failed to create command {nameof(ConnectorUpdateCommand)}");
+                return false;
+            }
+        }
+
         bool ICommandHandler.SendCommand(ITouchPortalCommand command)
         {
             var jsonMessage = JsonSerializer.Serialize<object>(command, Options.JsonSerializerOptions);
@@ -292,7 +323,7 @@ namespace TouchPortalSDK.Clients
                 case ShortConnectorIdNotificationEvent shortConnectorIdEvent:
                     _eventHandler.OnShortConnectorIdNotificationEvent(new ConnectorInfo(shortConnectorIdEvent));
                     return;
-                //All of Action, Up, Down:
+                // All of Action, Up, Down:
                 case ActionEvent actionEvent:
                     _eventHandler.OnActionEvent(actionEvent);
                     return;

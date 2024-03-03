@@ -11,60 +11,60 @@ namespace SampleUtils
     {
         public string PluginId => PluginInfo.AssemblyName;
 
-        protected abstract ILogger _logger { get; }
-        protected abstract ITouchPortalClient _client { get; }
+        protected abstract ILogger Logger { get; }
+        protected abstract ITouchPortalClient Client { get; }
 
         public virtual void OnActionEvent(ActionEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
         }
 
         public virtual void OnBroadcastEvent(BroadcastEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
         }
 
         public virtual void OnClosedEvent(string message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
 
-            //Optional force exits this plugin.
+            // Optional force exits this plugin.
             Environment.Exit(0);
         }
 
         public virtual void OnConnecterChangeEvent(ConnectorChangeEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
         }
 
         public virtual void OnInfoEvent(InfoEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
         }
 
         public virtual void OnListChangedEvent(ListChangeEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
         }
 
         public virtual void OnNotificationOptionClickedEvent(NotificationOptionClickedEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
         }
 
         public virtual void OnSettingsEvent(SettingsEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
         }
 
         public virtual void OnShortConnectorIdNotificationEvent(ConnectorInfo connectorInfo)
         {
-            _logger.LogObjectAsJson(connectorInfo);
+            Logger.LogObjectAsJson(connectorInfo);
         }
 
         public virtual void OnUnhandledEvent(string jsonMessage)
         {
-            _logger.LogObjectAsJson(jsonMessage);
+            Logger.LogObjectAsJson(jsonMessage);
         }
     }
 }

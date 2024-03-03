@@ -11,20 +11,21 @@ namespace TouchPortalSDK.Clients
 {
     public class TouchPortalSocket : ITouchPortalSocket
     {
-        public bool IsConnected => _socket?.Connected ?? false;
+        public bool IsConnected => _socket.Connected;
 
         private readonly TouchPortalOptions _options;
         private readonly IMessageHandler _messageHandler;
-        private readonly ILogger<TouchPortalSocket> _logger;
+        private readonly ILogger<TouchPortalSocket>? _logger;
         private readonly Socket _socket;
         private readonly Thread _listenerThread;
 
-        private StreamWriter _streamWriter;
-        private StreamReader _streamReader;
+        private StreamWriter? _streamWriter;
+        private StreamReader? _streamReader;
 
-        public TouchPortalSocket(TouchPortalOptions options,
-                                 IMessageHandler messageHandler,
-                                 ILoggerFactory loggerFactory = null)
+        public TouchPortalSocket(
+            TouchPortalOptions options,
+            IMessageHandler messageHandler,
+            ILoggerFactory? loggerFactory = null)
         {
             _options = options;
             _messageHandler = messageHandler;
@@ -148,7 +149,7 @@ namespace TouchPortalSDK.Clients
                     try
                     {
                         var message = _streamReader.ReadLine()
-                                      ?? throw new IOException("Socket closed.");
+                            ?? throw new IOException("Socket closed.");
 
                         _logger?.LogDebug(message);
 

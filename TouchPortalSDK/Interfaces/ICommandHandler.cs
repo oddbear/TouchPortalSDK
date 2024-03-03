@@ -1,4 +1,5 @@
-﻿using TouchPortalSDK.Messages.Models;
+﻿using System.Collections.Generic;
+using TouchPortalSDK.Messages.Models;
 using TouchPortalSDK.Messages.Models.Enums;
 using TouchPortalSDK.Values;
 
@@ -8,6 +9,8 @@ namespace TouchPortalSDK.Interfaces
     {
         /// <summary>
         /// Send a custom command. There is no state tracking for this.
+        /// Message would typically be one line as json to be accepted by Touch Portal
+        /// , but without line ending (added by the client).
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -60,6 +63,9 @@ namespace TouchPortalSDK.Interfaces
         /// <returns></returns>
         bool StateUpdate(string stateId, string value = "");
 
+        // TODO: Doc
+        bool StateListUpdate(string stateId, string[] values);
+
         /// <summary>
         /// Updates the drop down choices in the Touch Portal UI.
         /// InstanceId can be used to dynamically update a dropdown based on the value chosen from another dropdown.
@@ -105,5 +111,8 @@ namespace TouchPortalSDK.Interfaces
         /// <param name="value">A value between 0-100 to update the connector to</param>
         /// <returns></returns>
         bool ConnectorUpdate(ConnectorShortId shortId, int value);
+
+        // TODO: Doc
+        bool TriggerEvent(string eventId, Dictionary<string, string>? states = null);
     }
 }

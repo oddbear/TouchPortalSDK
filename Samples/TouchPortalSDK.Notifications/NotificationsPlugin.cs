@@ -9,32 +9,32 @@ namespace TouchPortalSDK.Notifications
 {
     public class NotificationsPlugin : SamplePluginBase
     {
-        protected override ILogger _logger { get; }
-        protected override ITouchPortalClient _client { get; }
+        protected override ILogger Logger { get; }
+        protected override ITouchPortalClient Client { get; }
 
         public NotificationsPlugin(
             ITouchPortalClientFactory clientFactory,
             ILogger<NotificationsPlugin> logger)
         {
-            _logger = logger;
-            _client = clientFactory.Create(this);
+            Logger = logger;
+            Client = clientFactory.Create(this);
         }
 
         public void Run()
         {
-            //Connect to Touch Portal:
-            _client.Connect();
+            // Connect to Touch Portal:
+            Client.Connect();
 
-            //Sends a notification to the Touch Portal UI this needs options the user can react on:
-            _client.ShowNotification($"TouchPortalSDK.Notifications|update", "SamplePlugin: new version", "Please update to version 1.0!", new[] {
+            // Sends a notification to the Touch Portal UI this needs options the user can react on:
+            Client.ShowNotification($"TouchPortalSDK.Notifications|update", "SamplePlugin: new version", "Please update to version 1.0!", [
                 new NotificationOptions { Id = "update", Title = "Update this plugin" },
                 new NotificationOptions { Id = "readMore", Title = "Read more..." }
-            });
+            ]);
         }
 
         public override void OnNotificationOptionClickedEvent(NotificationOptionClickedEvent message)
         {
-            _logger.LogObjectAsJson(message);
+            Logger.LogObjectAsJson(message);
 
             if (message.NotificationId is "TouchPortalSDK.Notifications|update")
             {

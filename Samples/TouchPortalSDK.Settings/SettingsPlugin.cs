@@ -7,35 +7,35 @@ namespace TouchPortalSDK.Settings
 {
     public class SettingsPlugin : SamplePluginBase
     {
-        protected override ILogger _logger { get; }
-        protected override ITouchPortalClient _client { get; }
+        protected override ILogger Logger { get; }
+        protected override ITouchPortalClient Client { get; }
 
         public SettingsPlugin(
             ITouchPortalClientFactory clientFactory,
             ILogger<SettingsPlugin> logger)
         {
-            _logger = logger;
-            _client = clientFactory.Create(this);
+            Logger = logger;
+            Client = clientFactory.Create(this);
         }
 
         public void Run()
         {
-            //Connect to Touch Portal:
-            _client.Connect();
+            // Connect to Touch Portal:
+            Client.Connect();
 
-            _client.SettingUpdate("Second", DateTime.UtcNow.ToString("s"));
+            Client.SettingUpdate("Second", DateTime.UtcNow.ToString("s"));
         }
 
         public override void OnInfoEvent(InfoEvent message)
         {
             var settings = message.Settings;
-            _logger.LogObjectAsJson(settings);
+            Logger.LogObjectAsJson(settings);
         }
 
         public override void OnSettingsEvent(SettingsEvent message)
         {
             var settings = message.Values;
-            _logger.LogObjectAsJson(settings);
+            Logger.LogObjectAsJson(settings);
         }
     }
 }

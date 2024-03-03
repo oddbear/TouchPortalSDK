@@ -6,7 +6,7 @@ namespace SampleUtils
 {
     public static class LoggerExtensions
     {
-        public static void LogObjectAsJson(this ILogger logger, object message, [CallerMemberName] string memberName = "")
+        public static void LogObjectAsJson(this ILogger? logger, object? message, [CallerMemberName] string memberName = "")
         {
             if (logger is null || message is null)
                 return;

@@ -5,16 +5,16 @@ using SampleUtils;
 using TouchPortalSDK.Configuration;
 using TouchPortalSDK.Events;
 
-//Used in debug to copy the entry.tp file if changed, and restart Touch Portal:
+// Used in debug to copy the entry.tp file if changed, and restart Touch Portal:
 EntryCopy.RefreshEntryFile();
 
-//Build configuration:
+// Build configuration:
 var configurationRoot = new ConfigurationBuilder()
     .SetBasePath(Directory.GetParent(AppContext.BaseDirectory)!.FullName)
     .AddJsonFile("appsettings.json")
     .Build();
 
-//Standard method for build a ServiceProvider in .Net:
+// Standard method for build a ServiceProvider in .Net:
 var serviceCollection = new ServiceCollection();
 serviceCollection.AddLogging(configure =>
 {
@@ -22,13 +22,13 @@ serviceCollection.AddLogging(configure =>
     configure.AddConfiguration(configurationRoot.GetSection("Logging"));
 });
 
-//Registering the Plugin to the IoC container:
+// Registering the Plugin to the IoC container:
 serviceCollection.AddTouchPortalSdk(configurationRoot);
 serviceCollection.AddSingleton<EventsPlugin>();
 
 var serviceProvider = serviceCollection.BuildServiceProvider(true);
 
-//Use your IoC framework to resolve the plugin with it's dependencies,
+// Use your IoC framework to resolve the plugin with it's dependencies,
 // or you can use 'TouchPortalFactory.CreateClient' to get started manually:
 var plugin = serviceProvider.GetRequiredService<EventsPlugin>();
 plugin.Run();

@@ -8,7 +8,7 @@ namespace TouchPortalSDK.Configuration
     {
         internal static ITouchPortalEvent? ResolveMessage(string message)
         {
-            //Is the message a valid object?
+            // Is the message a valid object?
             var jsonDocument = GenericDocument(message);
             if (jsonDocument.ValueKind != JsonValueKind.Object ||
                 !jsonDocument.TryGetProperty("type", out var typeElement))
@@ -17,7 +17,7 @@ namespace TouchPortalSDK.Configuration
             var type = typeElement.GetString();
             switch (type)
             {
-                //Events:
+                // Events:
                 case "info":
                     return JsonSerializer.Deserialize<InfoEvent>(message, Options.JsonSerializerOptions);
                 case "closePlugin":
